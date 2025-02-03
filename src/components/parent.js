@@ -1,6 +1,6 @@
 import { attachEventListeners } from "../DOM/attachEventListeners";
 import { observeDOMChanges } from "../DOM/observeDOMChanges";
-import { parentHtml } from "../html/parentHtml";
+import { parentHtml } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml.js";
 import { fetchModifications } from "../utils/getStyles";
 
 export async function parent() {
