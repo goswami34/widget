@@ -5,7 +5,7 @@
     import { token } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js";
 
     export async function parent() {
-       
+       console.log("html is " , parentHtml)
 
 
         function createWidget() {
