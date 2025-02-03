@@ -28,7 +28,7 @@
 
 
       async  function initializeSquareCraft() {
-            token()
+            // token();
             createWidget();
             attachEventListeners();
             fetchModifications();
