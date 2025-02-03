@@ -43,7 +43,6 @@ export async function parent() {
         widgetContainer.innerHTML = parentHtml();
 
         document.body.appendChild(widgetContainer);
-        document.body.appendChild(widgetContainer);
     }
 
 
