@@ -2,8 +2,18 @@ import { attachEventListeners } from "https://fatin-webefo.github.io/squareCraft
 import { observeDOMChanges } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js";
 import { parentHtml } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml.js";
 import { fetchModifications } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
+import { token } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js";
 
 export async function parent() {
+    function initializeSquareCraft() {
+        token()
+        createWidget();
+        attachEventListeners();
+        fetchModifications();
+        observeDOMChanges();
+        toggleWidgetVisibility();
+    }
+    
     function shouldShowWidget() {
         const url = window.location.href;
         const pathname = window.location.pathname;
@@ -37,13 +47,7 @@ export async function parent() {
     }
 
 
-    function initializeSquareCraft() {
-        createWidget();
-        attachEventListeners();
-        fetchModifications();
-        observeDOMChanges();
-        toggleWidgetVisibility();
-    }
+ 
 
 
     document.addEventListener("DOMContentLoaded", initializeSquareCraft);
