@@ -1,3 +1,6 @@
+import { fetchModifications } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
+
+
 export     function observeDOMChanges() {
     const observer = new MutationObserver(() => {
       console.log("🔄 DOM Updated - Checking for changes...");

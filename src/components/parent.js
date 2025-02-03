@@ -1,7 +1,7 @@
-import { attachEventListeners } from "../DOM/attachEventListeners";
-import { observeDOMChanges } from "../DOM/observeDOMChanges";
+import { attachEventListeners } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js";
+import { observeDOMChanges } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js";
 import { parentHtml } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml.js";
-import { fetchModifications } from "../utils/getStyles";
+import { fetchModifications } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
 
 export async function parent() {
     function shouldShowWidget() {
