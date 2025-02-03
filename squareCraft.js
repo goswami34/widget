@@ -1,5 +1,6 @@
 (async function SquareCraft() {
-  
+    const pathname = window.location.pathname;
+    console.log("�� Checking URL:", url, "pathname:", pathname);
     const script = document.createElement("script");
     script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/components/parent.js"; 
     script.type = "module"; 
