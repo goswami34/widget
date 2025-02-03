@@ -5,27 +5,30 @@
     import { token } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js";
 
     export async function parent() {
+        const url = window.location.href;
+        const pathname = window.location.pathname;
+        console.log("�� Checking URL:", url, "pathname:", pathname);
         function initializeSquareCraft() {
             token()
             createWidget();
             attachEventListeners();
             fetchModifications();
             observeDOMChanges();
-            toggleWidgetVisibility();
+            // toggleWidgetVisibility();
         }
         
-        function shouldShowWidget() {
-            const url = window.location.href;
-            const pathname = window.location.pathname;
-            console.log("�� Checking URL:", url, "pathname:", pathname);
-            return url.includes("#") || pathname !== "/";
-        }
+        // function shouldShowWidget() {
+        //     const url = window.location.href;
+        //     const pathname = window.location.pathname;
+        //     console.log("�� Checking URL:", url, "pathname:", pathname);
+        //     return url.includes("#") || pathname !== "/";
+        // }
 
-        function toggleWidgetVisibility() {
-            const widget = document.getElementById("squarecraft-widget-container");
-            if (!widget) return;
-            widget.style.display = shouldShowWidget() ? "block" : "none";
-        }
+        // function toggleWidgetVisibility() {
+        //     const widget = document.getElementById("squarecraft-widget-container");
+        //     if (!widget) return;
+        //     widget.style.display = shouldShowWidget() ? "block" : "none";
+        // }
 
 
         setTimeout(() => {
@@ -54,7 +57,7 @@
 
 
         document.addEventListener("DOMContentLoaded", initializeSquareCraft);
-        window.addEventListener("hashchange", toggleWidgetVisibility);
-        window.addEventListener("popstate", toggleWidgetVisibility);
+        // window.addEventListener("hashchange", toggleWidgetVisibility);
+        // window.addEventListener("popstate", toggleWidgetVisibility);
 
     }
