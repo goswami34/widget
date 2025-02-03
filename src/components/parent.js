@@ -16,6 +16,7 @@
             widgetContainer.style.left = "100px";
             widgetContainer.style.cursor = "grab";
             widgetContainer.style.zIndex = "9999";
+            widgetContainer.style.display = "block";
             console.log("🔍 Checking Widget Container:", widgetContainer);
 
             console.log("🔹 Injecting Widget HTML:", parentHtml());
