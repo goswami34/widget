@@ -2,7 +2,6 @@
     console.log("🚀 Parent function initialized...");
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
-        token();
         createWidget();
         attachEventListeners();
         fetchModifications();
@@ -28,6 +27,7 @@
     observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
     fetchModifications = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.fetchModifications;
     token = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js"))?.token;
+    token();
 
     if (!parentHtml || !attachEventListeners || !observeDOMChanges || !fetchModifications || !token) {
         console.error("❌ Some functions failed to load. Check module imports.");
