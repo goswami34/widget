@@ -33,18 +33,18 @@
 
     function createWidget() {
         console.log("🔹 Running createWidget function...");
-
+    
         if (!parentHtml) {
             console.error("❌ parentHtml is not defined. Check imports.");
             return;
         }
-
-        // ✅ Check if widget already exists before creating
+    
+        // ✅ Check if widget already exists
         if (document.getElementById("squarecraft-widget-container")) {
             console.warn("⚠️ Widget already exists, skipping creation.");
             return;
         }
-
+    
         const widgetContainer = document.createElement("div");
         widgetContainer.id = "squarecraft-widget-container";
         widgetContainer.style.position = "fixed";
@@ -52,10 +52,20 @@
         widgetContainer.style.left = "100px";
         widgetContainer.style.cursor = "grab";
         widgetContainer.style.zIndex = "9999";
-
+        const style = document.createElement("style");
+        style.innerHTML = `
+          #squarecraft-widget-container {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+          }
+        `;
+        document.head.appendChild(style);
+        
         console.log("📌 Injecting Widget HTML...");
         widgetContainer.innerHTML = parentHtml();
-
+    
+        // ✅ Append immediately if body is ready, otherwise wait
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", () => {
                 console.log("📌 Appending Widget to DOM...");
@@ -65,13 +75,20 @@
             console.log("📌 Appending Widget to DOM immediately...");
             document.body.appendChild(widgetContainer);
         }
-
+    
+        // 🔄 Retry appending in case Squarespace removes it
         setTimeout(() => {
-            const widget = document.getElementById("squarecraft-widget-container");
-            console.log("🔍 Checking Widget in DOM:", widget);
-        }, 2000);
+            if (!document.getElementById("squarecraft-widget-container")) {
+                console.warn("⚠️ Widget was removed! Re-adding...");
+                document.body.appendChild(widgetContainer);
+            }
+        }, 3000);
     }
-
+    
+    setTimeout(() => {
+        console.log("🔍 Checking Widget in DOM (After Delay):", document.getElementById("squarecraft-widget-container"));
+    }, 5000);
+    
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
         token();
@@ -81,5 +98,8 @@
         observeDOMChanges();
     }
 
-    document.addEventListener("DOMContentLoaded", initializeSquareCraft);
-})();
+    window.onload = () => {
+        console.log("⚡ Initializing SquareCraft after full page load...");
+        initializeSquareCraft();
+    };
+    })();
