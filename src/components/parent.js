@@ -48,6 +48,13 @@
     console.log("📌 HTML Structure:\n", parentHtml());
 
     function createWidget() {
+        console.log("🔹 Running createWidget function...");
+    
+        if (!parentHtml) {
+            console.error("❌ parentHtml is not defined. Check imports.");
+            return;
+        }
+    
         const widgetContainer = document.createElement("div");
         widgetContainer.id = "squarecraft-widget-container";
         widgetContainer.style.position = "fixed";
@@ -55,12 +62,27 @@
         widgetContainer.style.left = "100px";
         widgetContainer.style.cursor = "grab";
         widgetContainer.style.zIndex = "9999";
-        widgetContainer.style.display = "block";
-
-        console.log("🔹 Injecting Widget HTML:", parentHtml());
+    
+        console.log("📌 Appending Widget with HTML:", parentHtml());
+    
         widgetContainer.innerHTML = parentHtml();
-        document.body.appendChild(widgetContainer);
+    
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", () => {
+                console.log("📌 Appending Widget to DOM...");
+                document.body.appendChild(widgetContainer);
+            });
+        } else {
+            document.body.appendChild(widgetContainer);
+        }
+    
+        console.log("✅ Widget should now be in the DOM.");
     }
+    setTimeout(() => {
+        const widget = document.getElementById("squarecraft-widget-container");
+        console.log("🔍 Checking Widget in DOM:", widget);
+    }, 2000);
+    
 
     function initializeSquareCraft() {
         token();
