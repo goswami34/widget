@@ -2,18 +2,24 @@
     const pathname = window.location.pathname;
     const url = window.location.href;
     console.log("�� Checking URL:", url, "pathname:", pathname);
-    const script = document.createElement("script");
-    script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/components/parent.js"; 
-    script.type = "text/javascript";
- 
-    script.onload = () => {
-      console.log("🚀 Parent Script Loaded");
-    };
-    script.onerror = (err) => {
-      console.error("❌ Failed to load Parent Script:", err);
-    };
+    setTimeout(() => {
+      const script = document.createElement("script");
+      script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/components/parent.js";
+      script.onload = () => console.log("🚀 Script Loaded");
+      script.onerror = (err) => console.error("❌ Failed:", err);
+      document.head.appendChild(script);
+
+      script.onload = () => {
+        console.log("🚀 Parent Script Loaded");
+      };
+      script.onerror = (err) => {
+        console.error("❌ Failed to load Parent Script:", err);
+      };
+    
+      document.head.appendChild(script); 
+  }, 3000);
   
-    document.head.appendChild(script); 
+ 
   
   })();
   
