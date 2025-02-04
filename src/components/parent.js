@@ -56,7 +56,7 @@
         navbar.appendChild(pluginWrapper);
 
         setTimeout(() => {
-            pluginButton.style.opacity = "999999";
+            pluginButton.style.opacity = "1";
         }, 300);
 
         console.log("✅ Plugin Icon Added to Admin Navbar!");
