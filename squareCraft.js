@@ -1,37 +1,50 @@
 (async function SquareCraft() {
   const PLUGIN_ICON_ID = "squareCraft-icon-button";
-  const PLUGIN_ICON_URL = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; // Replace with your CDN link
-  const PLUGIN_DASHBOARD_URL = "https://your-plugin-dashboard.com"; // Replace with actual dashboard URL
+  const PLUGIN_DASHBOARD_URL = "https://your-plugin-dashboard.com"; 
   const TARGET_SELECTOR = '[data-guidance-engine="guidance-engine-device-view-button-container"]';
+  const LOCAL_STORAGE_KEY = "plugin_icon_url";
 
-  function addPluginIcon() {
+  async function fetchIconUrl() {
+      let iconUrl = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+      if (!iconUrl) {
+          iconUrl = "https://i.ibb.co/LXKK6swV/Group-29.jpg";
+          localStorage.setItem(LOCAL_STORAGE_KEY, iconUrl);
+          console.log("🌍 Icon URL saved to localStorage:", iconUrl);
+      } else {
+          console.log("🔄 Loaded Icon URL from localStorage:", iconUrl);
+      }
+
+      return iconUrl;
+  }
+
+  async function addPluginIcon() {
       const targetList = document.querySelector(TARGET_SELECTOR)?.closest("ul");
 
       if (!targetList) {
           console.warn("⚠️ Target Admin Toolbar NOT found. Retrying...");
-          setTimeout(addPluginIcon, 1000); // Retry after 1 second
+          setTimeout(addPluginIcon, 1000); 
           return;
       }
 
       console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
-      // Prevent duplicates
       if (document.getElementById(PLUGIN_ICON_ID)) {
           console.warn("⚠️ Plugin Icon already exists.");
           return;
       }
 
-      // ✅ Create the list item wrapper
-      const listItem = document.createElement("li");
-      listItem.className = "css-custom-plugin"; // Custom class for reference
+      const PLUGIN_ICON_URL = await fetchIconUrl();
 
-      // ✅ Create the button container
+      const listItem = document.createElement("li");
+      listItem.className = "css-custom-plugin"; 
+
       const buttonWrapper = document.createElement("div");
-      buttonWrapper.className = "css-1j096s0"; // Mimics Squarespace button wrapper
+      buttonWrapper.className = "css-1j096s0"; 
 
       const pluginButton = document.createElement("button");
       pluginButton.id = PLUGIN_ICON_ID;
-      pluginButton.className = "css-110yp2v"; // Mimics Squarespace button style
+      pluginButton.className = "css-110yp2v"; 
       pluginButton.setAttribute("aria-label", "My Plugin");
       pluginButton.setAttribute("data-test", "my-plugin-button");
 
@@ -49,13 +62,11 @@
           opacity: 0;
       `;
 
-      // ✅ Create Image Icon
       const iconImage = document.createElement("img");
       iconImage.src = PLUGIN_ICON_URL;
       iconImage.alt = "Plugin Icon";
       iconImage.style.cssText = "width: 22px; height: 22px;";
 
-      // 🖱️ Hover Effect
       pluginButton.onmouseenter = () => {
           pluginButton.style.transform = "scale(1.1)";
       };
@@ -63,20 +74,15 @@
           pluginButton.style.transform = "scale(1)";
       };
 
-      // 🔗 Click to Open Plugin Dashboard
       pluginButton.onclick = () => {
           window.open(PLUGIN_DASHBOARD_URL, "_blank");
       };
 
-      // ✅ Assemble Components
       pluginButton.appendChild(iconImage);
       buttonWrapper.appendChild(pluginButton);
       listItem.appendChild(buttonWrapper);
-
-      // ✅ Insert at the start of the toolbar
       targetList.insertBefore(listItem, targetList.firstChild);
 
-      // ✅ Smooth Fade-in
       requestAnimationFrame(() => {
           pluginButton.style.opacity = "1";
       });
@@ -84,7 +90,6 @@
       console.log("✅ Plugin Icon Injected Successfully!");
   }
 
-  // 🕵️ Detect Admin Navbar Changes
   const observer = new MutationObserver(() => {
       if (!document.getElementById(PLUGIN_ICON_ID)) {
           console.log("🔄 Admin Navbar changed, reinjecting icon...");
@@ -94,6 +99,8 @@
 
   observer.observe(document.body, { childList: true, subtree: true });
 
-  // ✅ Initial Call
-  setTimeout(addPluginIcon, 2000);
+  window.addEventListener("load", () => {
+      console.log("🚀 Page fully loaded. Initializing Plugin...");
+      setTimeout(addPluginIcon, 2000); 
+  });
 })();
