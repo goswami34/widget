@@ -4,7 +4,8 @@
     console.log("�� Checking URL:", url, "pathname:", pathname);
     setTimeout(() => {
       function addPluginIcon() {
-        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
+        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]').closest('li');
+        console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
         if (!targetList) {
             console.warn("⚠️ Target Admin Toolbar NOT found. Retrying...");
@@ -12,7 +13,6 @@
             return;
         }
 
-        console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
         // 🛑 Prevent duplicate icons
         if (document.getElementById("squareCraft-icon-button")) {
@@ -95,7 +95,7 @@
 
     // ✅ Initial Call
     addPluginIcon();
-  }, 10000);
+  }, 2000);
   
  
   
