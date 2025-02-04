@@ -1,4 +1,4 @@
-(function injectPluginIcon() {
+(function parent() {
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
     function addPluginIcon() {
