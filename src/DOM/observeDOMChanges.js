@@ -7,7 +7,7 @@ export     function observeDOMChanges() {
   
       if (isEditingMode()) {
         console.log("🛠 Detected Edit Mode - Rechecking modifications...");
-        setTimeout(fetchModifications, 3000); // ✅ Wait 3s before fetching again
+        setTimeout(fetchModifications, 3000); 
       } else {
         fetchModifications();
       }
