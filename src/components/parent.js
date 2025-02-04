@@ -1,7 +1,7 @@
-(async function parent() {
+( function parent() {
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
-  async  function addPluginIcon() {
+  function addPluginIcon() {
         const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
 
         if (!targetList) {
