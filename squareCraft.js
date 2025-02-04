@@ -3,21 +3,13 @@
     const url = window.location.href;
     console.log("�� Checking URL:", url, "pathname:", pathname);
     setTimeout(() => {
+      console.log("Injecting script...");
       const script = document.createElement("script");
       script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/components/parent.js?v=" + Date.now();
       script.crossOrigin = "anonymous";
       document.head.appendChild(script);
-      
-
-      script.onload = () => {
-        console.log("🚀 Parent Script Loaded");
-      };
-      script.onerror = (err) => {
-        console.error("❌ Failed to load Parent Script:", err);
-      };
-    
-      document.head.appendChild(script); 
-  }, 3000);
+  }, 3000); 
+  
   
  
   
