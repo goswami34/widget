@@ -1,32 +1,58 @@
-setTimeout(() => {
-    if (!window.location.href.includes("squarespace.com/config")) return;
 
-    console.log("🔹 Injecting Custom Admin Logo...");
-    const toolbar = document.querySelector('[data-test="header-nav"]'); 
-    console.log("toolbar found...", toolbar);
-    if (!toolbar) {
-      console.warn("⚠️ Squarespace navbar not found.");
-      return;
-    }
- 
-    if (document.getElementById("customAdminLogo")) return;
+  (function headerLogo() {
+      console.log("🚀 Searching for Squarespace Admin Header...");
 
-    const logoWrapper = document.createElement("div");
-    logoWrapper.id = "customAdminLogo";
-    logoWrapper.style.display = "flex";
-    logoWrapper.style.alignItems = "center";
-    logoWrapper.style.marginLeft = "10px";
-    const logo = document.createElement("img");
-    logo.src = "https://i.ibb.co.com/LXKK6swV/Group-29.jpg"; 
-    logo.alt = "Your Plugin";
-    logo.style.width = "28px";
-    logo.style.height = "28px";
-    logo.style.borderRadius = "50%";
-    logo.style.cursor = "pointer";
+      function addPluginIcon() {
+          const navbar = document.querySelector(".sqs-admin-navbar");
 
-    logoWrapper.appendChild(logo);
-    toolbar.appendChild(logoWrapper);
+          if (!navbar) {
+              console.warn("⚠️ Admin Navbar NOT found. Retrying in 1s...");
+              setTimeout(addPluginIcon, 1000);
+              return;
+          } else {
+              console.log("✅ Admin Navbar FOUND:", navbar);
+          }
 
-    console.log("✅ Custom Admin Logo Added to Squarespace Navbar");
+          if (document.getElementById("my-plugin-icon")) {
+              console.warn("⚠️ Plugin Icon already exists.");
+              return;
+          }
 
-  }, 1000);
+          const pluginButton = document.createElement("button");
+          pluginButton.id = "my-plugin-icon";
+          pluginButton.style.cssText = `
+              background: transparent;
+              border: none;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              padding: 5px;
+          `;
+
+          const iconImage = document.createElement("img");
+          iconImage.src = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; // Your Image URL
+          iconImage.alt = "Plugin Icon";
+          iconImage.style.cssText = `
+              width: 24px;
+              height: 24px;
+          `;
+
+          const buttonText = document.createElement("span");
+          buttonText.innerText = "My Plugin";
+          buttonText.style.cssText = `
+              color: white;
+              font-size: 14px;
+          `;
+
+          pluginButton.appendChild(iconImage);
+          pluginButton.appendChild(buttonText);
+          pluginButton.onclick = () => window.open("https://your-plugin-dashboard.com", "_blank");
+
+          navbar.appendChild(pluginButton);
+
+          console.log("✅ Plugin Icon with Image Added to Admin Navbar!");
+      }
+
+      document.addEventListener("DOMContentLoaded", addPluginIcon);
+  })();
