@@ -1,109 +1,66 @@
-(async function parent() {
-    console.log("🚀 Parent function initialized...");
-    function initializeSquareCraft() {
-        console.log("⚡ Initializing SquareCraft...");
-        createWidget();
-        attachEventListeners();
-        fetchModifications();
-        observeDOMChanges();
-        headerLogo();
-    }
+(function injectPluginIcon() {
+    console.log("🚀 Checking Squarespace Admin Navbar...");
 
-    let parentHtml, attachEventListeners, observeDOMChanges, fetchModifications, token, headerLogo;
+    function addPluginIcon() {
+        const navbar = document.querySelector(".sqs-admin-navbar");
 
-    async function loadModule(url) {
-        try {
-            console.log(`🚀 Loading module: ${url}`);
-            const module = await import(url);
-            console.log(`✅ Successfully loaded: ${url}`);
-            return module;
-        } catch (err) {
-            console.error(`❌ Failed to load module: ${url}`, err);
-            return null;
-        }
-    }
-
-    parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml.js"))?.parentHtml;
-    attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
-    observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
-    fetchModifications = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.fetchModifications;
-    token = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js"))?.token;
-    headerLogo = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/logo/headerLogo.js"))?.headerLogo;
-
-
-    console.log("✅ Successfully imported all modules. , header logo" , headerLogo);
-
- console.log("📌 HTML Structure:\n", parentHtml());
-
-    function createWidget() {
-        console.log("🔹 Running createWidget function...");
-
-        if (!parentHtml) {
-            console.error("❌ parentHtml is not defined. Check imports.");
+        if (!navbar) {
+            console.warn("⚠️ Admin Navbar NOT found. Retrying...");
+            setTimeout(addPluginIcon, 1000);
             return;
         }
 
-        if (document.getElementById("squarecraft-widget-container")) {
-            console.warn("⚠️ Widget already exists, skipping creation.");
+        console.log("✅ Admin Navbar FOUND:", navbar);
+
+        if (document.getElementById("squareCraft-icon-button")) {
+            console.warn("⚠️ Plugin Icon already exists.");
             return;
         }
 
-        const widgetContainer = document.createElement("div");
-        widgetContainer.id = "squarecraft-widget-container";
-        widgetContainer.style.position = "fixed";
-        widgetContainer.style.top = "100px";
-        widgetContainer.style.left = "100px";
-        widgetContainer.style.cursor = "grab";
-        widgetContainer.style.zIndex = "9999";
-
-        const style = document.createElement("style");
-        style.innerHTML = `
-          #squarecraft-widget-container {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-          }
+        const pluginWrapper = document.createElement("div");
+        pluginWrapper.className = "my-plugin-container";
+        pluginWrapper.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
         `;
-        document.head.appendChild(style);
 
-        console.log("📌 Injecting Widget HTML...");
-        widgetContainer.innerHTML = parentHtml();
+        const pluginButton = document.createElement("button");
+        pluginButton.id = "squareCraft-icon-button";
+        pluginButton.style.cssText = `
+            width: 37px;
+            height: 37px;
+            border-radius: 4px;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s ease-in-out, opacity 0.3s ease-in-out;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+        `;
 
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", () => {
-                console.log("📌 Appending Widget to DOM...");
-                document.body.appendChild(widgetContainer);
-                console.log("✅ Widget appended! Checking in DOM:", document.getElementById("squarecraft-widget-container"));
-            });
-        } else {
-            console.log("📌 Appending Widget to DOM immediately...");
-            document.body.appendChild(widgetContainer);
-            console.log("✅ Widget appended! Checking in DOM:", document.getElementById("squarecraft-widget-container"));
-        }
+        const iconImage = document.createElement("img");
+        iconImage.src = "https://webefo.com/wp-content/uploads/2023/09/cropped-Webefo-Favicon.png";
+        iconImage.alt = "Plugin Icon";
+        iconImage.style.cssText = "width: 22px; height: 22px;";
+
+        pluginButton.onclick = () => {
+            window.open("https://your-plugin-dashboard.com", "_blank");
+        };
+
+        pluginButton.appendChild(iconImage);
+        pluginWrapper.appendChild(pluginButton);
+        navbar.appendChild(pluginWrapper);
 
         setTimeout(() => {
-            if (!document.getElementById("squarecraft-widget-container")) {
-                console.warn("⚠️ Widget was removed! Re-adding...");
-                document.body.appendChild(widgetContainer);
-            }
-        }, 3000);
+            pluginButton.style.opacity = "999999";
+        }, 300);
+
+        console.log("✅ Plugin Icon Added to Admin Navbar!");
     }
 
-    setTimeout(() => {
-        console.log("🔍 Checking Widget in DOM (After Delay):", document.getElementById("squarecraft-widget-container"));
-    }, 3000);
-
-
-
-    setInterval(() => {
-        if (!document.getElementById("squarecraft-widget-container")) {
-            console.warn("⚠️ Widget removed by Squarespace! Re-adding...");
-            createWidget();
-        }
-    }, 1000);
-
-    setTimeout(() => {
-        console.log("⚡ Ensuring SquareCraft initializes...");
-        initializeSquareCraft();
-    }, 1000);
+    document.addEventListener("DOMContentLoaded", addPluginIcon);
 })();

@@ -34,7 +34,7 @@ export function headerLogo() {
       `;
 
       const iconImage = document.createElement("img");
-      iconImage.src = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; 
+      iconImage.src = "https://webefo.com/wp-content/uploads/2023/09/cropped-Webefo-Favicon.png"; 
       iconImage.alt = "Plugin Icon";
       iconImage.style.cssText = "width: 22px; height: 22px;";
 
