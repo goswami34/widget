@@ -4,7 +4,7 @@
     console.log("�� Checking URL:", url, "pathname:", pathname);
     setTimeout(() => {
       function addPluginIcon() {
-        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]').closest('li');
+        const targetList = document?.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('li');
         console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
         if (!targetList) {
