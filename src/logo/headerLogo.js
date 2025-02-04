@@ -1,4 +1,4 @@
-(function headerLogo() {
+export function headerLogo() {
   console.log("🚀 Searching for Squarespace Admin Navbar...");
 
   function addPluginIcon() {
@@ -53,4 +53,4 @@
   }
 
   document.addEventListener("DOMContentLoaded", addPluginIcon);
-})();
+}
