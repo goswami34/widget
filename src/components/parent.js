@@ -5,7 +5,7 @@
         const navbar = document.querySelector(".sqs-admin-navbar");
 
         if (!navbar) {
-            console.warn("⚠️ Admin Navbar NOT found. Retrying...");
+            console.error("⚠️ Admin Navbar NOT found. Retrying...");
             setTimeout(addPluginIcon, 1000);
             return;
         }
@@ -13,10 +13,11 @@
         console.log("✅ Admin Navbar FOUND:", navbar);
 
         if (document.getElementById("squareCraft-icon-button")) {
-            console.warn("⚠️ Plugin Icon already exists.");
+            console.error("⚠️ Plugin Icon already exists.");
             return;
         }
 
+        // ✅ Create Wrapper
         const pluginWrapper = document.createElement("div");
         pluginWrapper.className = "my-plugin-container";
         pluginWrapper.style.cssText = `
@@ -26,6 +27,7 @@
             margin-left: 10px;
         `;
 
+        // ✅ Create Button
         const pluginButton = document.createElement("button");
         pluginButton.id = "squareCraft-icon-button";
         pluginButton.style.cssText = `
@@ -42,22 +44,26 @@
             opacity: 0;
         `;
 
+        // ✅ Create Image Icon
         const iconImage = document.createElement("img");
         iconImage.src = "https://webefo.com/wp-content/uploads/2023/09/cropped-Webefo-Favicon.png";
         iconImage.alt = "Plugin Icon";
         iconImage.style.cssText = "width: 22px; height: 22px;";
 
+        // ✅ Click Event
         pluginButton.onclick = () => {
             window.open("https://your-plugin-dashboard.com", "_blank");
         };
 
+        // ✅ Append Elements
         pluginButton.appendChild(iconImage);
         pluginWrapper.appendChild(pluginButton);
         navbar.appendChild(pluginWrapper);
 
-        setTimeout(() => {
+        // ✅ Smooth Fade-in
+        requestAnimationFrame(() => {
             pluginButton.style.opacity = "1";
-        }, 300);
+        });
 
         console.log("✅ Plugin Icon Added to Admin Navbar!");
     }
