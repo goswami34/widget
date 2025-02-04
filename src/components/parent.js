@@ -1,5 +1,13 @@
 (async function parent() {
     console.log("🚀 Parent function initialized...");
+    function initializeSquareCraft() {
+        console.log("⚡ Initializing SquareCraft...");
+        token();
+        createWidget();
+        attachEventListeners();
+        fetchModifications();
+        observeDOMChanges();
+    }
 
     let parentHtml, attachEventListeners, observeDOMChanges, fetchModifications, token;
 
@@ -92,27 +100,19 @@
 
     setTimeout(() => {
         console.log("🔍 Checking Widget in DOM (After Delay):", document.getElementById("squarecraft-widget-container"));
-    }, 5000);
+    }, 3000);
 
-    function initializeSquareCraft() {
-        console.log("⚡ Initializing SquareCraft...");
-        token();
-        createWidget();
-        attachEventListeners();
-        fetchModifications();
-        observeDOMChanges();
-    }
 
-    // 🔄 Ensure widget persists even if Squarespace removes it
+
     setInterval(() => {
         if (!document.getElementById("squarecraft-widget-container")) {
             console.warn("⚠️ Widget removed by Squarespace! Re-adding...");
             createWidget();
         }
-    }, 3000);
+    }, 1000);
 
     setTimeout(() => {
         console.log("⚡ Ensuring SquareCraft initializes...");
         initializeSquareCraft();
-    }, 2000);
+    }, 1000);
 })();
