@@ -1,4 +1,4 @@
-( function parentHtml() {
+export function parentHtml() {
     return `
       <div style="width: 300px; background: #2c2c2c; padding: 20px; border-radius: 18px; border: 1.5px solid #3D3D3D; color: white;">
         <h3>🎨 SquareCraft Widget</h3>
@@ -18,5 +18,5 @@
         </button>
       </div>
     `;
-  })()
+  }
   
