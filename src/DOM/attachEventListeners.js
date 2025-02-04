@@ -1,3 +1,6 @@
+import { applyStyle } from "./applyStyle";
+import { getPageAndElement } from "./getPageAndElement";
+
 export function attachEventListeners() {
     let selectedElement = null;
     let lastHighlightedElement = null; 

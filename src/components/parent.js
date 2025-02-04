@@ -31,7 +31,7 @@
     headerLogo = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/logo/headerLogo.js"))?.headerLogo;
 
 
-    console.log("✅ Successfully imported all modules.");
+    console.log("✅ Successfully imported all modules. , header logo" , headerLogo);
 
  console.log("📌 HTML Structure:\n", parentHtml());
 
