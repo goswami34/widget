@@ -1,108 +1,73 @@
 (async function headerLogo() {
-    
     document.addEventListener("click", function (event) {
         console.log("🔥 Clicked Element:", event.target);
         console.log("🔍 Element Selector:", getElementSelector(event.target));
         forceClick(event.target);
     });
-    
+
     function getElementSelector(element) {
         if (!element) return null;
-    
-        if (element.id) {
-            return `#${element.id}`;
-        } else if (element.className) {
-            const classNames = element.className
-                .toString()
-                .split(" ")
-                .filter(Boolean)
-                .join(".");
-            return `.${classNames}`;
-        } else {
-            return element.tagName.toLowerCase();
+        if (element.id) return `#${element.id}`;
+        if (element.className) {
+            return `.${element.className.toString().split(" ").filter(Boolean).join(".")}`;
         }
+        return element.tagName.toLowerCase();
     }
-    
+
     function forceClick(targetElement) {
-        if (!targetElement) {
-            console.warn("⚠️ No target element provided.");
-            return;
-        }
-    
+        if (!targetElement) return console.warn("⚠️ No target element provided.");
+
         console.log("🔥 Attempting to click:", targetElement);
-    
-        // Ensure element is visible
+
         if (targetElement.offsetParent === null) {
             console.warn("⚠️ Target is hidden (display: none or visibility: hidden)");
             return;
         }
-    
-        // Try a normal click
+
         try {
+            targetElement.focus();
             targetElement.click();
             console.log("✅ Click event dispatched normally.");
             return;
-        } catch (error) {
+        } catch {
             console.warn("⚠️ Normal click failed, trying other methods...");
         }
-    
-        // Try dispatching a MouseEvent
+
         try {
-            let mouseEvent = new MouseEvent("click", { 
-                bubbles: true, 
-                cancelable: true, 
-                view: window 
-            });
-            targetElement.dispatchEvent(mouseEvent);
+            targetElement.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
             console.log("✅ MouseEvent click dispatched.");
             return;
-        } catch (error) {
+        } catch {
             console.warn("⚠️ MouseEvent click failed.");
         }
-    
-        // Try setting focus and pressing Enter
+
         try {
             targetElement.focus();
-            document.dispatchEvent(new KeyboardEvent("keydown", {
-                key: "Enter",
-                code: "Enter",
-                keyCode: 13,
-                bubbles: true
-            }));
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", code: "Enter", keyCode: 13, bubbles: true }));
             console.log("✅ Enter key simulated.");
-        } catch (error) {
+        } catch {
             console.warn("⚠️ Enter key simulation failed.");
         }
     }
-    
-    
-    
+
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
-    let iconUrl = localStorage.getItem("squareCraft_icon_url");
-    if (!iconUrl) {
-        iconUrl = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; // Default icon
-        localStorage.setItem("squareCraft_icon_url", iconUrl);
-        console.log("📝 Icon URL set in localStorage:", iconUrl);
-    } else {
-        console.log("🔄 Loaded Icon URL from localStorage:", iconUrl);
-    }
+    let iconUrl = localStorage.getItem("squareCraft_icon_url") || "https://i.ibb.co/LXKK6swV/Group-29.jpg";
+    localStorage.setItem("squareCraft_icon_url", iconUrl);
+    console.log("📝 Icon URL set in localStorage:", iconUrl);
+
+    let retryCount = 0, maxRetries = 10;
 
     function addPluginIcon() {
-        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
+        if (retryCount >= maxRetries) return console.warn("🚨 Max retries reached. Stopping plugin injection.");
+        retryCount++;
 
-        if (!targetList) {
-            console.warn("⚠️ Target Admin Toolbar NOT found. Retrying...");
-            setTimeout(addPluginIcon, 1000);
-            return;
-        }
+        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
+        if (!targetList) return setTimeout(addPluginIcon, 1000);
 
         console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
-        if (document.getElementById("squareCraft-icon-button")) {
-            console.warn("⚠️ Plugin Icon already exists.");
-            return;
-        }
+        if (document.getElementById("squareCraft-icon-button")) return console.warn("⚠️ Plugin Icon already exists.");
 
         const listItem = document.createElement("li");
         listItem.className = "css-custom-plugin";
@@ -115,18 +80,10 @@
         pluginButton.className = "css-110yp2v";
         pluginButton.setAttribute("aria-label", "My Plugin");
         pluginButton.setAttribute("data-test", "my-plugin-button");
-
         pluginButton.style.cssText = `
-            width: 37px;
-            height: 37px;
-            border-radius: 4px;
-            background-color: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
+            width: 37px; height: 37px; border-radius: 4px; background-color: transparent;
+            display: flex; justify-content: center; align-items: center; border: none;
+            cursor: pointer; transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
             opacity: 0;
         `;
 
@@ -135,16 +92,9 @@
         iconImage.alt = "Plugin Icon";
         iconImage.style.cssText = "width: 22px; height: 22px;";
 
-        pluginButton.onmouseenter = () => {
-            pluginButton.style.transform = "scale(1.1)";
-        };
-        pluginButton.onmouseleave = () => {
-            pluginButton.style.transform = "scale(1)";
-        };
-
-        pluginButton.onclick = () => {
-            window.open("https://your-plugin-dashboard.com", "_blank");
-        };
+        pluginButton.onmouseenter = () => pluginButton.style.transform = "scale(1.1)";
+        pluginButton.onmouseleave = () => pluginButton.style.transform = "scale(1)";
+        pluginButton.onclick = () => window.open("https://your-plugin-dashboard.com", "_blank");
 
         pluginButton.appendChild(iconImage);
         buttonWrapper.appendChild(pluginButton);
@@ -152,11 +102,9 @@
 
         targetList.insertBefore(listItem, targetList.firstChild);
 
-        requestAnimationFrame(() => {
-            pluginButton.style.opacity = "1";
-        });
-
+        requestAnimationFrame(() => pluginButton.style.opacity = "1");
         console.log("✅ Plugin Icon Injected Successfully!", targetList.firstChild);
+        retryCount = 0;
     }
 
     const observer = new MutationObserver(() => {
@@ -167,6 +115,5 @@
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
-
     addPluginIcon();
 })();
