@@ -1,124 +1,116 @@
-(async function squarespaceNavbarFix() {
-    console.log("🚀 Squarespace Navbar Fix Script Loaded!");
+(async function injectAdminPluginIcon() {
+    console.log("🚀 Squarespace Plugin Loader Initialized!");
 
-    // 🛠️ Function to Detect Clicks Everywhere
-    function detectClicksEverywhere() {
-        // 1️⃣ Detect Clicks on Main Document
-        document.addEventListener("click", (event) => {
-            console.log("🔥 Clicked in Main Document:", event.target);
-        });
+    let iconUrl = localStorage.getItem("squareCraft_icon_url") || "https://i.ibb.co/LXKK6swV/Group-29.jpg";
+    localStorage.setItem("squareCraft_icon_url", iconUrl);
 
-        // 2️⃣ Detect Clicks Inside iframes
-        let iframe = document.querySelector("iframe");
-        if (iframe) {
-            let iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            if (iframeDoc) {
-                iframeDoc.addEventListener("click", (event) => {
-                    console.log("🔥 Clicked inside iframe:", event.target);
-                });
-                console.log("✅ Click listener added inside iframe!");
-            } else {
-                console.warn("❌ Unable to access iframe document.");
-            }
-        } else {
-            console.warn("⚠️ No iframe detected. Navbar might not be inside an iframe.");
+    let retryCount = 0, maxRetries = 10;
+
+    function addPluginIcon() {
+        if (retryCount >= maxRetries) return console.warn("🚨 Max retries reached. Stopping plugin injection.");
+        retryCount++;
+
+        // 1️⃣ Find the Squarespace Admin Navbar
+        const adminToolbar = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
+
+        // If the admin toolbar is not found, retry after a short delay
+        if (!adminToolbar) {
+            console.warn("⚠️ Squarespace Admin Navbar not found. Retrying...");
+            setTimeout(addPluginIcon, 1000);
+            return;
         }
 
-        // 3️⃣ Detect Clicks in Shadow DOM
-        let shadowHost = document.querySelector("squarespace-toolbar"); // Example
+        console.log("✅ Admin Toolbar FOUND:", adminToolbar);
+
+        // Prevent duplicate injection
+        if (document.getElementById("squareCraft-icon-button")) return console.warn("⚠️ Plugin Icon already exists.");
+
+        // 2️⃣ Create the Plugin Button
+        const listItem = document.createElement("li");
+        listItem.className = "custom-plugin-icon";
+
+        const buttonWrapper = document.createElement("div");
+        buttonWrapper.className = "custom-plugin-wrapper";
+
+        const pluginButton = document.createElement("button");
+        pluginButton.id = "squareCraft-icon-button";
+        pluginButton.className = "custom-plugin-btn";
+        pluginButton.setAttribute("aria-label", "My Plugin");
+        pluginButton.setAttribute("data-test", "my-plugin-button");
+        pluginButton.style.cssText = `
+            width: 37px; height: 37px; border-radius: 4px; background-color: transparent;
+            display: flex; justify-content: center; align-items: center; border: none;
+            cursor: pointer; transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
+            opacity: 0;
+        `;
+
+        // 3️⃣ Plugin Icon Image
+        const iconImage = document.createElement("img");
+        iconImage.src = iconUrl;
+        iconImage.alt = "Plugin Icon";
+        iconImage.style.cssText = "width: 22px; height: 22px;";
+
+        // Button Hover Effects
+        pluginButton.onmouseenter = () => pluginButton.style.transform = "scale(1.1)";
+        pluginButton.onmouseleave = () => pluginButton.style.transform = "scale(1)";
+        pluginButton.onclick = () => window.open("https://your-plugin-dashboard.com", "_blank");
+
+        // Append elements
+        pluginButton.appendChild(iconImage);
+        buttonWrapper.appendChild(pluginButton);
+        listItem.appendChild(buttonWrapper);
+
+        // 4️⃣ Inject Plugin Icon into Admin Toolbar
+        adminToolbar.insertBefore(listItem, adminToolbar.firstChild);
+
+        // Fade-in effect
+        requestAnimationFrame(() => pluginButton.style.opacity = "1");
+
+        console.log("✅ Plugin Icon Injected Successfully!");
+        retryCount = 0;
+    }
+
+    // 🕵️ Detect Shadow DOM (if used by Squarespace)
+    function detectShadowDOM() {
+        let shadowHost = document.querySelector("squarespace-toolbar");
         if (shadowHost && shadowHost.shadowRoot) {
+            console.log("✅ Shadow DOM detected. Adding click listener...");
             shadowHost.shadowRoot.addEventListener("click", (event) => {
                 console.log("🔥 Clicked inside Shadow DOM:", event.target);
             });
-            console.log("✅ Click listener added inside Shadow DOM!");
         } else {
             console.warn("⚠️ No Shadow DOM detected.");
         }
     }
 
-    // 🛠️ Function to Enable Clicks on Navbar
-    function enableNavbarClick() {
-        let navbar = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]');
-        if (navbar) {
-            navbar.style.pointerEvents = "auto";
-            console.log("✅ Navbar clicks enabled!");
-        } else {
-            console.warn("🚨 Navbar not found!");
-        }
-    }
-
-    // 🛠️ Function to Inject Plugin Icon into Navbar
-    function injectPluginIcon() {
-        let navbar = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]');
-        if (!navbar) {
-            console.warn("⚠️ Navbar not found. Retrying in 1s...");
-            setTimeout(injectPluginIcon, 1000);
-            return;
-        }
-
-        // Prevent duplicate icon injections
-        if (document.getElementById("squareCraft-icon-button")) return console.warn("⚠️ Plugin Icon already exists.");
-
-        const button = document.createElement("button");
-        button.id = "squareCraft-icon-button";
-        button.style.cssText = `
-            width: 40px; height: 40px; background-color: transparent;
-            border: none; cursor: pointer; display: flex; align-items: center;
-        `;
-        button.innerHTML = `<img src="https://i.ibb.co/LXKK6swV/Group-29.jpg" style="width: 30px; height: 30px;">`;
-
-        button.onclick = () => window.open("https://your-plugin-dashboard.com", "_blank");
-
-        navbar.appendChild(button);
-        console.log("✅ Plugin Icon Injected!");
-    }
-
-    // 🛠️ Function to Handle iframe Access
-    function detectIframeClicks() {
+    // 🕵️ Detect if Admin Navbar is Inside an iframe
+    function detectIframeNavbar() {
         let iframe = document.querySelector("iframe");
-        if (!iframe) return console.warn("⚠️ No iframe detected. Navbar might be in the main DOM.");
-
-        let iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        if (!iframeDoc) return console.warn("❌ Unable to access iframe content.");
-
-        iframeDoc.addEventListener("click", (event) => {
-            console.log("🔥 Clicked inside iframe:", event.target);
-        });
-
-        console.log("✅ Click listener added inside iframe!");
+        if (iframe) {
+            let iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            if (iframeDoc) {
+                console.log("✅ iframe detected. Adding click listener...");
+                iframeDoc.addEventListener("click", (event) => {
+                    console.log("🔥 Clicked inside iframe:", event.target);
+                });
+            }
+        }
     }
 
-    // 🛠️ Function to Handle Shadow DOM
-    function detectShadowDOMClicks() {
-        let shadowHost = document.querySelector("squarespace-toolbar"); // Example
-        if (!shadowHost) return console.warn("❌ No Shadow DOM detected.");
-
-        let shadowRoot = shadowHost.shadowRoot;
-        if (!shadowRoot) return console.warn("❌ Shadow root is missing.");
-
-        shadowRoot.addEventListener("click", (event) => {
-            console.log("🔥 Clicked inside Shadow DOM:", event.target);
-        });
-
-        console.log("✅ Click listener added inside Shadow DOM!");
-    }
-
-    // 🛠️ Mutation Observer to Watch for Navbar Changes
+    // 🛠️ Mutation Observer to Track Admin UI Changes
     const observer = new MutationObserver(() => {
         if (!document.getElementById("squareCraft-icon-button")) {
             console.log("🔄 Admin Navbar changed, reinjecting icon...");
-            injectPluginIcon();
+            addPluginIcon();
         }
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // ✅ Run All Functions After Page Loads
+    // ✅ Run Functions After Page Loads
     setTimeout(() => {
-        detectClicksEverywhere();
-        enableNavbarClick();
-        detectIframeClicks();
-        detectShadowDOMClicks();
-        injectPluginIcon();
+        detectShadowDOM();
+        detectIframeNavbar();
+        addPluginIcon();
     }, 3000);
 })();
