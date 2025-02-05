@@ -1,4 +1,4 @@
-import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/getPageAndElement";
+import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/getPageAndElement.js";
 
 
 export function attachEventListeners() {
