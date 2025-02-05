@@ -10,7 +10,7 @@ export function setToken() {
 
   if (token) {
       console.log("🔑 Token received:", token);
-      localStorage.setItem("squareCraft_auth_token_🔑", token);
-      document.cookie = `squareCraft_auth_token_🔑=${token}; path=.squarespace.com;`;
+      localStorage.setItem("squareCraft_auth_token", token);
+      document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
   }
 }
