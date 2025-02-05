@@ -1,4 +1,4 @@
-import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement";
+import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
 
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token")

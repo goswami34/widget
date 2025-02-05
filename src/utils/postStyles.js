@@ -1,5 +1,5 @@
 
-import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement";
+import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
 
 export async function saveModifications(pageId, elementId, css) {
     if (!pageId || !elementId || !css) return;
