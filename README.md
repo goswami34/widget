@@ -1,4 +1,4 @@
-inject code
+<h1>inject code</h1>
 
 Copy and paste the following script into your Squarespace Code Injection section:  
 

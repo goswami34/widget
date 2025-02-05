@@ -1,6 +1,7 @@
 
 
 export async function getStyles() {
+  const token = localStorage.getItem(squareCraft_auth_token)
   function isEditingMode() {
     return document.body.classList.contains("sqs-editing");
   }
@@ -39,7 +40,7 @@ export async function getStyles() {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const data = await response.json();
-    console.log("📥 Fetched Modifications:", data);
+    console.log("📥 Fetched Modifications:", response);
 
     data.modifications.forEach(({ page_id, elements }) => {
       if (page_id === pageId) {
