@@ -1,41 +1,43 @@
-export async function headerLogo() {
+(async function injectPluginIcon() {
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
-    // Check if icon exists in localStorage; if not, set it
-    const iconURLKey = "squareCraft_icon_url";
-    let iconURL = localStorage.getItem(iconURLKey);
-
-    if (!iconURL) {
-        iconURL = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; // Default icon URL
-        localStorage.setItem(iconURLKey, iconURL);
-        console.log("💾 Icon URL stored in localStorage:", iconURL);
+    // 1️⃣ Check if icon URL exists in localStorage
+    let iconUrl = localStorage.getItem("squareCraft_icon_url");
+    if (!iconUrl) {
+        iconUrl = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; // Default icon
+        localStorage.setItem("squareCraft_icon_url", iconUrl);
+        console.log("📝 Icon URL set in localStorage:", iconUrl);
     } else {
-        console.log("🔄 Loaded Icon URL from localStorage:", iconURL);
+        console.log("🔄 Loaded Icon URL from localStorage:", iconUrl);
     }
 
-    function injectIcon() {
-        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest("ul");
+    // 2️⃣ Function to inject icon into Squarespace Admin Toolbar
+    function addPluginIcon() {
+        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
 
         if (!targetList) {
             console.warn("⚠️ Target Admin Toolbar NOT found. Retrying...");
-            setTimeout(injectIcon, 1000);
+            setTimeout(addPluginIcon, 1000);
             return;
         }
 
         console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
-        // Prevent duplicate icon injection
+        // Prevent duplicate icons
         if (document.getElementById("squareCraft-icon-button")) {
             console.warn("⚠️ Plugin Icon already exists.");
             return;
         }
 
+        // 3️⃣ Create list item for the icon
         const listItem = document.createElement("li");
         listItem.className = "css-custom-plugin";
 
+        // Button wrapper
         const buttonWrapper = document.createElement("div");
-        buttonWrapper.className = "css-1j096s0";
+        buttonWrapper.className = "css-1j096s0"; // Mimics Squarespace button wrapper
 
+        // Plugin button
         const pluginButton = document.createElement("button");
         pluginButton.id = "squareCraft-icon-button";
         pluginButton.className = "css-110yp2v";
@@ -56,11 +58,13 @@ export async function headerLogo() {
             opacity: 0;
         `;
 
+        // 4️⃣ Create Image Icon
         const iconImage = document.createElement("img");
-        iconImage.src = iconURL;
+        iconImage.src = iconUrl;
         iconImage.alt = "Plugin Icon";
         iconImage.style.cssText = "width: 22px; height: 22px;";
 
+        // 🖱️ Hover Effect
         pluginButton.onmouseenter = () => {
             pluginButton.style.transform = "scale(1.1)";
         };
@@ -68,17 +72,20 @@ export async function headerLogo() {
             pluginButton.style.transform = "scale(1)";
         };
 
+        // 🔗 Click to Open Plugin Dashboard
         pluginButton.onclick = () => {
             window.open("https://your-plugin-dashboard.com", "_blank");
         };
 
+        // 5️⃣ Assemble Elements
         pluginButton.appendChild(iconImage);
         buttonWrapper.appendChild(pluginButton);
         listItem.appendChild(buttonWrapper);
 
-        // Insert at the start of the toolbar
+        // Insert at the **beginning** of the toolbar
         targetList.insertBefore(listItem, targetList.firstChild);
 
+        // Smooth Fade-in
         requestAnimationFrame(() => {
             pluginButton.style.opacity = "1";
         });
@@ -86,19 +93,16 @@ export async function headerLogo() {
         console.log("✅ Plugin Icon Injected Successfully!", targetList.firstChild);
     }
 
+    // 6️⃣ MutationObserver to detect changes & reinject icon if removed
     const observer = new MutationObserver(() => {
         if (!document.getElementById("squareCraft-icon-button")) {
             console.log("🔄 Admin Navbar changed, reinjecting icon...");
-            injectIcon();
+            addPluginIcon();
         }
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // Wait for DOM to be fully loaded before running
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", injectIcon);
-    } else {
-        injectIcon();
-    }
-}
+    // 7️⃣ Initial Injection
+    addPluginIcon();
+})();
