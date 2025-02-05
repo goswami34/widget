@@ -1,28 +1,30 @@
 export async function headerLogo() {
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
-    const LOCAL_STORAGE_KEY = "squareCraft_icon_url";
-    let iconUrl = localStorage.getItem(LOCAL_STORAGE_KEY);
+    // Check if icon exists in localStorage; if not, set it
+    const iconURLKey = "squareCraft_icon_url";
+    let iconURL = localStorage.getItem(iconURLKey);
 
-    if (!iconUrl) {
-        iconUrl = "https://i.ibb.co/LXKK6swV/Group-29.jpg";
-        localStorage.setItem(LOCAL_STORAGE_KEY, iconUrl);
-        console.log("🌍 Icon URL saved to localStorage:", iconUrl);
+    if (!iconURL) {
+        iconURL = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; // Default icon URL
+        localStorage.setItem(iconURLKey, iconURL);
+        console.log("💾 Icon URL stored in localStorage:", iconURL);
     } else {
-        console.log("🔄 Loaded Icon URL from localStorage:", iconUrl);
+        console.log("🔄 Loaded Icon URL from localStorage:", iconURL);
     }
 
     function injectIcon() {
-        const targetParent = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest("ul");
+        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest("ul");
 
-        if (!targetParent) {
-            console.error("⚠️ Target Admin Toolbar NOT found. Retrying...");
+        if (!targetList) {
+            console.warn("⚠️ Target Admin Toolbar NOT found. Retrying...");
             setTimeout(injectIcon, 1000);
             return;
         }
 
-        console.log("✅ Target Admin Toolbar FOUND:", targetParent);
+        console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
+        // Prevent duplicate icon injection
         if (document.getElementById("squareCraft-icon-button")) {
             console.warn("⚠️ Plugin Icon already exists.");
             return;
@@ -55,7 +57,7 @@ export async function headerLogo() {
         `;
 
         const iconImage = document.createElement("img");
-        iconImage.src = iconUrl;
+        iconImage.src = iconURL;
         iconImage.alt = "Plugin Icon";
         iconImage.style.cssText = "width: 22px; height: 22px;";
 
@@ -74,16 +76,15 @@ export async function headerLogo() {
         buttonWrapper.appendChild(pluginButton);
         listItem.appendChild(buttonWrapper);
 
-        targetParent.insertBefore(listItem, targetParent.firstChild);
+        // Insert at the start of the toolbar
+        targetList.insertBefore(listItem, targetList.firstChild);
 
         requestAnimationFrame(() => {
             pluginButton.style.opacity = "1";
         });
 
-        console.log("✅ Plugin Icon Injected Successfully!", targetParent.firstChild);
+        console.log("✅ Plugin Icon Injected Successfully!", targetList.firstChild);
     }
-
-    injectIcon();
 
     const observer = new MutationObserver(() => {
         if (!document.getElementById("squareCraft-icon-button")) {
@@ -93,4 +94,11 @@ export async function headerLogo() {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+
+    // Wait for DOM to be fully loaded before running
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", injectIcon);
+    } else {
+        injectIcon();
+    }
 }
