@@ -1,5 +1,5 @@
-import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
-import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode.js";
+import { getStyles } from "../../src/utils/getStyles.js";
+import { isEditingMode } from "../../src/DOM/isEditingMode.js";
 
 
 export function observeDOMChanges() {
