@@ -1,7 +1,7 @@
 
 
 export async function getStyles() {
-  const token = localStorage.getItem(squareCraft_auth_token)
+  const token = localStorage.getItem("squareCraft_auth_token")
   function isEditingMode() {
     return document.body.classList.contains("sqs-editing");
   }
