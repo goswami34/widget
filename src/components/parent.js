@@ -34,6 +34,7 @@
         console.error("❌ Failed to import setToken:", error);
     }
 
+  
    if (!attachEventListeners){
         console.error("�� attachEventListeners function not found! Check if the script loaded properly.");
        
@@ -50,9 +51,7 @@
     else if (!getStyles) {
         console.error("�� getStyles function not found! Check if the script loaded properly.");
     }
-    else if(!token){
-       console.error("�� token function not found! Check if the script loaded properly.")
-    }
+   
 
     console.log("📌 HTML Structure:\n", parentHtml());
 

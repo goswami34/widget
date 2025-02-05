@@ -1,4 +1,5 @@
 import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/getPageAndElement.js";
+import { applyStyle } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStyle";
 
 
 export function attachEventListeners() {

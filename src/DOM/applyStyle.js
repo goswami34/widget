@@ -1,4 +1,4 @@
-export function applyStyle() {
+export async function applyStyle() {
     if (!selectedElement) return;
   
     const fontSize = document.getElementById("squareCraftFontSize").value + "px";
