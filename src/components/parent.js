@@ -12,23 +12,20 @@
 
         console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
-        // 🛑 Prevent duplicate icons
         if (document.getElementById("squareCraft-icon-button")) {
             console.warn("⚠️ Plugin Icon already exists.");
             return;
         }
 
-        // ✅ Create the list item wrapper
         const listItem = document.createElement("li");
-        listItem.className = "css-custom-plugin"; // Custom class for reference
+        listItem.className = "css-custom-plugin"; 
 
-        // ✅ Create the button container
         const buttonWrapper = document.createElement("div");
-        buttonWrapper.className = "css-1j096s0"; // Mimics Squarespace button wrapper
+        buttonWrapper.className = "css-1j096s0"; 
 
         const pluginButton = document.createElement("button");
         pluginButton.id = "squareCraft-icon-button";
-        pluginButton.className = "css-110yp2v"; // Mimics Squarespace button style
+        pluginButton.className = "css-110yp2v"; 
         pluginButton.setAttribute("aria-label", "My Plugin");
         pluginButton.setAttribute("data-test", "my-plugin-button");
 
@@ -46,13 +43,11 @@
             opacity: 0;
         `;
 
-        // ✅ Create Image Icon
         const iconImage = document.createElement("img");
         iconImage.src = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; 
         iconImage.alt = "Plugin Icon";
         iconImage.style.cssText = "width: 22px; height: 22px;";
 
-        // 🖱️ Hover Effect
         pluginButton.onmouseenter = () => {
             pluginButton.style.transform = "scale(1.1)";
         };
@@ -60,20 +55,16 @@
             pluginButton.style.transform = "scale(1)";
         };
 
-        // 🔗 Click to Open Plugin Dashboard
         pluginButton.onclick = () => {
             window.open("https://your-plugin-dashboard.com", "_blank");
         };
 
-        // ✅ Assemble Components
         pluginButton.appendChild(iconImage);
         buttonWrapper.appendChild(pluginButton);
         listItem.appendChild(buttonWrapper);
 
-        // ✅ Insert at the start of the toolbar
         targetList.insertBefore(listItem, targetList.firstChild);
 
-        // ✅ Smooth Fade-in
         requestAnimationFrame(() => {
             pluginButton.style.opacity = "1";
         });
@@ -81,7 +72,6 @@
         console.log("✅ Plugin Icon Injected Successfully!");
     }
 
-    // 🕵️ Detect Admin Navbar Changes
     const observer = new MutationObserver(() => {
         if (!document.getElementById("squareCraft-icon-button")) {
             console.log("🔄 Admin Navbar changed, reinjecting icon...");
@@ -91,6 +81,5 @@
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // ✅ Initial Call
     addPluginIcon();
 })();
