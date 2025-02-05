@@ -62,12 +62,24 @@
         if (retryCount >= maxRetries) return console.warn("🚨 Max retries reached. Stopping plugin injection.");
         retryCount++;
 
+        // Detect if inside an iframe
+        let iframe = document.querySelector("iframe");
+        if (iframe) {
+            let iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            console.log("📌 Detected iframe:", iframeDoc);
+        }
+
+        // Find the target admin navbar
         const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
         if (!targetList) return setTimeout(addPluginIcon, 1000);
 
         console.log("✅ Target Admin Toolbar FOUND:", targetList);
 
+        // Check if already injected
         if (document.getElementById("squareCraft-icon-button")) return console.warn("⚠️ Plugin Icon already exists.");
+
+        // Fix pointer-events issue if needed
+        targetList.style.pointerEvents = "auto";
 
         const listItem = document.createElement("li");
         listItem.className = "css-custom-plugin";
@@ -105,6 +117,16 @@
         requestAnimationFrame(() => pluginButton.style.opacity = "1");
         console.log("✅ Plugin Icon Injected Successfully!", targetList.firstChild);
         retryCount = 0;
+    }
+
+    // Detect Shadow DOM
+    function detectShadowDOM() {
+        const adminToolbar = document.querySelector("squarespace-toolbar")?.shadowRoot;
+        if (adminToolbar) {
+            console.log("🎯 Admin Toolbar Detected Inside Shadow DOM:", adminToolbar);
+            return adminToolbar;
+        }
+        return null;
     }
 
     const observer = new MutationObserver(() => {
