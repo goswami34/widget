@@ -4,11 +4,11 @@
         console.log("⚡ Initializing SquareCraft...");
         createWidget();
         attachEventListeners();
-        fetchModifications();
+        getStyles();
         observeDOMChanges();
     }
 
-    let parentHtml, attachEventListeners, observeDOMChanges, fetchModifications, token;
+    let parentHtml, attachEventListeners, observeDOMChanges, getStyles, token;
 
     async function loadModule(url) {
         try {
@@ -25,27 +25,27 @@
     parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml.js"))?.parentHtml;
     attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
     observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
-    fetchModifications = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.fetchModifications;
+    getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
     try {
         const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
-        setToken(); 
+        setToken();
         console.log("✅ setToken function executed successfully.");
     } catch (error) {
         console.error("❌ Failed to import setToken:", error);
     }
 
-    if (!parentHtml || !attachEventListeners || !observeDOMChanges || !fetchModifications || !token) {
+    if (!parentHtml || !attachEventListeners || !observeDOMChanges || !getStyles || !token) {
         console.error("❌ Some functions failed to load. Check module imports.");
         return;
     }
 
     console.log("✅ Successfully imported all modules.");
-    
+
     if (!parentHtml) {
         console.error("❌ parentHtml function not found! Check if the script loaded properly.");
         return;
     }
-    
+
     console.log("📌 HTML Structure:\n", parentHtml());
 
     function createWidget() {
