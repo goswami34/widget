@@ -33,6 +33,7 @@ export async function getStyles() {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
+          "pageId": pageId
         },
       }
     );
