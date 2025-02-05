@@ -1,10 +1,14 @@
-import { setToken } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js";
-
-async function parent() {
+(function parent() {
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
-  function addPluginIcon() {
-    setToken()
+    async function addPluginIcon() {
+        try {
+            const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
+            setToken(); console.log(setToken);
+        } catch (error) {
+            console.error("❌ Failed to import setToken:", error);
+        }
+
         const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
 
         if (!targetList) {
@@ -21,14 +25,14 @@ async function parent() {
         }
 
         const listItem = document.createElement("li");
-        listItem.className = "css-custom-plugin"; 
+        listItem.className = "css-custom-plugin";
 
         const buttonWrapper = document.createElement("div");
-        buttonWrapper.className = "css-1j096s0"; 
+        buttonWrapper.className = "css-1j096s0";
 
         const pluginButton = document.createElement("button");
         pluginButton.id = "squareCraft-icon-button";
-        pluginButton.className = "css-110yp2v"; 
+        pluginButton.className = "css-110yp2v";
         pluginButton.setAttribute("aria-label", "My Plugin");
         pluginButton.setAttribute("data-test", "my-plugin-button");
 
@@ -47,7 +51,7 @@ async function parent() {
         `;
 
         const iconImage = document.createElement("img");
-        iconImage.src = "https://i.ibb.co/LXKK6swV/Group-29.jpg"; 
+        iconImage.src = "https://i.ibb.co/LXKK6swV/Group-29.jpg";
         iconImage.alt = "Plugin Icon";
         iconImage.style.cssText = "width: 22px; height: 22px;";
 
@@ -85,4 +89,4 @@ async function parent() {
     observer.observe(document.body, { childList: true, subtree: true });
 
     addPluginIcon();
-}
+})();
