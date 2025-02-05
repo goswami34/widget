@@ -38,12 +38,24 @@
         console.error("❌ Some functions failed to load. Check module imports.");
         return;
     }
+  else if (!attachEventListeners){
+        console.error("�� attachEventListeners function not found! Check if the script loaded properly.");
+       
+    }
 
-    console.log("✅ Successfully imported all modules.");
+   else if(!observeDOMChanges){
+    console.error("�� observeDOMChanges function not found! Check if the script loaded properly.");
+ 
+   }
 
-    if (!parentHtml) {
+    else if (!parentHtml) {
         console.error("❌ parentHtml function not found! Check if the script loaded properly.");
-        return;
+    }
+    else if (!getStyles) {
+        console.error("�� getStyles function not found! Check if the script loaded properly.");
+    }
+    else if(!token){
+       console.error("�� token function not found! Check if the script loaded properly.")
     }
 
     console.log("📌 HTML Structure:\n", parentHtml());
