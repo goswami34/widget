@@ -4,7 +4,7 @@ export async function headerLogo() {
 
     if (!targetList) {
         console.warn("⚠️ Target Admin Toolbar NOT found. Retrying...");
-        setTimeout(addPluginIcon, 1000);
+        setTimeout(headerLogo, 1000);
         return;
     }
 
