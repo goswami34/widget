@@ -1,10 +1,10 @@
 import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
+import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode";
 
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token")
-  function isEditingMode() {
-    return document.body.classList.contains("sqs-editing");
-  }
+
+ 
 
   try {
     const userId = "679b4e3aee8e48bf97172661";
