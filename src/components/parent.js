@@ -1,6 +1,5 @@
 (async function parent() {
     console.log("🚀 Parent function initialized...");
-    
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
         createWidget();
@@ -27,8 +26,13 @@
     attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
     observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
     fetchModifications = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.fetchModifications;
-    token = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js"))?.token;
-    token();
+    try {
+        const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
+        setToken(); 
+        console.log("✅ setToken function executed successfully.");
+    } catch (error) {
+        console.error("❌ Failed to import setToken:", error);
+    }
 
     if (!parentHtml || !attachEventListeners || !observeDOMChanges || !fetchModifications || !token) {
         console.error("❌ Some functions failed to load. Check module imports.");
@@ -90,6 +94,7 @@
             console.log("✅ Widget appended! Checking in DOM:", document.getElementById("squarecraft-widget-container"));
         }
 
+        // 🔄 Retry appending in case Squarespace removes it
         setTimeout(() => {
             if (!document.getElementById("squarecraft-widget-container")) {
                 console.warn("⚠️ Widget was removed! Re-adding...");
@@ -97,7 +102,22 @@
             }
         }, 3000);
     }
-    
-    initializeSquareCraft();
 
+    setTimeout(() => {
+        console.log("🔍 Checking Widget in DOM (After Delay):", document.getElementById("squarecraft-widget-container"));
+    }, 1000);
+
+
+
+    setInterval(() => {
+        if (!document.getElementById("squarecraft-widget-container")) {
+            console.warn("⚠️ Widget removed by Squarespace! Re-adding...");
+            createWidget();
+        }
+    }, 1000);
+
+    setTimeout(() => {
+        console.log("⚡ Ensuring SquareCraft initializes...");
+        initializeSquareCraft();
+    }, 1000);
 })();
