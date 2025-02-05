@@ -1,53 +1,55 @@
 (async function headerLogo() {
-
-//    clickign event handler
-function forceClick(targetElement) {
-    if (!targetElement) {
-        console.warn("⚠️ No target element provided.");
-        return;
+    
+    document.addEventListener("click", function (event) {
+        console.log("Clicked Element:", event.target);
+        console.log("Element Selector:", forceClick(event.target));
+    });
+    
+    function forceClick(targetElement) {
+        if (!targetElement) {
+            console.warn("⚠️ No target element provided.");
+            return;
+        }
+    
+        console.log("🔥 Attempting to click:", targetElement);
+    
+        // Try a normal click
+        try {
+            targetElement.click();
+            console.log("✅ Click event dispatched normally.");
+            return;
+        } catch (error) {
+            console.warn("⚠️ Normal click failed, trying other methods...");
+        }
+    
+        // Try dispatching a MouseEvent
+        try {
+            targetElement.dispatchEvent(new MouseEvent("click", { 
+                bubbles: true, 
+                cancelable: true, 
+                view: window 
+            }));
+            console.log("✅ MouseEvent click dispatched.");
+            return;
+        } catch (error) {
+            console.warn("⚠️ MouseEvent click failed.");
+        }
+    
+        // Try setting focus and pressing Enter
+        try {
+            targetElement.focus();
+            document.dispatchEvent(new KeyboardEvent("keydown", {
+                key: "Enter",
+                code: "Enter",
+                keyCode: 13,
+                bubbles: true
+            }));
+            console.log("✅ Enter key simulated.");
+        } catch (error) {
+            console.warn("⚠️ Enter key simulation failed.");
+        }
     }
-
-    console.log("🔥 Attempting to click:", targetElement);
-
-    // Try a normal click
-    try {
-        targetElement.click();
-        console.log("✅ Click event dispatched normally.");
-        return;
-    } catch (error) {
-        console.warn("⚠️ Normal click failed, trying other methods...");
-    }
-
-    // Try dispatching a MouseEvent
-    try {
-        targetElement.dispatchEvent(new MouseEvent("click", { 
-            bubbles: true, 
-            cancelable: true, 
-            view: window 
-        }));
-        console.log("✅ MouseEvent click dispatched.");
-        return;
-    } catch (error) {
-        console.warn("⚠️ MouseEvent click failed.");
-    }
-
-    // Try setting focus and pressing Enter
-    try {
-        targetElement.focus();
-        document.dispatchEvent(new KeyboardEvent("keydown", {
-            key: "Enter",
-            code: "Enter",
-            keyCode: 13,
-            bubbles: true
-        }));
-        console.log("✅ Enter key simulated.");
-    } catch (error) {
-        console.warn("⚠️ Enter key simulation failed.");
-    }
-}
-
-//    clickign event handler
-
+    
     
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
