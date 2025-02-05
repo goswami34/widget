@@ -20,7 +20,7 @@
     const observer = new MutationObserver(() => {
         if (!document.getElementById("squareCraft-icon-button")) {
             console.log("🔄 Admin Navbar changed, reinjecting icon...");
-            headerLogo(); 
+
         }
     });
 
