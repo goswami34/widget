@@ -1,5 +1,5 @@
 import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
-import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode";
+import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode.js";
 
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token")
