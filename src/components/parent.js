@@ -34,11 +34,7 @@
         console.error("❌ Failed to import setToken:", error);
     }
 
-    if (!parentHtml || !attachEventListeners || !observeDOMChanges || !getStyles || !token) {
-        console.error("❌ Some functions failed to load. Check module imports.");
-        return;
-    }
-  else if (!attachEventListeners){
+   if (!attachEventListeners){
         console.error("�� attachEventListeners function not found! Check if the script loaded properly.");
        
     }
