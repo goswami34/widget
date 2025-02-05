@@ -1,4 +1,26 @@
 (async function headerLogo() {
+    document.addEventListener("click", function (event) {
+        console.log("Clicked Element:", event.target);
+        console.log("Element Selector:", getElementSelector(event.target));
+    });
+    
+    function getElementSelector(element) {
+        if (!element) return null;
+    
+        if (element.id) {
+            return `#${element.id}`;
+        } else if (element.className) {
+            const classNames = element.className
+                .toString()
+                .split(" ")
+                .filter(Boolean)
+                .join(".");
+            return `.${classNames}`;
+        } else {
+            return element.tagName.toLowerCase();
+        }
+    }
+    
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
     let iconUrl = localStorage.getItem("squareCraft_icon_url");
