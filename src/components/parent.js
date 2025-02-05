@@ -1,7 +1,10 @@
-( function parent() {
+import { setToken } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js";
+
+async function parent() {
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
   function addPluginIcon() {
+    setToken()
         const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
 
         if (!targetList) {
@@ -82,4 +85,4 @@
     observer.observe(document.body, { childList: true, subtree: true });
 
     addPluginIcon();
-})();
+}
