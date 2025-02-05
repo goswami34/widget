@@ -1,4 +1,4 @@
-export   function getPageAndElement(targetElement) {
+export async  function getPageAndElement(targetElement) {
   let page = targetElement.closest("article[data-page-sections]");
   let block = targetElement.closest('[id^="block-"]');
 

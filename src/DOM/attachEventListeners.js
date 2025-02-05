@@ -1,5 +1,5 @@
-import { applyStyle } from "./applyStyle";
-import { getPageAndElement } from "./getPageAndElement";
+import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/getPageAndElement";
+
 
 export function attachEventListeners() {
     let selectedElement = null;
