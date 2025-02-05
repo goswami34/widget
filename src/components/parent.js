@@ -1,92 +1,29 @@
-(function parent() {
+(async function parent() {
     console.log("🚀 Searching for Squarespace Admin Navbar...");
 
-    async function addPluginIcon() {
-        try {
-            const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
-            setToken(); console.log(setToken);
-        } catch (error) {
-            console.error("❌ Failed to import setToken:", error);
-        }
+    try {
+        const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
+        setToken(); 
+        console.log("✅ setToken function executed successfully.");
+    } catch (error) {
+        console.error("❌ Failed to import setToken:", error);
+    }
 
-        const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
-
-        if (!targetList) {
-            console.warn("⚠️ Target Admin Toolbar NOT found. Retrying...");
-            setTimeout(addPluginIcon, 1000);
-            return;
-        }
-
-        console.log("✅ Target Admin Toolbar FOUND:", targetList);
-
-        if (document.getElementById("squareCraft-icon-button")) {
-            console.warn("⚠️ Plugin Icon already exists.");
-            return;
-        }
-
-        const listItem = document.createElement("li");
-        listItem.className = "css-custom-plugin";
-
-        const buttonWrapper = document.createElement("div");
-        buttonWrapper.className = "css-1j096s0";
-
-        const pluginButton = document.createElement("button");
-        pluginButton.id = "squareCraft-icon-button";
-        pluginButton.className = "css-110yp2v";
-        pluginButton.setAttribute("aria-label", "My Plugin");
-        pluginButton.setAttribute("data-test", "my-plugin-button");
-
-        pluginButton.style.cssText = `
-            width: 37px;
-            height: 37px;
-            border-radius: 4px;
-            background-color: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
-            opacity: 0;
-        `;
-
-        const iconImage = document.createElement("img");
-        iconImage.src = "https://i.ibb.co/LXKK6swV/Group-29.jpg";
-        iconImage.alt = "Plugin Icon";
-        iconImage.style.cssText = "width: 22px; height: 22px;";
-
-        pluginButton.onmouseenter = () => {
-            pluginButton.style.transform = "scale(1.1)";
-        };
-        pluginButton.onmouseleave = () => {
-            pluginButton.style.transform = "scale(1)";
-        };
-
-        pluginButton.onclick = () => {
-            window.open("https://your-plugin-dashboard.com", "_blank");
-        };
-
-        pluginButton.appendChild(iconImage);
-        buttonWrapper.appendChild(pluginButton);
-        listItem.appendChild(buttonWrapper);
-
-        targetList.insertBefore(listItem, targetList.firstChild);
-
-        requestAnimationFrame(() => {
-            pluginButton.style.opacity = "1";
-        });
-
-        console.log("✅ Plugin Icon Injected Successfully!");
+    try {
+        const { headerLogo } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/logo/headerLogo.js");
+        await headerLogo(); 
+        console.log("✅ headerLogo function executed successfully.");
+    } catch (error) {
+        console.error("❌ Failed to import headerLogo:", error);
     }
 
     const observer = new MutationObserver(() => {
         if (!document.getElementById("squareCraft-icon-button")) {
             console.log("🔄 Admin Navbar changed, reinjecting icon...");
-            addPluginIcon();
+            headerLogo(); 
         }
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    addPluginIcon();
 })();
