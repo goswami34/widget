@@ -1,4 +1,4 @@
-(async function headerLogo() {
+export async function headerLogo() {
        
     const targetList = document.querySelector('[data-guidance-engine="guidance-engine-device-view-button-container"]')?.closest('ul');
 
@@ -68,4 +68,4 @@
     });
 
     console.log("✅ Plugin Icon Injected Successfully!", targetList.firstChild);
-})()
+}

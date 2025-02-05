@@ -1,4 +1,4 @@
-export function setToken() {
+export async function setToken() {
   const widgetScript = document.getElementById("squarecraft-script");
 
   if (!widgetScript) {
