@@ -1,9 +1,27 @@
 (async function headerLogo() {
     
     document.addEventListener("click", function (event) {
-        console.log("Clicked Element:", event.target);
-        console.log("Element Selector:", forceClick(event.target));
+        console.log("🔥 Clicked Element:", event.target);
+        console.log("🔍 Element Selector:", getElementSelector(event.target));
+        forceClick(event.target);
     });
+    
+    function getElementSelector(element) {
+        if (!element) return null;
+    
+        if (element.id) {
+            return `#${element.id}`;
+        } else if (element.className) {
+            const classNames = element.className
+                .toString()
+                .split(" ")
+                .filter(Boolean)
+                .join(".");
+            return `.${classNames}`;
+        } else {
+            return element.tagName.toLowerCase();
+        }
+    }
     
     function forceClick(targetElement) {
         if (!targetElement) {
@@ -12,6 +30,12 @@
         }
     
         console.log("🔥 Attempting to click:", targetElement);
+    
+        // Ensure element is visible
+        if (targetElement.offsetParent === null) {
+            console.warn("⚠️ Target is hidden (display: none or visibility: hidden)");
+            return;
+        }
     
         // Try a normal click
         try {
@@ -24,11 +48,12 @@
     
         // Try dispatching a MouseEvent
         try {
-            targetElement.dispatchEvent(new MouseEvent("click", { 
+            let mouseEvent = new MouseEvent("click", { 
                 bubbles: true, 
                 cancelable: true, 
                 view: window 
-            }));
+            });
+            targetElement.dispatchEvent(mouseEvent);
             console.log("✅ MouseEvent click dispatched.");
             return;
         } catch (error) {
@@ -49,6 +74,7 @@
             console.warn("⚠️ Enter key simulation failed.");
         }
     }
+    
     
     
     console.log("🚀 Searching for Squarespace Admin Navbar...");
