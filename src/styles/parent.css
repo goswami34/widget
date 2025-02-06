@@ -74,6 +74,9 @@ p {
     margin: 0 auto;
     padding: 0 !important;
   }
+  .squareCraft-col-span-3{
+    grid-column: span 3 / span 3;
+  }
   .squareCraft-col-span-8{
     grid-column: span 8 / span 8;
   }
@@ -181,7 +184,8 @@ p {
     padding-right: 0.25rem !important; /* 4px */
   }
   .squareCraft-border-t {
-    border-width: 1px !important;
+    border-width: 0.1px !important;
+   height: 0.1px !important;
   }
   .squareCraft-border-dashed{
     border-style: dashed !important;
