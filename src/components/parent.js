@@ -22,7 +22,7 @@
         }
     }
 
-    parentHtml = (await loadModule("../../src/html/parentHtml.js"))?.parentHtml;
+    parentHtml = (await loadModule("../../src/html/parentHtml/parentHtml.js"))?.parentHtml;
     attachEventListeners = (await loadModule("../../src/DOM/attachEventListeners.js"))?.attachEventListeners;
     observeDOMChanges = (await loadModule("../../src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
     getStyles = (await loadModule("../../src/utils/getStyles.js"))?.getStyles;
