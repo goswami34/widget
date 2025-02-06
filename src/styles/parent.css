@@ -28,16 +28,23 @@ p {
   .squareCraft-btn{
     all: unset;
   }
+  .squareCraft-mx-auto{
+    margin: 0 auto !important;
+  }
   .squareCraft-border-r{
     border-right-width: 1px !important;
     border-right-style: solid !important;
+  }
+  .squareCraft-border-l{
+    border-left-width: 1px !important;
+    border-left-style: solid !important;
   }
   .squareCraft-border{
     border-width: 0.1px !important;
     border-style: dashed !important;
   }
   .squareCraft-bg-3f3f3f{
-    background-color: #646363 !important;
+    background-color: #5a5959 !important;
   }
   .squareCraft-bg-transparent{
     background-color: transparent !important;
