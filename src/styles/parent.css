@@ -72,7 +72,9 @@ p {
   .squareCraft-font-light {
     font-weight: 300 !important;
   }
-  
+  .squareCraft-justify-center{
+    justify-content: center !important;
+  }
   .squareCraft-bg-color-2c2c2c {
     background-color: #2c2c2c !important;
   }
@@ -290,8 +292,8 @@ p {
    
   }
   .squareCraft-py-1px{
-    padding-top: 5px !important;
-    padding-bottom: 5px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
   }
   .squareCraft-px-2_5{
     padding-left: 0.625rem !important; /* 10px */
