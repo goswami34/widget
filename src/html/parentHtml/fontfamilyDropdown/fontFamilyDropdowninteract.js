@@ -30,7 +30,7 @@
             dropdownContainer.style.border = "1px solid #585858";
             dropdownContainer.style.borderRadius = "6px";
             dropdownContainer.style.padding = "8px";
-            dropdownContainer.style.minWidth = "200px";
+            dropdownContainer.style.width = "165px";
             dropdownContainer.style.color = "#ffffff";
             dropdownContainer.style.fontSize = "14px";
             dropdownContainer.style.zIndex = "9999";
@@ -107,7 +107,7 @@
             variantDropdown.style.border = "1px solid #585858";
             variantDropdown.style.borderRadius = "6px";
             variantDropdown.style.padding = "8px";
-            variantDropdown.style.width = "170px";
+            variantDropdown.style.width = "165px";
             variantDropdown.style.color = "#ffffff";
             variantDropdown.style.fontSize = "14px";
             variantDropdown.style.zIndex = "9999";
