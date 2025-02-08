@@ -107,7 +107,7 @@
             variantDropdown.style.border = "1px solid #585858";
             variantDropdown.style.borderRadius = "6px";
             variantDropdown.style.padding = "8px";
-            variantDropdown.style.minWidth = "200px";
+            variantDropdown.style.width = "100px";
             variantDropdown.style.color = "#ffffff";
             variantDropdown.style.fontSize = "14px";
             variantDropdown.style.zIndex = "9999";
@@ -118,7 +118,7 @@
 
         variantDropdown.innerHTML = `<div class="dropdown-content">
             ${variants.map(variant => `
-                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer">
+                <p class="squareCraft-text-center squareCraft-py-1  squareCraft-text-sm squareCraft-cursor-pointer">
                     ${variant}
                 </p>
             `).join("")}
