@@ -107,7 +107,7 @@
             variantDropdown.style.border = "1px solid #585858";
             variantDropdown.style.borderRadius = "6px";
             variantDropdown.style.padding = "8px";
-            variantDropdown.style.width = "180px";
+            variantDropdown.style.width = "170px";
             variantDropdown.style.color = "#ffffff";
             variantDropdown.style.fontSize = "14px";
             variantDropdown.style.zIndex = "9999";
