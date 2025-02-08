@@ -144,4 +144,65 @@
             });
         });
     }
+
+    waitForElement("#font-size", (parentDiv) => {
+        let dropdownContainer = document.getElementById("customFontSizeDropdown");
+        if (!dropdownContainer) {
+            dropdownContainer = document.createElement("div");
+            dropdownContainer.id = "customFontSizeDropdown";
+            dropdownContainer.style.position = "absolute";
+            dropdownContainer.style.display = "none";
+            dropdownContainer.style.background = "#3d3d3d";
+            dropdownContainer.style.border = "1px solid #585858";
+            dropdownContainer.style.borderRadius = "6px";
+            dropdownContainer.style.padding = "8px";
+            dropdownContainer.style.minWidth = "80px";
+            dropdownContainer.style.color = "#ffffff";
+            dropdownContainer.style.fontSize = "14px";
+            dropdownContainer.style.zIndex = "9999";
+            dropdownContainer.style.maxHeight = "250px";
+            dropdownContainer.style.overflowY = "auto";
+            document.body.appendChild(dropdownContainer);
+        }
+
+        let isDropdownOpen = false;
+
+        function toggleDropdown() {
+            isDropdownOpen = !isDropdownOpen;
+            dropdownContainer.style.display = isDropdownOpen ? "block" : "none";
+            if (isDropdownOpen) {
+                const rect = parentDiv.getBoundingClientRect();
+                dropdownContainer.style.left = `${rect.left}px`;
+                dropdownContainer.style.top = `${rect.bottom + window.scrollY}px`;
+            }
+        }
+
+        parentDiv.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleDropdown();
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
+                isDropdownOpen = false;
+                dropdownContainer.style.display = "none";
+            }
+        });
+
+        let fontSizes = Array.from({ length: 80 }, (_, i) => i + 1);
+        dropdownContainer.innerHTML = `<div class="dropdown-content">
+            ${fontSizes.map(size => `
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer">
+                    ${size}px
+                </p>
+            `).join("")}
+        </div>`;
+
+        document.querySelectorAll("#customFontSizeDropdown .dropdown-content p").forEach(sizeOption => {
+            sizeOption.addEventListener("click", function () {
+                parentDiv.querySelector("#font-size-number").textContent = this.textContent.replace("px", "");
+                toggleDropdown();
+            });
+        });
+    });
 })();
