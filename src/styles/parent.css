@@ -316,8 +316,8 @@ p {
    
   }
   .squareCraft-py-1px{
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
   }
   .squareCraft-px-2_5{
     padding-left: 0.625rem !important; /* 10px */
@@ -461,4 +461,49 @@ p {
     height: 40px;
     border: none;
     cursor: pointer;
+}
+
+.toggle-container {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 15px;
+  background-color: #747372;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+/* Toggle bullet */
+.toggle-bullet {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 16px;
+  height: 15px;
+  background: #F2F2F2;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  transition: left 0.3s ease;
+}
+
+/* Active state */
+.active {
+  background-color: #EF7C2F !important; /* Green when active */
+}
+
+.active .toggle-bullet {
+  left: calc(100% - 18px); /* Move to the right */
+}
+
+.rotate-animation {
+  animation: rotate360 1s ease-in-out;
+}
+
+@keyframes rotate360 {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
 }

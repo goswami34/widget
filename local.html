@@ -32,9 +32,9 @@
                 </div>
 
                 <div class="squareCraft-mt-6 squareCraft-flex  squareCraft-items-center ">
-                    <p class="squareCraft-text-sm squareCraft-px-4 squareCraft-cursor-pointer">Design</p>
-                    <p class="squareCraft-text-sm squareCraft-px-4 squareCraft-cursor-pointer">Advanced</p>
-                    <p class="squareCraft-text-sm squareCraft-px-4 squareCraft-cursor-pointer">Presets</p>
+                    <p class="squareCraft-text-sm squareCraft-px-4 squareCraft-cursor-pointer tabHeader ">Design</p>
+                    <p class="squareCraft-text-sm squareCraft-px-4 squareCraft-cursor-pointer tabHeader">Advanced</p>
+                    <p class="squareCraft-text-sm squareCraft-px-4 squareCraft-cursor-pointer tabHeader">Presets</p>
                 </div>
 
                 <div
@@ -57,20 +57,19 @@
                     <div
                         class="squareCraft-flex squareCraft-px-2 squareCraft-mt-2 squareCraft-items-center squareCraft-justify-between">
                         <div class="squareCraft-flex squareCraft-gap-2 squareCraft-items-center">
-                            <div
-                                class="squareCraft-relative squareCraft-w-toogle squareCraft-h-toogle squareCraft-rounded-15px squareCraft-bg-color-EF7C2F squareCraft-h-13px">
-                                <div
-                                    class="squareCraft-absolute squareCraft-bg-F2F2F2 squareCraft-rounded-full squareCraft-h-toogle-bullet squareCraft-w-13px">
-                                </div>
+                            <div class="toggle-container" id="toggleSwitch">
+                                <div class="toggle-bullet"></div>
                             </div>
-                            <p class="squareCraft-text-sm">Enable</p>
+                            <p id="toggleText" class="squareCraft-text-sm">Enable</p>
                         </div>
-                        <div
-                            class="squareCraft-flex squareCraft-items-center squareCraft-py-1px squareCraft-rounded-15px squareCraft-gap-2 squareCraft-bg-3f3f3f squareCraft-px-2">
-                            <p class="squareCraft-text-sm">Reset</p>
-                            <img src="https://fatin-webefo.github.io/squareCraft-Plugin/public/reset.svg"
-                                width="12px" />
-                        </div>
+                        <div id="resetButton" 
+                        class="squareCraft-flex squareCraft-cursor-pointer squareCraft-items-center squareCraft-py-1px squareCraft-rounded-15px squareCraft-gap-2 squareCraft-bg-3f3f3f squareCraft-px-2">
+                        <p class="squareCraft-text-sm">Reset</p>
+                        <img id="resetIcon" 
+                            src="https://fatin-webefo.github.io/squareCraft-Plugin/public/reset.svg"
+                            width="12px" />
+                    </div>
+                    
                     </div>
                     <div class="squareCraft-h-1px squareCraft-mt-2 squareCraft-bg-3f3f3f"></div>
                     <div class="squareCraft-mt-2">
