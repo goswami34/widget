@@ -22,12 +22,12 @@
         }
     }
 
-    parentHtml = (await loadModule("../../src/html/parentHtml/parentHtml.js"))?.parentHtml;
-    attachEventListeners = (await loadModule("../../src/DOM/attachEventListeners.js"))?.attachEventListeners;
-    observeDOMChanges = (await loadModule("../../src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
-    getStyles = (await loadModule("../../src/utils/getStyles.js"))?.getStyles;
+    parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js"))?.parentHtml;
+    attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
+    observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
+    getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
     try {
-        const { setToken } = await import("../../src/credentials/setToken.js");
+        const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
         setToken();
         console.log("✅ setToken function executed successfully.");
     } catch (error) {
