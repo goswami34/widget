@@ -34,11 +34,7 @@
             dropdownContainer.style.zIndex = "9999";
             dropdownContainer.style.maxHeight = "250px"; 
             dropdownContainer.style.overflowY = "auto"; 
-            dropdownContainer.innerHTML = `
-                <div class="dropdown-content">
-                    <p class="dropdown-item">Loading fonts...</p>
-                </div>
-            `;
+            dropdownContainer.innerHTML = `<div class="dropdown-content"><p class="dropdown-item">Loading fonts...</p></div>`;
             document.body.appendChild(dropdownContainer);
 
             fetchGoogleFonts(dropdownContainer, parentDiv);
@@ -86,45 +82,28 @@
         try {
             console.log("⏳ Fetching Google Fonts...");
             const response = await fetch(apiUrl);
-
             if (!response.ok) {
                 throw new Error(`HTTP Error! Status: ${response.status}`);
             }
-
             const data = await response.json();
             console.log("✅ Google Fonts Response:", data?.items);
 
             dropdownContainer.innerHTML = `
                 <div class="dropdown-content">
-                    ${data?.items?.slice(0, 10)?.map(font => `
-                        <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer squareCraft-bg-colo-EF7C2F-hover dropdown-item" 
-                          font-family:${font.family};">
+                    ${data.items.slice(0, 10).map(font => `
+                        <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer squareCraft-bg-colo-EF7C2F-hover" data-font='${JSON.stringify(font)}'>
                             ${font.family}
                         </p>
                     `).join("")}
                 </div>
             `;
 
-            document.querySelectorAll("#customDropdown .dropdown-item").forEach(fontOption => {
-                fontOption.addEventListener("mouseenter", () => {
-                    fontOption.style.background = "#666";
-                });
-
-                fontOption.addEventListener("mouseleave", () => {
-                    fontOption.style.background = "#444";
-                });
-
-                fontOption.addEventListener("click", () => {
-                    console.log(`✅ Selected Font: ${fontOption.textContent}`);
-
-                    const selectedTextElement = parentDiv.querySelector("p");
-                    if (selectedTextElement) {
-                        selectedTextElement.textContent = fontOption.textContent;
-                        selectedTextElement.style.fontFamily = fontOption.textContent; // Apply the font
-                    } else {
-                        console.error("❌ Could not find the correct element inside #squareCraft-font-family");
-                    }
-
+            document.querySelectorAll("#customDropdown .dropdown-content p").forEach(fontOption => {
+                fontOption.addEventListener("click", function () {
+                    const fontData = JSON.parse(this.getAttribute("data-font"));
+                    console.log(`✅ Selected Font: ${fontData.family}`);
+                    parentDiv.querySelector("p").textContent = fontData.family;
+                    updateFontVariants(fontData.variants);
                     toggleDropdown();
                 });
             });
@@ -133,5 +112,23 @@
             console.error("❌ Failed to fetch Google Fonts:", error);
             dropdownContainer.innerHTML = `<p class="dropdown-item">❌ Error loading fonts</p>`;
         }
+    }
+
+    function updateFontVariants(variants) {
+        let varientDropdown = document.getElementById("squareCraft-font-varient");
+        if (!varientDropdown) return;
+        
+        varientDropdown.innerHTML = variants.map(variant => `
+            <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer">
+                ${variant}
+            </p>
+        `).join("");
+
+        document.querySelectorAll("#squareCraft-font-varient p").forEach(variantOption => {
+            variantOption.addEventListener("click", function () {
+                console.log(`✅ Selected Variant: ${this.textContent}`);
+                varientDropdown.textContent = this.textContent;
+            });
+        });
     }
 })();

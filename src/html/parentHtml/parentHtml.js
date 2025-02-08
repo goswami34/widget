@@ -116,7 +116,7 @@ export function parentHtml() {
                     <div class="squareCraft-mt-2 squareCraft-grid squareCraft-px-2 squareCraft-w-full squareCraft-grid-cols-12 squareCraft-gap-2 ">
                         <div class="squareCraft-flex squareCraft-col-span-7 squareCraft-justify-between squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-rounded-6px squareCraft-items-center squareCraft-h-full">
                             <div class="squareCraft-bg-494949 squareCraft-px-2 squareCraft-w-full  squareCraft-py-1px ">
-                                <p class="squareCraft-text-sm squareCraft-font-light">Regular</p>
+                                <p id="squareCraft-font-varient" class="squareCraft-text-sm squareCraft-cursor-pointer squareCraft-font-light">Regular</p>
                             </div>
                             <div class="squareCraft-bg-3f3f3f squareCraft-px-2" style="height: 27px; padding: 0 8px;">
                                 <img class="squareCraft-h-full squareCraft-rotate-180" width="12px"
