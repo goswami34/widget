@@ -73,7 +73,7 @@
             const data = await response.json();
             dropdownContainer.innerHTML = `<div class="dropdown-content">
                 ${data.items.slice(0, 10).map(font => `
-                    <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(font)}'>
+                    <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(font)}'>
                         ${font.family}
                     </p>
                 `).join("")}
@@ -118,7 +118,7 @@
 
         variantDropdown.innerHTML = `<div class="dropdown-content">
             ${variants.map(variant => `
-                <p class="squareCraft-text-center squareCraft-py-1  squareCraft-text-sm squareCraft-cursor-pointer">
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover  squareCraft-text-sm squareCraft-cursor-pointer">
                     ${variant}
                 </p>
             `).join("")}
@@ -201,7 +201,7 @@
         let fontSizes = Array.from({ length: 80 }, (_, i) => i + 1);
         dropdownContainer.innerHTML = `<div class="dropdown-content">
             ${fontSizes.map(size => `
-                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer">
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer">
                     ${size}px
                 </p>
             `).join("")}
