@@ -94,10 +94,10 @@ export function parentHtml() {
 
                             </div>
                         </div>
-                        <div class="squareCraft-flex squareCraft-justify-between squareCraft-col-span-4  squareCraft-rounded-6px squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-items-center squareCraft-h-full">
+                        <div id="font-size" class="squareCraft-flex squareCraft-justify-between squareCraft-col-span-4  squareCraft-rounded-6px squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-items-center squareCraft-h-full">
                            <div class="squareCraft-flex squareCraft-items-center squareCraft-w-full">
                             <div class=" squareCraft-bg-494949  squareCraft-px-2 squareCraft-w-full squareCraft-py-1px ">
-                                <p class="squareCraft-text-sm  squareCraft-font-light">14</p>
+                                <p id="font-size-number" class="squareCraft-text-sm  squareCraft-font-light">14</p>
                             </div>
                             <div class="squareCraft-border-r   squareCraft-border-585858 squareCraft-h-full"></div>
                             <div class="squareCraft-bg-494949  squareCraft-px-1 squareCraft-w-full squareCraft-py-1px ">
