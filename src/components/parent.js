@@ -1,4 +1,21 @@
 (async function parent() {
+    function injectStylesheet() {
+        if (document.getElementById("squareCraft-styles")) {
+            console.warn("⚠️ SquareCraft styles already exist.");
+            return;
+        }
+
+        const link = document.createElement("link");
+        link.id = "squareCraft-styles";
+        link.rel = "stylesheet";
+        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css"; // Change to your actual CDN or file path
+        link.type = "text/css";
+        link.onload = () => console.log("✅ SquareCraft styles loaded successfully!");
+        link.onerror = () => console.error("❌ Failed to load SquareCraft styles.");
+
+        document.head.appendChild(link);
+    }
+    injectStylesheet();
     console.log("🚀 Parent function initialized...");
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
