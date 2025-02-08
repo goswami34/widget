@@ -8,7 +8,7 @@
         const link = document.createElement("link");
         link.id = "squareCraft-styles";
         link.rel = "stylesheet";
-        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css"; // Change to your actual CDN or file path
+        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css";
         link.type = "text/css";
         link.onload = () => console.log("✅ SquareCraft styles loaded successfully!");
         link.onerror = () => console.error("❌ Failed to load SquareCraft styles.");
@@ -17,68 +17,59 @@
     }
     injectStylesheet();
 
-
-
-
-
-
-
     console.log("🚀 Parent function initialized...");
+
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
         createWidget();
-        attachEventListeners();
-        getStyles();
-        observeDOMChanges();
+        attachEventListeners?.();
+        getStyles?.();
+        observeDOMChanges?.();
+        parentHtmlTab?.();
     }
 
     let parentHtml, attachEventListeners, observeDOMChanges, getStyles, parentHtmlTab;
 
-    async function loadModule(url) {
-        try {
-            console.log(`🚀 Loading module: ${url}`);
-            const module = await import(url);
-            console.log(`✅ Successfully loaded: ${url}`);
-            return module;
-        } catch (err) {
-            console.error(`❌ Failed to load module: ${url}`, err);
-            return null;
+    function injectScript(id, url, callback) {
+        if (document.getElementById(id)) {
+            console.warn(`⚠️ ${id} already exists.`);
+            return;
         }
+
+        const script = document.createElement("script");
+        script.id = id;
+        script.src = url;
+        script.defer = true;
+        script.onload = callback;
+        script.onerror = () => console.error(`❌ Failed to load script: ${url}`);
+
+        document.body.appendChild(script);
     }
 
-    parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js"))?.parentHtml;
-    attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
-    observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
-    getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
-    parentHtmlTab = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"))?.parentHtmlTab
-    try {
-        const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
-        setToken();
-        console.log("✅ setToken function executed successfully.");
-    } catch (error) {
-        console.error("❌ Failed to import setToken:", error);
-    }
+    injectScript("squareCraft-parentHtml", "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js", () => {
+        parentHtml = window.parentHtml;
+        console.log("✅ parentHtml.js loaded!");
+    });
 
-  
-   if (!attachEventListeners){
-        console.error("�� attachEventListeners function not found! Check if the script loaded properly.");
-       
-    }
+    injectScript("squareCraft-parentHtmlTab", "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js", () => {
+        parentHtmlTab = window.parentHtmlTab;
+        console.log("✅ parentHtmlTab.js loaded!");
+    });
 
-   else if(!observeDOMChanges){
-    console.error("�� observeDOMChanges function not found! Check if the script loaded properly.");
- 
-   }
+    injectScript("squareCraft-attachEventListeners", "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js", () => {
+        attachEventListeners = window.attachEventListeners;
+        console.log("✅ attachEventListeners.js loaded!");
+    });
 
-    else if (!parentHtml) {
-        console.error("❌ parentHtml function not found! Check if the script loaded properly.");
-    }
-    else if (!getStyles) {
-        console.error("�� getStyles function not found! Check if the script loaded properly.");
-    }
-   
+    injectScript("squareCraft-observeDOMChanges", "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js", () => {
+        observeDOMChanges = window.observeDOMChanges;
+        console.log("✅ observeDOMChanges.js loaded!");
+    });
 
-    console.log("📌 HTML Structure:\n", parentHtml());
+    injectScript("squareCraft-getStyles", "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js", () => {
+        getStyles = window.getStyles;
+        console.log("✅ getStyles.js loaded!");
+    });
 
     function createWidget() {
         console.log("🔹 Running createWidget function...");
@@ -137,8 +128,6 @@
     setTimeout(() => {
         console.log("🔍 Checking Widget in DOM (After Delay):", document.getElementById("squarecraft-widget-container"));
     }, 1000);
-
-
 
     setInterval(() => {
         if (!document.getElementById("squarecraft-widget-container")) {
