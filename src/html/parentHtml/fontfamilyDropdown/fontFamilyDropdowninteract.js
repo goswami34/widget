@@ -119,7 +119,7 @@
         if (!varientDropdown) return;
         
         varientDropdown.innerHTML = variants.map(variant => `
-            <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer">
+            <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(variant)}>
                 ${variant}
             </p>
         `).join("");
