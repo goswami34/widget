@@ -89,7 +89,7 @@ export function parentHtml() {
                             <div class="squareCraft-bg-494949 squareCraft-w-full squareCraft-px-2 squareCraft-py-1px ">
                                 <p class="squareCraft-text-sm squareCraft-font-light">Sf Pro sans</p>
                             </div>
-                            <div class="squareCraft-bg-3f3f3f" style="height: 27px; padding: 0 8px;">
+                            <div class="squareCraft-bg-3f3f3f squareCraft-px-2" style="height: 27px; padding: 0 8px;">
                                 <img class="squareCraft-h-full squareCraft-rotate-180" width="12px"
                                     src="https://fatin-webefo.github.io/squareCraft-Plugin/public/arrow.svg" alt="">
 
@@ -105,7 +105,7 @@ export function parentHtml() {
                                 <p class="squareCraft-text-sm squareCraft-font-light">px</p>
                             </div>
                            </div>
-                            <div class="squareCraft-bg-3f3f3f " style="height: 27px; padding: 0 8px;">
+                            <div class="squareCraft-bg-3f3f3f squareCraft-px-2" style="height: 27px; padding: 0 8px;">
                                 <img class=" squareCraft-rounded-6px squareCraft-rotate-180" width="12px"
                                     src="https://fatin-webefo.github.io/squareCraft-Plugin/public/arrow.svg" alt="">
 
@@ -119,7 +119,7 @@ export function parentHtml() {
                             <div class="squareCraft-bg-494949 squareCraft-px-2 squareCraft-w-full  squareCraft-py-1px ">
                                 <p class="squareCraft-text-sm squareCraft-font-light">Regular</p>
                             </div>
-                            <div class="squareCraft-bg-3f3f3f" style="height: 27px; padding: 0 8px;">
+                            <div class="squareCraft-bg-3f3f3f squareCraft-px-2" style="height: 27px; padding: 0 8px;">
                                 <img class="squareCraft-h-full squareCraft-rotate-180" width="12px"
                                     src="https://fatin-webefo.github.io/squareCraft-Plugin/public/arrow.svg" alt="">
 
