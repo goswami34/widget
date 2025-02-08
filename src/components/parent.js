@@ -8,7 +8,7 @@
         const link = document.createElement("link");
         link.id = "squareCraft-styles";
         link.rel = "stylesheet";
-        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css";
+        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css"; // Change to your actual CDN or file path
         link.type = "text/css";
         link.onload = () => console.log("✅ SquareCraft styles loaded successfully!");
         link.onerror = () => console.error("❌ Failed to load SquareCraft styles.");
@@ -17,59 +17,83 @@
     }
     injectStylesheet();
 
-    console.log("🚀 Parent function initialized...");
 
-    function initializeSquareCraft() {
-        console.log("⚡ Initializing SquareCraft...");
-        createWidget();
-        attachEventListeners?.();
-        getStyles?.();
-        observeDOMChanges?.();
-        parentHtmlTab?.();
-    }
-
-    let parentHtml, attachEventListeners, observeDOMChanges, getStyles, parentHtmlTab;
-
-    function injectScript(id, url, callback) {
-        if (document.getElementById(id)) {
-            console.warn(`⚠️ ${id} already exists.`);
+    function parentTabFunction() {
+        if (document.getElementById("squareCraft-script-tab")) {
+            console.warn("⚠️ SquareCraft script already exists.");
             return;
         }
 
         const script = document.createElement("script");
-        script.id = id;
-        script.src = url;
+        script.id = "squareCraft-script-tab";
+        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
         script.defer = true;
-        script.onload = callback;
-        script.onerror = () => console.error(`❌ Failed to load script: ${url}`);
+
+        script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
+        script.onerror = (e) => console.error("❌ Failed to load parentHtmlTab.js", e);
 
         document.body.appendChild(script);
     }
 
-    injectScript("squareCraft-parentHtml", "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js", () => {
-        parentHtml = window.parentHtml;
-        console.log("✅ parentHtml.js loaded!");
-    });
 
-    injectScript("squareCraft-parentHtmlTab", "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js", () => {
-        parentHtmlTab = window.parentHtmlTab;
-        console.log("✅ parentHtmlTab.js loaded!");
-    });
 
-    injectScript("squareCraft-attachEventListeners", "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js", () => {
-        attachEventListeners = window.attachEventListeners;
-        console.log("✅ attachEventListeners.js loaded!");
-    });
 
-    injectScript("squareCraft-observeDOMChanges", "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js", () => {
-        observeDOMChanges = window.observeDOMChanges;
-        console.log("✅ observeDOMChanges.js loaded!");
-    });
+    console.log("🚀 Parent function initialized...");
+    function initializeSquareCraft() {
+        console.log("⚡ Initializing SquareCraft...");
+        createWidget();
+        attachEventListeners();
+        getStyles();
+        observeDOMChanges();
+        parentTabFunction();
+    }
 
-    injectScript("squareCraft-getStyles", "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js", () => {
-        getStyles = window.getStyles;
-        console.log("✅ getStyles.js loaded!");
-    });
+    let parentHtml, attachEventListeners, observeDOMChanges, getStyles, token;
+
+    async function loadModule(url) {
+        try {
+            console.log(`🚀 Loading module: ${url}`);
+            const module = await import(url);
+            console.log(`✅ Successfully loaded: ${url}`);
+            return module;
+        } catch (err) {
+            console.error(`❌ Failed to load module: ${url}`, err);
+            return null;
+        }
+    }
+
+    parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js"))?.parentHtml;
+    attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
+    observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
+    getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
+    try {
+        const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
+        setToken();
+        console.log("✅ setToken function executed successfully.");
+    } catch (error) {
+        console.error("❌ Failed to import setToken:", error);
+    }
+
+
+    if (!attachEventListeners) {
+        console.error("�� attachEventListeners function not found! Check if the script loaded properly.");
+
+    }
+
+    else if (!observeDOMChanges) {
+        console.error("�� observeDOMChanges function not found! Check if the script loaded properly.");
+
+    }
+
+    else if (!parentHtml) {
+        console.error("❌ parentHtml function not found! Check if the script loaded properly.");
+    }
+    else if (!getStyles) {
+        console.error("�� getStyles function not found! Check if the script loaded properly.");
+    }
+
+
+    console.log("📌 HTML Structure:\n", parentHtml());
 
     function createWidget() {
         console.log("🔹 Running createWidget function...");
@@ -129,15 +153,19 @@
         console.log("🔍 Checking Widget in DOM (After Delay):", document.getElementById("squarecraft-widget-container"));
     }, 1000);
 
+
+
     setInterval(() => {
         if (!document.getElementById("squarecraft-widget-container")) {
             console.warn("⚠️ Widget removed by Squarespace! Re-adding...");
             createWidget();
+            parentTabFunction();
         }
     }, 1000);
 
     setTimeout(() => {
         console.log("⚡ Ensuring SquareCraft initializes...");
         initializeSquareCraft();
+        parentTabFunction();
     }, 1000);
 })();
