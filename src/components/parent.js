@@ -35,10 +35,8 @@
     document.body.appendChild(script);
 }
 
-// 🕒 Wait until DOM is fully loaded before injecting script
-document.addEventListener("DOMContentLoaded", () => {
-    parentTabFunction();
-});
+
+
 
 
 
@@ -50,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         attachEventListeners();
         getStyles();
         observeDOMChanges();
+        parentTabFunction();
     }
 
     let parentHtml, attachEventListeners, observeDOMChanges, getStyles, token;
@@ -163,11 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!document.getElementById("squarecraft-widget-container")) {
             console.warn("⚠️ Widget removed by Squarespace! Re-adding...");
             createWidget();
+            parentTabFunction();
         }
     }, 1000);
 
     setTimeout(() => {
         console.log("⚡ Ensuring SquareCraft initializes...");
         initializeSquareCraft();
+        parentTabFunction();
     }, 1000);
 })();
