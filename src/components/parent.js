@@ -18,24 +18,6 @@
     injectStylesheet();
 
 
-   function parentTabFunction() {
-    if (document.getElementById("squareCraft-script-tab")) {
-        console.warn("⚠️ SquareCraft script already exists.");
-        return;
-    }
-
-    const script = document.createElement("script");
-    script.id = "squareCraft-script-tab";
-    script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
-    script.defer = true;
-
-    script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
-    script.onerror = (e) => console.error("❌ Failed to load parentHtmlTab.js", e);
-
-    document.body.appendChild(script);
-}
-
-
 
 
 
@@ -48,10 +30,9 @@
         attachEventListeners();
         getStyles();
         observeDOMChanges();
-        parentTabFunction();
     }
 
-    let parentHtml, attachEventListeners, observeDOMChanges, getStyles, token;
+    let parentHtml, attachEventListeners, observeDOMChanges, getStyles, parentHtmlTab;
 
     async function loadModule(url) {
         try {
@@ -69,6 +50,7 @@
     attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
     observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
     getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
+    parentHtmlTab = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"))?.parentHtmlTab
     try {
         const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
         setToken();
@@ -162,13 +144,11 @@
         if (!document.getElementById("squarecraft-widget-container")) {
             console.warn("⚠️ Widget removed by Squarespace! Re-adding...");
             createWidget();
-            parentTabFunction();
         }
     }, 1000);
 
     setTimeout(() => {
         console.log("⚡ Ensuring SquareCraft initializes...");
         initializeSquareCraft();
-        parentTabFunction();
     }, 1000);
 })();
