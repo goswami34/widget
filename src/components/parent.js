@@ -8,7 +8,7 @@
         const link = document.createElement("link");
         link.id = "squareCraft-styles";
         link.rel = "stylesheet";
-        link.href = "../styles/parent.css"; // Change to your actual CDN or file path
+        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css"; // Change to your actual CDN or file path
         link.type = "text/css";
         link.onload = () => console.log("✅ SquareCraft styles loaded successfully!");
         link.onerror = () => console.error("❌ Failed to load SquareCraft styles.");
