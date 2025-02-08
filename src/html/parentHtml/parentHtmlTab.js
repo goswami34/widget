@@ -1,11 +1,11 @@
 (
-    async function parentHtmlTab(){
-            const tabs = document.querySelectorAll(".tabHeader");
-            const contentContainer = document.querySelector(".squareCraft-rounded-6px.squareCraft-mt-6");
-            const activeIndicator = document.querySelector(".squareCraft-absolute"); // The moving indicator
-        
-            const tabData = {
-                design: `
+    async function parentHtmlTab() {
+        const tabs = document.querySelectorAll(".tabHeader");
+        const contentContainer = document.querySelector(".squareCraft-rounded-6px.squareCraft-mt-6");
+        const activeIndicator = document.querySelector(".squareCraft-absolute"); // The moving indicator
+
+        const tabData = {
+            design: `
                   <div class="squareCraft-flex squareCraft-p-2 squareCraft-items-center squareCraft-justify-between">
                                 <div class="squareCraft-flex squareCraft-gap-2 squareCraft-items-center"><img loading="lazy"
                                         src="https://fatin-webefo.github.io/squareCraft-Plugin/public/T.svg" alt="">
@@ -53,7 +53,7 @@
                             </div>
         
                             <div class="squareCraft-mt-2 squareCraft-grid squareCraft-w-full squareCraft-grid-cols-12 squareCraft-gap-2 squareCraft-px-2">
-                                <div class="squareCraft-flex squareCraft-col-span-8 squareCraft-justify-between squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-rounded-6px squareCraft-items-center squareCraft-h-full">
+                                <div id="squareCraft-font-family" class="squareCraft-flex squareCraft-col-span-8 squareCraft-justify-between squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-rounded-6px squareCraft-items-center squareCraft-h-full">
                                     <div class="squareCraft-bg-494949 squareCraft-w-full squareCraft-px-2 squareCraft-py-1px ">
                                         <p class="squareCraft-text-sm squareCraft-font-light">Sf Pro sans</p>
                                     </div>
@@ -138,60 +138,60 @@
                             </div> -->
                             <div class="squareCraft-mt-2"> </div>
                 `,
-                advanced: `
+            advanced: `
                     <div class="squareCraft-flex squareCraft-p-2 squareCraft-items-center squareCraft-justify-between">
                         <p class="squareCraft-text-sm">Advanced Settings</p>
                     </div>
                     <div class="squareCraft-h-1px squareCraft-bg-3f3f3f"></div>
                 `,
-                presets: `
+            presets: `
                     <div class="squareCraft-flex squareCraft-p-2 squareCraft-items-center squareCraft-justify-between">
                         <p class="squareCraft-text-sm">Preset Options</p>
                     </div>
                     <div class="squareCraft-h-1px squareCraft-bg-3f3f3f"></div>
                 `
-            };
-        
-            tabs.forEach(tab => {
-                tab.addEventListener("click", function () {
-                    tabs.forEach(t => t.classList.remove("squareCraft-active-tab"));
-        
-                    this.classList.add("squareCraft-active-tab");
-        
-                    const selectedTab = this.textContent.trim().toLowerCase();
-                    contentContainer.innerHTML = tabData[selectedTab] || "";
-        
-                    const tabRect = this.getBoundingClientRect();
-                    const parentRect = this.parentElement.getBoundingClientRect();
-                    activeIndicator.style.left = `${tabRect.left - parentRect.left}px`;
-                    activeIndicator.style.width = `${tabRect.width}px`;
-                });
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", function () {
+                tabs.forEach(t => t.classList.remove("squareCraft-active-tab"));
+
+                this.classList.add("squareCraft-active-tab");
+
+                const selectedTab = this.textContent.trim().toLowerCase();
+                contentContainer.innerHTML = tabData[selectedTab] || "";
+
+                const tabRect = this.getBoundingClientRect();
+                const parentRect = this.parentElement.getBoundingClientRect();
+                activeIndicator.style.left = `${tabRect.left - parentRect.left}px`;
+                activeIndicator.style.width = `${tabRect.width}px`;
             });
-            document.addEventListener("click", function (event) {
-                const toggle = event.target.closest("#toggleSwitch");
-                if (toggle) {
-                    const toggleText = document.getElementById("toggleText");
-                    toggle.classList.toggle("active");
-                    if (toggleText) {
-                        toggleText.textContent = toggle.classList.contains("active") ? "Enabled" : "Enable";
-                    }
+        });
+        document.addEventListener("click", function (event) {
+            const toggle = event.target.closest("#toggleSwitch");
+            if (toggle) {
+                const toggleText = document.getElementById("toggleText");
+                toggle.classList.toggle("active");
+                if (toggleText) {
+                    toggleText.textContent = toggle.classList.contains("active") ? "Enabled" : "Enable";
                 }
-            });
-        
-            document.addEventListener("click", function (event) {
-                const resetButton = event.target.closest("#resetButton");
-                if (resetButton) {
-                    const resetIcon = resetButton.querySelector("#resetIcon");
-                    if (resetIcon) {
-                        resetIcon.classList.add("rotate-animation");
-                        setTimeout(() => {
-                            resetIcon.classList.remove("rotate-animation");
-                        }, 1000);
-                    }
+            }
+        });
+
+        document.addEventListener("click", function (event) {
+            const resetButton = event.target.closest("#resetButton");
+            if (resetButton) {
+                const resetIcon = resetButton.querySelector("#resetIcon");
+                if (resetIcon) {
+                    resetIcon.classList.add("rotate-animation");
+                    setTimeout(() => {
+                        resetIcon.classList.remove("rotate-animation");
+                    }, 1000);
                 }
-            });
-        
-     
+            }
+        });
+
+
         // its the https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js
     }
 )()

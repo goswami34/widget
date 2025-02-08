@@ -1,5 +1,5 @@
 export async function setToken() {
-  const widgetScript = document.getElementById("squarecraft-script");
+  const widgetScript = document.getElementById("squareCraft-script");
 
   if (!widgetScript) {
       console.warn("⚠️ squarecraft-script not found.");
