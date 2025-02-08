@@ -118,16 +118,21 @@
         let varientDropdown = document.getElementById("squareCraft-font-varient");
         if (!varientDropdown) return;
 
-        varientDropdown.innerHTML = variants.map(variant => `
-            <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(variant)}>
+        let variantContainer = document.createElement("div");
+        variantContainer.classList.add("dropdown-content");
+        variantContainer.innerHTML = variants.map(variant => `
+            <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer">
                 ${variant}
             </p>
         `).join("");
 
-        document.querySelectorAll("#squareCraft-font-varient p").forEach(variantOption => {
+        varientDropdown.innerHTML = "";
+        varientDropdown.appendChild(variantContainer);
+
+        document.querySelectorAll("#squareCraft-font-varient .dropdown-content p").forEach(variantOption => {
             variantOption.addEventListener("click", function () {
                 console.log(`✅ Selected Variant: ${this.textContent}`);
-                varientDropdown.textContent = this.textContent;
+                varientDropdown.querySelector("p").textContent = this.textContent;
             });
         });
     }
