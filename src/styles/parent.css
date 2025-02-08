@@ -352,6 +352,9 @@ p {
   .squareCraft-bg-colo-EF7C2F{
     background-color: #EF7C2F !important;
   }
+  .squareCraft-bg-colo-EF7C2F-hover:hover{
+    background-color: #EF7C2F !important;
+  }
   .squareCraft-p-1px {
     padding: 1px !important;
   }
@@ -360,6 +363,10 @@ p {
   }
   .squareCraft-h-full {
     height: 100% !important;
+  }
+  .squareCraft-py-1{
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
   }
 
   .squareCraft-border-color-585858 {
@@ -506,4 +513,30 @@ p {
   to {
       transform: rotate(360deg);
   }
+}
+
+
+::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: #222 !important;
+  border-radius: 100% !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff7f00 !important;
+  border-radius: 100% !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e67600 !important;
+  border-radius: 100%;
+}
+
+* {
+  scrollbar-width: thin !important;
+  scrollbar-color: #ff7f00 #222 !important;
+ 
 }

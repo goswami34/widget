@@ -3,7 +3,6 @@
 
     function waitForElement(selector, callback, timeout = 5000) {
         const startTime = Date.now();
-
         const interval = setInterval(() => {
             const element = document.querySelector(selector);
             if (element) {
@@ -29,15 +28,20 @@
             dropdownContainer.style.border = "1px solid #585858";
             dropdownContainer.style.borderRadius = "6px";
             dropdownContainer.style.padding = "8px";
-            dropdownContainer.style.minWidth = "180px";
+            dropdownContainer.style.minWidth = "200px";
             dropdownContainer.style.color = "#ffffff";
             dropdownContainer.style.fontSize = "14px";
             dropdownContainer.style.zIndex = "9999";
-            dropdownContainer.innerHTML = `<p class="dropdown-item">Loading fonts...</p>`; 
+            dropdownContainer.style.maxHeight = "250px"; 
+            dropdownContainer.style.overflowY = "auto"; 
+            dropdownContainer.innerHTML = `
+                <div class="dropdown-content">
+                    <p class="dropdown-item">Loading fonts...</p>
+                </div>
+            `;
             document.body.appendChild(dropdownContainer);
 
-            // 🔥 Fetch fonts and populate dropdown
-            fetchGoogleFonts(dropdownContainer);
+            fetchGoogleFonts(dropdownContainer, parentDiv);
         }
 
         let isDropdownOpen = false;
@@ -62,6 +66,10 @@
             toggleDropdown();
         });
 
+        dropdownContainer.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+
         document.addEventListener("click", function (event) {
             if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
                 isDropdownOpen = false;
@@ -72,8 +80,7 @@
         console.log("✅ Dropdown initialized successfully!");
     });
 
-    // 🔥 Async function to fetch Google Fonts and populate dropdown
-    async function fetchGoogleFonts(dropdownContainer) {
+    async function fetchGoogleFonts(dropdownContainer, parentDiv) {
         const apiUrl = "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBPpLHcfY1Z1SfUIe78z6UvPe-wF31iwRk";
 
         try {
@@ -87,22 +94,39 @@
             const data = await response.json();
             console.log("✅ Google Fonts Response:", data?.items);
 
-            dropdownContainer.innerHTML = "";
-            data.items.slice(0, 10).forEach(font => {  
-                const fontOption = document.createElement("p");
-                fontOption.classList.add("dropdown-item");
-                fontOption.textContent = font.family;
-                fontOption.style.fontFamily = font.family;
-                fontOption.style.cursor = "pointer";
-                fontOption.style.padding = "5px";
+            dropdownContainer.innerHTML = `
+                <div class="dropdown-content">
+                    ${data?.items?.slice(0, 10)?.map(font => `
+                        <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer squareCraft-bg-colo-EF7C2F-hover dropdown-item" 
+                          font-family:${font.family};">
+                            ${font.family}
+                        </p>
+                    `).join("")}
+                </div>
+            `;
 
-                fontOption.addEventListener("click", () => {
-                    console.log(`✅ Selected Font: ${font.family}`);
-                    parentDiv.querySelector("p").textContent = font.family;
-                    toggleDropdown();
+            document.querySelectorAll("#customDropdown .dropdown-item").forEach(fontOption => {
+                fontOption.addEventListener("mouseenter", () => {
+                    fontOption.style.background = "#666";
                 });
 
-                dropdownContainer.appendChild(fontOption);
+                fontOption.addEventListener("mouseleave", () => {
+                    fontOption.style.background = "#444";
+                });
+
+                fontOption.addEventListener("click", () => {
+                    console.log(`✅ Selected Font: ${fontOption.textContent}`);
+
+                    const selectedTextElement = parentDiv.querySelector("p");
+                    if (selectedTextElement) {
+                        selectedTextElement.textContent = fontOption.textContent;
+                        selectedTextElement.style.fontFamily = fontOption.textContent; // Apply the font
+                    } else {
+                        console.error("❌ Could not find the correct element inside #squareCraft-font-family");
+                    }
+
+                    toggleDropdown();
+                });
             });
 
         } catch (error) {

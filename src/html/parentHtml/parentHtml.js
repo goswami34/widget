@@ -2,8 +2,7 @@
 export function parentHtml() {
 
     return `
- <div>
-        <div>
+
 
             <div
                 class="squareCraft-p-4 squareCraft-border squareCraft-border-solid squareCraft-border-3d3d3d squareCraft-bg-color-2c2c2c squareCraft-rounded-15px squareCraft-w-300px">
@@ -172,8 +171,6 @@ export function parentHtml() {
                 </div>
             </div>
 
-        </div>
-    </div>
     `;
 }
 
