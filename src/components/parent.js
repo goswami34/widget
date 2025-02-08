@@ -19,13 +19,13 @@
 
 
    function parentTabFunction() {
-    if (document.getElementById("squareCraft-script")) {
+    if (document.getElementById("squareCraft-script-tab")) {
         console.warn("⚠️ SquareCraft script already exists.");
         return;
     }
 
     const script = document.createElement("script");
-    script.id = "squareCraft-script";
+    script.id = "squareCraft-script-tab";
     script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
     script.defer = true;
 
