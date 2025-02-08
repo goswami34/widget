@@ -18,28 +18,28 @@
     injectStylesheet();
 
 
-    function injectScript() {
-        if (document.getElementById("squareCraft-script")) {
-            console.warn("⚠️ SquareCraft script already exists.");
-            return;
-        }
-    
-        const script = document.createElement("script");
-        script.id = "squareCraft-script";
-        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
-        script.defer = true;
-    
-        script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
-        script.onerror = (e) => console.error("❌ Failed to load parentHtmlTab.js", e);
-    
-        document.body.appendChild(script);
+   function injectScript() {
+    if (document.getElementById("squareCraft-script")) {
+        console.warn("⚠️ SquareCraft script already exists.");
+        return;
     }
-    
-    // 🕒 Wait until DOM is fully loaded before injecting script
-    document.addEventListener("DOMContentLoaded", () => {
-        injectScript();
-    });
-    
+
+    const script = document.createElement("script");
+    script.id = "squareCraft-script";
+    script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
+    script.defer = true;
+
+    script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
+    script.onerror = (e) => console.error("❌ Failed to load parentHtmlTab.js", e);
+
+    document.body.appendChild(script);
+}
+
+// 🕒 Wait until DOM is fully loaded before injecting script
+document.addEventListener("DOMContentLoaded", () => {
+    injectScript();
+});
+
 
 
 
@@ -54,19 +54,17 @@
 
     let parentHtml, attachEventListeners, observeDOMChanges, getStyles, token;
 
-    async function loadModule(url, callback) {
-        const script = document.createElement("script");
-        script.src = url;
-        script.onload = () => {
+    async function loadModule(url) {
+        try {
+            console.log(`🚀 Loading module: ${url}`);
+            const module = await import(url);
             console.log(`✅ Successfully loaded: ${url}`);
-            if (callback) callback();
-        };
-        script.onerror = () => console.error(`❌ Failed to load module: ${url}`);
-        document.body.appendChild(script);
+            return module;
+        } catch (err) {
+            console.error(`❌ Failed to load module: ${url}`, err);
+            return null;
+        }
     }
-    
-   
-    
 
     parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js"))?.parentHtml;
     attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
