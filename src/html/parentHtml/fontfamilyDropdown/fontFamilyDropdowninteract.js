@@ -12,13 +12,19 @@
         }, 200);
     }
 
+    function setDropdownPosition(parentDiv, dropdown) {
+        const rect = parentDiv.getBoundingClientRect();
+        dropdown.style.left = `${rect.left}px`;
+        dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+        dropdown.style.display = "block";
+    }
+
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         let dropdownContainer = document.getElementById("customDropdown");
         if (!dropdownContainer) {
             dropdownContainer = document.createElement("div");
             dropdownContainer.id = "customDropdown";
             dropdownContainer.style.position = "absolute";
-            dropdownContainer.style.top = "5px";
             dropdownContainer.style.display = "none";
             dropdownContainer.style.background = "#3d3d3d";
             dropdownContainer.style.border = "1px solid #585858";
@@ -30,7 +36,6 @@
             dropdownContainer.style.zIndex = "9999";
             dropdownContainer.style.maxHeight = "250px";
             dropdownContainer.style.overflowY = "auto";
-            dropdownContainer.innerHTML = `<div class="dropdown-content"></div>`;
             document.body.appendChild(dropdownContainer);
 
             fetchGoogleFonts(dropdownContainer, parentDiv);
@@ -40,7 +45,11 @@
 
         function toggleDropdown() {
             isDropdownOpen = !isDropdownOpen;
-            dropdownContainer.style.display = isDropdownOpen ? "block" : "none";
+            if (isDropdownOpen) {
+                setDropdownPosition(parentDiv, dropdownContainer);
+            } else {
+                dropdownContainer.style.display = "none";
+            }
         }
 
         parentDiv.addEventListener("click", function (event) {
@@ -88,14 +97,11 @@
         let variantParentDiv = document.getElementById("squareCraft-font-varient");
         if (!variantParentDiv) return;
 
-        variantParentDiv.querySelector("p").textContent = variants[0];
-
         let variantDropdown = document.getElementById("customVariantDropdown");
         if (!variantDropdown) {
             variantDropdown = document.createElement("div");
             variantDropdown.id = "customVariantDropdown";
             variantDropdown.style.position = "absolute";
-            variantDropdown.style.top = "5px";
             variantDropdown.style.display = "none";
             variantDropdown.style.background = "#3d3d3d";
             variantDropdown.style.border = "1px solid #585858";
@@ -122,7 +128,11 @@
 
         function toggleVariantDropdown() {
             isVariantDropdownOpen = !isVariantDropdownOpen;
-            variantDropdown.style.display = isVariantDropdownOpen ? "block" : "none";
+            if (isVariantDropdownOpen) {
+                setDropdownPosition(variantParentDiv, variantDropdown);
+            } else {
+                variantDropdown.style.display = "none";
+            }
         }
 
         variantParentDiv.addEventListener("click", function (event) {
@@ -169,11 +179,10 @@
 
         function toggleDropdown() {
             isDropdownOpen = !isDropdownOpen;
-            dropdownContainer.style.display = isDropdownOpen ? "block" : "none";
             if (isDropdownOpen) {
-                const rect = parentDiv.getBoundingClientRect();
-                dropdownContainer.style.left = `${rect.left}px`;
-                dropdownContainer.style.top = `${rect.bottom + window.scrollY}px`;
+                setDropdownPosition(parentDiv, dropdownContainer);
+            } else {
+                dropdownContainer.style.display = "none";
             }
         }
 
