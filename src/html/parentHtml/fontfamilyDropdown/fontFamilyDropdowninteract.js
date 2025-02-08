@@ -32,8 +32,8 @@
             dropdownContainer.style.color = "#ffffff";
             dropdownContainer.style.fontSize = "14px";
             dropdownContainer.style.zIndex = "9999";
-            dropdownContainer.style.maxHeight = "250px"; 
-            dropdownContainer.style.overflowY = "auto"; 
+            dropdownContainer.style.maxHeight = "250px";
+            dropdownContainer.style.overflowY = "auto";
             dropdownContainer.innerHTML = `<div class="dropdown-content"><p class="dropdown-item">Loading fonts...</p></div>`;
             document.body.appendChild(dropdownContainer);
 
@@ -117,7 +117,7 @@
     function updateFontVariants(variants) {
         let varientDropdown = document.getElementById("squareCraft-font-varient");
         if (!varientDropdown) return;
-        
+
         varientDropdown.innerHTML = variants.map(variant => `
             <p class="squareCraft-text-center squareCraft-py-1 squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(variant)}>
                 ${variant}
