@@ -16,6 +16,25 @@
         document.head.appendChild(link);
     }
     injectStylesheet();
+
+
+    function injectParentJs() {
+       
+
+        const script = document.createElement("script");
+        script.id = "squareCraft-script-parent";
+        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; 
+        script.defer = true;
+        script.onload = () => console.log("✅ SquareCraft script loaded successfully!");
+        script.onerror = () => console.error("❌ Failed to load SquareCraft script.");
+
+        document.body.appendChild(script);
+    }
+
+    injectParentJs();
+
+
+
     console.log("🚀 Parent function initialized...");
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
