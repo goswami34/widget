@@ -18,6 +18,7 @@
             dropdownContainer = document.createElement("div");
             dropdownContainer.id = "customDropdown";
             dropdownContainer.style.position = "absolute";
+            dropdownContainer.style.top = "5px";
             dropdownContainer.style.display = "none";
             dropdownContainer.style.background = "#3d3d3d";
             dropdownContainer.style.border = "1px solid #585858";
@@ -94,6 +95,7 @@
             variantDropdown = document.createElement("div");
             variantDropdown.id = "customVariantDropdown";
             variantDropdown.style.position = "absolute";
+            variantDropdown.style.top = "5px";
             variantDropdown.style.display = "none";
             variantDropdown.style.background = "#3d3d3d";
             variantDropdown.style.border = "1px solid #585858";
