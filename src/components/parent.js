@@ -18,7 +18,7 @@
     injectStylesheet();
 
 
-   function injectScript() {
+   function parentTabFunction() {
     if (document.getElementById("squareCraft-script")) {
         console.warn("⚠️ SquareCraft script already exists.");
         return;
@@ -37,7 +37,7 @@
 
 // 🕒 Wait until DOM is fully loaded before injecting script
 document.addEventListener("DOMContentLoaded", () => {
-    injectScript();
+    parentTabFunction();
 });
 
 

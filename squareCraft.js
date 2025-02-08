@@ -15,6 +15,9 @@
         script.onerror = () => console.error("❌ Failed to load SquareCraft script.");
 
         document.body.appendChild(script);
+
+
+        
     }
 
     injectScript();

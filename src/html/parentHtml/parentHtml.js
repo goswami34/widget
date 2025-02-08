@@ -173,7 +173,6 @@ export function parentHtml() {
             </div>
 
         </div>
-        <script src="https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"></script>
     </div>
     `;
 }

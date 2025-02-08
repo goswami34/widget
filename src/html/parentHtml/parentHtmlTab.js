@@ -153,9 +153,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     tabs.forEach(tab => {
         tab.addEventListener("click", function () {
-            tabs.forEach(t => t.classList.remove("active-tab"));
-            
-            this.classList.add("active-tab");
+            tabs.forEach(t => t.classList.remove("squareCraft-active-tab"));
+
+            this.classList.add("squareCraft-active-tab");
 
             const selectedTab = this.textContent.trim().toLowerCase();
             contentContainer.innerHTML = tabData[selectedTab] || "";
@@ -189,6 +189,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-    
+
 });
 // its the https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js
