@@ -168,6 +168,7 @@
             fontFamilyDropdowninteract();
             parentTabFunction();
             fontFamilyDropdown();
+            getStyles();
         }
     }, 1000);
 
@@ -175,5 +176,6 @@
         initializeSquareCraft();
         fontFamilyDropdown();
         parentTabFunction();
+        getStyles();
     }, 1000);
 })();
