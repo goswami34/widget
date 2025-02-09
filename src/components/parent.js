@@ -10,7 +10,6 @@
         link.rel = "stylesheet";
         link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css"; // Change to your actual CDN or file path
         link.type = "text/css";
-        link.onload = () => console.log("✅ SquareCraft styles loaded successfully!");
         link.onerror = () => console.error("❌ Failed to load SquareCraft styles.");
 
         document.head.appendChild(link);
@@ -29,7 +28,6 @@
         script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; 
         script.defer = true;
 
-        script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
         script.onerror = (e) => console.error("❌ Failed to load parentHtmlTab.js", e);
 
         document.body.appendChild(script);
@@ -56,7 +54,6 @@
 
 
 
-    console.log("🚀 Parent function initialized...");
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
         fontFamilyDropdowninteract();
@@ -71,9 +68,7 @@
 
     async function loadModule(url) {
         try {
-            console.log(`🚀 Loading module: ${url}`);
             const module = await import(url);
-            console.log(`✅ Successfully loaded: ${url}`);
             return module;
         } catch (err) {
             console.error(`❌ Failed to load module: ${url}`, err);
@@ -88,7 +83,6 @@
     try {
         const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
         setToken();
-        console.log("✅ setToken function executed successfully.");
     } catch (error) {
         console.error("❌ Failed to import setToken:", error);
     }
@@ -112,10 +106,8 @@
     }
 
 
-    console.log("📌 HTML Structure:\n", parentHtml());
 
     function fontFamilyDropdowninteract() {
-        console.log("🔹 Running fontFamilyDropdowninteract function...");
 
         if (!parentHtml) {
             console.error("❌ parentHtml is not defined. Check imports.");
@@ -145,23 +137,17 @@
             `;
         document.head.appendChild(style);
 
-        console.log("📌 Injecting Widget HTML...");
         widgetContainer.innerHTML = parentHtml();
 
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", () => {
-                console.log("📌 Appending Widget to DOM...");
                 document.body.appendChild(widgetContainer);
-                console.log("✅ Widget appended!");
 
                 fontFamilyDropdowninteract();
             });
         } else {
-            console.log("📌 Appending Widget to DOM immediately...");
             document.body.appendChild(widgetContainer);
-            console.log("✅ Widget appended!");
 
-            // ✅ Initialize Dropdown **AFTER** the widget is loaded
             fontFamilyDropdowninteract();
         }
 
@@ -173,10 +159,6 @@
         }, 3000);
     }
 
-
-    setTimeout(() => {
-        console.log("🔍 Checking Widget in DOM (After Delay):", document.getElementById("squarecraft-widget-container"));
-    }, 1000);
 
 
 
@@ -190,7 +172,6 @@
     }, 1000);
 
     setTimeout(() => {
-        console.log("⚡ Ensuring SquareCraft initializes...");
         initializeSquareCraft();
         fontFamilyDropdown();
         parentTabFunction();
