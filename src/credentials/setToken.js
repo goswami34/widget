@@ -18,14 +18,14 @@ export async function setToken() {
 
   if (squareCraft_u_id) {
       console.log("👤 User ID received:", squareCraft_u_id);
-      localStorage.setItem("squareCraft_user_id", squareCraft_u_id);
-      document.cookie = `squareCraft_user_id=${squareCraft_u_id}; path=.squarespace.com;`;
+      localStorage.setItem("squareCraft_u_id", squareCraft_u_id);
+      document.cookie = `squareCraft_u_id=${squareCraft_u_id}; path=.squarespace.com;`;
 
   }
 
   if (squareCraft_w_id) {
       console.log("🛠️ Widget ID received:", squareCraft_w_id);
-      localStorage.setItem("squareCraft_widget_id", squareCraft_w_id);
-      document.cookie = `squareCraft_widget_id=${squareCraft_w_id}; path=.squarespace.com;`;
+      localStorage.setItem("squareCraft_w_id", squareCraft_w_id);
+      document.cookie = `squareCraft_w_id=${squareCraft_w_id}; path=.squarespace.com;`;
   }
 }
