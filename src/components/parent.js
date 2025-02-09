@@ -64,7 +64,7 @@
         fontFamilyDropdown();
     }
 
-    let parentHtml, attachEventListeners, observeDOMChanges, getStyles, token;
+    let parentHtml, attachEventListeners, observeDOMChanges, getStyles;
 
     async function loadModule(url) {
         try {
