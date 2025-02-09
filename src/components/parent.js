@@ -26,7 +26,7 @@
 
         const script = document.createElement("script");
         script.id = "squareCraft-script-tab";
-        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
+        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; 
         script.defer = true;
 
         script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
@@ -154,7 +154,6 @@
                 document.body.appendChild(widgetContainer);
                 console.log("✅ Widget appended!");
 
-                // ✅ Initialize Dropdown **AFTER** the widget is loaded
                 fontFamilyDropdowninteract();
             });
         } else {
