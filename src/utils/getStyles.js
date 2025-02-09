@@ -3,11 +3,12 @@ import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin
 
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token")
+  const squareCraft_w_id = localStorage.getItem("squareCraft_w_id")
 
  
 
   try {
-    const userId = "679b4e3aee8e48bf97172661";
+    const userId = squareCraft_w_id;
 
     if (isEditingMode()) {
       console.log("🛠 Squarespace is in Edit Mode - Waiting for changes...");
