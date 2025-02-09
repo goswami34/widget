@@ -124,7 +124,7 @@ export function parentHtml() {
 
                             </div>
                         </div>
-                        <div class="squareCraft-flex squareCraft-w-full squareCraft-bg-color-EF7C2F squareCraft-justify-between squareCraft-col-span-4  squareCraft-rounded-6px squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-items-center squareCraft-h-full">
+                        <div class="squareCraft-flex squareCraft-w-full  squareCraft-justify-between squareCraft-col-span-4  squareCraft-rounded-6px squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-items-center squareCraft-h-full">
                           <div class="squareCraft-flex  squareCraft-mx-auto squareCraft-items-center squareCraft-justify-center">
                             <img class=" squareCraft-rounded-6px squareCraft-rotate-180 squareCraft-w-full " 
                             src="https://fatin-webefo.github.io/squareCraft-Plugin/public/dot.svg"  alt="">

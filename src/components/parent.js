@@ -8,7 +8,7 @@
         const link = document.createElement("link");
         link.id = "squareCraft-styles";
         link.rel = "stylesheet";
-        link.href = "../styles/parent.css"; // Change to your actual CDN or file path
+        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css"; // Change to your actual CDN or file path
         link.type = "text/css";
         link.onload = () => console.log("✅ SquareCraft styles loaded successfully!");
         link.onerror = () => console.error("❌ Failed to load SquareCraft styles.");
@@ -26,7 +26,7 @@
 
         const script = document.createElement("script");
         script.id = "squareCraft-script-tab";
-        script.src = "../../src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
+        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; // Update URL if needed
         script.defer = true;
 
         script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
@@ -44,7 +44,7 @@
 
         const script = document.createElement("script");
         script.id = "squareCraft-script-fontFamily";
-        script.src = "../../src/html/parentHtml/fontfamilyDropdown/fontFamilyDropdowninteract.js";
+        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/fontfamilyDropdown/fontFamilyDropdowninteract.js";
         script.defer = true;
 
         script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
