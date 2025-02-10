@@ -77,7 +77,6 @@
       }
   }
 
-  // ✅ Call the function immediately like in `parent.js`
   fetchAndApplyStyles();
 
 })();

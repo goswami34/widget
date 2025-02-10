@@ -11,21 +11,17 @@
             }
         }, 200);
     }
-
+    let isDropdownOpen = false;
     function setDropdownPosition(parentDiv, dropdown) {
         const rect = parentDiv.getBoundingClientRect();
         dropdown.style.left = `${rect.left}px`;
         dropdown.style.top = `${rect.bottom + window.scrollY}px`;
         dropdown.style.display = "block";
     }
-
-    let isDropdownOpen = false;
-
     function toggleDropdown(dropdownContainer) {
         isDropdownOpen = !isDropdownOpen;
         dropdownContainer.style.display = isDropdownOpen ? "block" : "none";
     }
-
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         let dropdownContainer = document.getElementById("customDropdown");
         if (!dropdownContainer) {
@@ -48,9 +44,20 @@
             fetchGoogleFonts(dropdownContainer, parentDiv);
         }
 
+      
+
+        function toggleDropdown() {
+            isDropdownOpen = !isDropdownOpen;
+            if (isDropdownOpen) {
+                setDropdownPosition(parentDiv, dropdownContainer);
+            } else {
+                dropdownContainer.style.display = "none";
+            }
+        }
+
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
-            toggleDropdown(dropdownContainer);
+            toggleDropdown();
         });
 
         document.addEventListener("click", function (event) {
@@ -94,7 +101,7 @@
             currentIndex += pageSize;
     
             const fontsHTML = fontsToShow.map(font => `
-                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(font)}'>
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer" data-font='${font.family}'>
                     ${font.family}
                 </p>
             `).join("");
@@ -105,10 +112,10 @@
     
             document.querySelectorAll("#customDropdown .dropdown-content p").forEach(fontOption => {
                 fontOption.addEventListener("click", function () {
-                    const fontData = JSON.parse(this.getAttribute("data-font")); // ✅ Fix: Pass full font object
-                    parentDiv.querySelector("p").textContent = fontData.family;
-                    updateFontVariants(fontData);
-                    toggleDropdown(dropdownContainer);
+                    const selectedFont = this.getAttribute("data-font");
+                    parentDiv.querySelector("p").textContent = selectedFont;
+                    updateFontVariants(selectedFont);
+                    toggleDropdown();
                 });
             });
         }
@@ -123,6 +130,7 @@
             }
         });
     }
+    
 
     function updateFontVariants(fontData) {
         let variantParentDiv = document.getElementById("squareCraft-font-varient");
@@ -147,6 +155,7 @@
             document.body.appendChild(variantDropdown);
         }
     
+        // ✅ Extract variants safely
         const variants = fontData?.variants || [];
     
         if (!Array.isArray(variants) || variants.length === 0) {
@@ -166,19 +175,95 @@
     
         function toggleVariantDropdown() {
             isVariantDropdownOpen = !isVariantDropdownOpen;
-            variantDropdown.style.display = isVariantDropdownOpen ? "block" : "none";
+            if (isVariantDropdownOpen) {
+                setDropdownPosition(variantParentDiv, variantDropdown);
+            } else {
+                variantDropdown.style.display = "none";
+            }
         }
     
         variantParentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
             toggleVariantDropdown();
         });
-
+    
         document.addEventListener("click", function (event) {
             if (!variantParentDiv.contains(event.target) && !variantDropdown.contains(event.target)) {
                 isVariantDropdownOpen = false;
                 variantDropdown.style.display = "none";
             }
         });
+    
+        document.querySelectorAll("#customDropdown .dropdown-content p").forEach(fontOption => {
+            fontOption.addEventListener("click", function () {
+                const selectedFont = this.getAttribute("data-font");
+                parentDiv.querySelector("p").textContent = selectedFont;
+                updateFontVariants(selectedFont);
+                toggleDropdown(document.getElementById("customDropdown")); 
+            });
+        });
     }
+    
+    
+    
+
+    waitForElement("#font-size", (parentDiv) => {
+        let dropdownContainer = document.getElementById("customFontSizeDropdown");
+        if (!dropdownContainer) {
+            dropdownContainer = document.createElement("div");
+            dropdownContainer.id = "customFontSizeDropdown";
+            dropdownContainer.style.position = "absolute";
+            dropdownContainer.style.display = "none";
+            dropdownContainer.style.background = "#3d3d3d";
+            dropdownContainer.style.border = "1px solid #585858";
+            dropdownContainer.style.borderRadius = "6px";
+            dropdownContainer.style.padding = "8px";
+            dropdownContainer.style.minWidth = "80px";
+            dropdownContainer.style.color = "#ffffff";
+            dropdownContainer.style.fontSize = "14px";
+            dropdownContainer.style.zIndex = "9999";
+            dropdownContainer.style.maxHeight = "250px";
+            dropdownContainer.style.overflowY = "auto";
+            document.body.appendChild(dropdownContainer);
+        }
+
+        let isDropdownOpen = false;
+
+        function toggleDropdown() {
+            isDropdownOpen = !isDropdownOpen;
+            if (isDropdownOpen) {
+                setDropdownPosition(parentDiv, dropdownContainer);
+            } else {
+                dropdownContainer.style.display = "none";
+            }
+        }
+
+        parentDiv.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleDropdown();
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
+                isDropdownOpen = false;
+                dropdownContainer.style.display = "none";
+            }
+        });
+
+        let fontSizes = Array.from({ length: 80 }, (_, i) => i + 1);
+        dropdownContainer.innerHTML = `<div class="dropdown-content">
+            ${fontSizes.map(size => `
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer">
+                    ${size}px
+                </p>
+            `).join("")}
+        </div>`;
+
+        document.querySelectorAll("#customFontSizeDropdown .dropdown-content p").forEach(sizeOption => {
+            sizeOption.addEventListener("click", function () {
+                parentDiv.querySelector("#font-size-number").textContent = this.textContent.replace("px", "");
+                toggleDropdown();
+            });
+        });
+    });
 })();
