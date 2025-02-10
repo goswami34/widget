@@ -1,5 +1,14 @@
 
 (async function fontFamilyDropdowninteract() {
+    async function loadModule(url) {
+        try {
+            const module = await import(url);
+            return module;
+        } catch (err) {
+            console.error(`❌ Failed to load module: ${url}`, err);
+            return null;
+        }
+    }
     postStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/postStyles.js"))?.postStyles;
     getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
 
