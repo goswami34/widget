@@ -4,6 +4,7 @@ import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token")
   const squareCraft_u_id = localStorage.getItem("squareCraft_u_id")
+  const squareCraft_w_id = localStorage.getItem("squareCraft_w_id")
 
  
 
@@ -34,7 +35,6 @@ export async function getStyles() {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
-          "pageId": pageId
         },
       }
     );
