@@ -8,7 +8,7 @@ let selectedPageId = null;
 let selectedElementId = null;
 let lastHighlightedElement = null;
 
-export function attachEventListeners() {
+export async function attachEventListeners () {
     console.log("🔗 attachEventListeners Initialized");
 
     document.addEventListener("click", (event) => {
