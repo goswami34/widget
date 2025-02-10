@@ -1,74 +1,72 @@
+import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/getPageAndElement.js";
+import { saveModifications } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/saveModifications.js";
 
+export function attachEventListeners() {
+    let selectedElement = null;
+    let selectedPageId = null;
+    let selectedElementId = null;
 
-export async function saveModifications(targetElement, css = {}, fontFamily, fontVariant, fontSize) {
-    const token = localStorage.getItem("squareCraft_auth_token");
-    const userId = localStorage.getItem("squareCraft_u_id");
-    const widgetId = localStorage.getItem("squareCraft_w_id");
+    // 🔥 Click Event: Store selected element details
+    document.addEventListener("click", (event) => {
+        let { pageId, elementId } = getPageAndElement(event.target);
 
-    if (!token || !userId || !widgetId) {
-        console.warn("⚠️ Missing authentication details. Cannot save modifications.");
-        // return;
-    }
+        if (!pageId || !elementId) {
+            console.warn("⚠️ No valid page or block found.");
+            return;
+        }
 
-    let page = targetElement.closest("article[data-page-sections]");
-    let block = targetElement.closest('[id^="block-"]');
+        // ✅ Store the selected element data
+        selectedElement = event.target;
+        selectedPageId = pageId;
+        selectedElementId = elementId;
 
-    if (!page || !block) {
-        console.warn("⚠️ No valid page or block found.");
-        // return;
-    }
+        console.log(`✅ Selected → Page ID: ${selectedPageId}, Element ID: ${selectedElementId}`);
 
-    let pageId = page.getAttribute("data-page-sections");
-    let elementId = block.id;
+        // Apply highlight effect
+        selectedElement.style.outline = "3px solid #FF5733";
+        selectedElement.style.animation = "squarecraftGlow 1.5s infinite alternate";
+    });
 
-    let blockType = "Unknown";
-    if (block.classList.contains("sqs-block-html")) blockType = "Text";
-    else if (block.classList.contains("sqs-block-image")) blockType = "Image";
-    else if (block.classList.contains("sqs-block-button")) blockType = "Button";
+    // 🔥 Apply Styling (Font, Size, Variant)
+    document.getElementById("squareCraft-font-family").addEventListener("change", (event) => {
+        if (!selectedElement) {
+            console.warn("⚠️ No element selected! Click an element first.");
+            return;
+        }
+        selectedElement.style.fontFamily = event.target.value;
+    });
 
-    if (fontFamily) css["font-family"] = fontFamily;
-    if (fontVariant) css["font-variant"] = fontVariant;
-    if (fontSize) css["font-size"] = `${fontSize}px`;
+    document.getElementById("font-size").addEventListener("input", (event) => {
+        if (!selectedElement) {
+            console.warn("⚠️ No element selected! Click an element first.");
+            return;
+        }
+        selectedElement.style.fontSize = event.target.value + "px";
+    });
 
-    console.log(`💾 Saving modifications for Page ID: ${pageId}, Element ID: ${elementId}, Block Type: ${blockType}`, css);
+    document.getElementById("squareCraft-font-varient").addEventListener("change", (event) => {
+        if (!selectedElement) {
+            console.warn("⚠️ No element selected! Click an element first.");
+            return;
+        }
+        selectedElement.style.fontVariant = event.target.value;
+    });
 
-    const modificationData = {
-        userId,
-        token,
-        widgetId,
-        modifications: [
-            {
-                pageId,
-                elements: [
-                    {
-                        elementId,
-                        css,
-                    }
-                ]
-            }
-        ]
-    };
+    // 🔥 Publish Changes (Save to Backend)
+    document.getElementById("squareCraftPublish").addEventListener("click", async () => {
+        if (!selectedElement || !selectedPageId || !selectedElementId) {
+            console.warn("⚠️ No element selected! Click an element first.");
+            return;
+        }
 
-    try {
-        const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-                "userId": userId,
-                "widget-id": widgetId,
-                "pageId": pageId
-            },
-            body: JSON.stringify(modificationData),
-        });
+        let css = {
+            fontFamily: selectedElement.style.fontFamily,
+            fontSize: selectedElement.style.fontSize,
+            fontVariant: selectedElement.style.fontVariant,
+        };
 
-      
+        console.log("🎨 Publishing Changes:", { selectedPageId, selectedElementId, css });
 
-        const data = await response.json();
-        console.log("✅ Changes Saved Successfully!", data);
-
-    } catch (error) {
-        console.error("❌ Error saving modifications:", error);
-        return
-    }
+        await saveModifications(selectedElement, css);
+    });
 }
