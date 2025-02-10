@@ -41,6 +41,7 @@ export async function saveModifications(pageId, elementId, css, fontFamily) {
             },
             body: JSON.stringify(modificationData),
         });
+        console.log(response)
 
         if (response.ok) {
             const data = await response.json();
