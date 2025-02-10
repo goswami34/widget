@@ -1,3 +1,4 @@
+
 import { postStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/postStyles.js";
 import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
 
@@ -23,17 +24,17 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         }, 200);
     }
 
-    function toggleDropdown(parentDiv, dropdown) {
-        if (!dropdown) return;
-        isDropdownOpen = !isDropdownOpen;
-        isDropdownOpen ? setDropdownPosition(parentDiv, dropdown) : dropdown.classList.remove("squareCraft-visible");
-    }
-
     function setDropdownPosition(parentDiv, dropdown) {
         const rect = parentDiv.getBoundingClientRect();
         dropdown.style.left = `${rect.left}px`;
         dropdown.style.top = `${rect.bottom + window.scrollY}px`;
         dropdown.classList.add("squareCraft-visible");
+    }
+
+    function toggleDropdown(parentDiv, dropdown) {
+        if (!dropdown) return;
+        isDropdownOpen = !isDropdownOpen;
+        isDropdownOpen ? setDropdownPosition(parentDiv, dropdown) : dropdown.classList.remove("squareCraft-visible");
     }
 
     document.addEventListener("click", (event) => {
@@ -46,7 +47,6 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         getStyles(selectedElement);
     });
 
-    // Font Family Dropdown
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         fontDropdown = document.createElement("div");
         fontDropdown.id = "fontDropdown";
@@ -102,19 +102,13 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
     }
 
     function applyFont(fontFamily, fontUrl) {
-        const formattedFontName = fontFamily.replace(/\s+/g, "+");
-        const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@400;700&display=swap`;
-
-        if (!document.querySelector(`link[href="${fontCDN}"]`)) {
+        if (!document.querySelector(`link[href="${fontUrl}"]`)) {
             let fontLink = document.createElement("link");
             fontLink.rel = "stylesheet";
-            fontLink.href = fontCDN;
+            fontLink.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400;700&display=swap`;
             document.head.appendChild(fontLink);
         }
-
-        if (selectedElement) {
-            selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
-        }
+        selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
     }
 
     // Font Size Dropdown
@@ -142,30 +136,5 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         });
     });
 
-    // Font Variant Dropdown
-    waitForElement("#squareCraft-font-variant", (parentDiv) => {
-        variantDropdown = document.createElement("div");
-        variantDropdown.id = "fontVariantDropdown";
-        variantDropdown.classList.add("squareCraft-dropdown");
-        document.body.appendChild(variantDropdown);
-        parentDiv.addEventListener("click", function (event) {
-            event.stopPropagation();
-            toggleDropdown(parentDiv, variantDropdown);
-        });
-        variantDropdown.innerHTML = ["normal", "small-caps", "all-small-caps", "slashed-zero"]
-            .map(variant => `<p class="squareCraft-dropdown-item" data-variant="${variant}">${variant}</p>`)
-            .join("");
-        document.querySelectorAll("#fontVariantDropdown .squareCraft-dropdown-item").forEach(variantOption => {
-            variantOption.addEventListener("click", function () {
-                if (!selectedElement) return;
-                const selectedVariant = this.getAttribute("data-variant");
-                selectedElement.style.fontVariant = selectedVariant;
-                document.querySelector("#squareCraft-font-variant p").textContent = selectedVariant;
-                postStyles(selectedElement, { "font-variant": selectedVariant });
-                toggleDropdown(parentDiv, variantDropdown);
-            });
-        });
-    });
 
 })();
-
