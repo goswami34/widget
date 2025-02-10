@@ -132,7 +132,12 @@
     function updateFontVariants(variants) {
         let variantParentDiv = document.getElementById("squareCraft-font-varient");
         if (!variantParentDiv) return;
-
+    
+        // ✅ Ensure `variants` is an array, if not, convert it
+        if (!Array.isArray(variants)) {
+            variants = [variants];
+        }
+    
         let variantDropdown = document.getElementById("customVariantDropdown");
         if (!variantDropdown) {
             variantDropdown = document.createElement("div");
@@ -151,17 +156,18 @@
             variantDropdown.style.overflowY = "auto";
             document.body.appendChild(variantDropdown);
         }
-
+    
+        // ✅ Render dropdown safely
         variantDropdown.innerHTML = `<div class="dropdown-content">
-            ${variants?.map(variant => `
-                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover  squareCraft-text-sm squareCraft-cursor-pointer">
+            ${variants.map(variant => `
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer">
                     ${variant}
                 </p>
             `).join("")}
         </div>`;
-
+    
         let isVariantDropdownOpen = false;
-
+    
         function toggleVariantDropdown() {
             isVariantDropdownOpen = !isVariantDropdownOpen;
             if (isVariantDropdownOpen) {
@@ -170,19 +176,19 @@
                 variantDropdown.style.display = "none";
             }
         }
-
+    
         variantParentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
             toggleVariantDropdown();
         });
-
+    
         document.addEventListener("click", function (event) {
             if (!variantParentDiv.contains(event.target) && !variantDropdown.contains(event.target)) {
                 isVariantDropdownOpen = false;
                 variantDropdown.style.display = "none";
             }
         });
-
+    
         document.querySelectorAll("#customVariantDropdown .dropdown-content p").forEach(variantOption => {
             variantOption.addEventListener("click", function () {
                 variantParentDiv.querySelector("p").textContent = this.textContent;
@@ -190,6 +196,7 @@
             });
         });
     }
+    
 
     waitForElement("#font-size", (parentDiv) => {
         let dropdownContainer = document.getElementById("customFontSizeDropdown");
