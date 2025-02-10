@@ -1,4 +1,4 @@
-import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
+
 import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode.js";
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token");
@@ -48,7 +48,7 @@ export async function getStyles() {
           if (fetchedPageId === pageId) {
               elements.forEach(({ elementId, css }) => {
                   console.log(`🎨 Applying styles to ${elementId}`, css); // ✅ Fix: Logs CSS styles
-                  applyStylesToElement(elementId, css);
+           
               });
           }
       });

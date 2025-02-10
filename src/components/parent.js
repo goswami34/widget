@@ -57,14 +57,13 @@
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
         fontFamilyDropdowninteract();
-        attachEventListeners();
         getStyles();
         observeDOMChanges();
         parentTabFunction();
         fontFamilyDropdown();
     }
 
-    let parentHtml, attachEventListeners, observeDOMChanges, getStyles;
+    let parentHtml,  observeDOMChanges, getStyles;
 
     async function loadModule(url) {
         try {
@@ -77,7 +76,6 @@
     }
 
     parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js"))?.parentHtml;
-    attachEventListeners = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/attachEventListeners.js"))?.attachEventListeners;
     observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
     getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
     try {
@@ -88,12 +86,7 @@
     }
 
 
-    if (!attachEventListeners) {
-        console.error("�� attachEventListeners function not found! Check if the script loaded properly.");
-
-    }
-
-    else if (!observeDOMChanges) {
+     if (!observeDOMChanges) {
         console.error("�� observeDOMChanges function not found! Check if the script loaded properly.");
 
     }

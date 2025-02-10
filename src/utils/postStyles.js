@@ -1,4 +1,4 @@
-import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
+
 
 export async function saveModifications(targetElement, css = {}, fontFamily, fontVariant, fontSize) {
     const token = localStorage.getItem("squareCraft_auth_token");
@@ -30,7 +30,6 @@ export async function saveModifications(targetElement, css = {}, fontFamily, fon
     if (fontVariant) css["font-variant"] = fontVariant;
     if (fontSize) css["font-size"] = `${fontSize}px`;
 
-    applyStylesToElement(elementId, css);
     console.log(`💾 Saving modifications for Page ID: ${pageId}, Element ID: ${elementId}, Block Type: ${blockType}`, css);
 
     const modificationData = {
