@@ -12,28 +12,27 @@ export async function saveModifications(pageId, elementId, css) {
 
     applyStylesToElement(elementId, css);
     console.log(`💾 Saving modifications for Page ID: ${pageId}, Element ID: ${elementId}`);
-    
-   const modificationdata={
-      userId,
-      token,
-      widgetId,
-      modifications: [{
-               pageId,
-               elements: [{ elementId, css }]
-                     }]
-    }
+
+    const modificationData = {
+        userId,
+        token,
+        widgetId,
+        modifications: [{
+            pageId,
+            elements: [{ elementId, css }]
+        }]
+    };
 
     try {
-        const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", modificationdata, {
+        const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
                 "userId": userId,
-                "widget-id": widgetId,
-                "pageId": pageId
+                "widget-id": widgetId
             },
-           
+            body: JSON.stringify(modificationData),
         });
 
         if (response.ok) {
