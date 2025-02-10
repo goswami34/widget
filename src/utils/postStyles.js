@@ -7,7 +7,7 @@ export async function saveModifications(targetElement, css = {}, fontFamily, fon
 
     if (!token || !userId || !widgetId) {
         console.warn("⚠️ Missing authentication details. Cannot save modifications.");
-        return;
+        // return;
     }
 
     let page = targetElement.closest("article[data-page-sections]");
@@ -15,7 +15,7 @@ export async function saveModifications(targetElement, css = {}, fontFamily, fon
 
     if (!page || !block) {
         console.warn("⚠️ No valid page or block found.");
-        return;
+        // return;
     }
 
     let pageId = page.getAttribute("data-page-sections");
