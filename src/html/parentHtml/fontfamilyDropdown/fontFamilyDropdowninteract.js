@@ -12,16 +12,23 @@
             const element = document.querySelector(selector);
             if (element) {
                 clearInterval(interval);
+                console.log(`✅ Found element: ${selector}`);
                 callback(element);
             } else if (Date.now() - startTime > timeout) {
+                console.warn(`⚠️ Timeout waiting for ${selector}`);
                 clearInterval(interval);
             }
         }, 200);
     }
 
     function toggleDropdown(parentDiv) {
-        if (!dropdownContainer) return;
+        if (!dropdownContainer) {
+            console.warn("⚠️ dropdownContainer not found!");
+            return;
+        }
+
         isDropdownOpen = !isDropdownOpen;
+        console.log(`🔄 Toggling Dropdown → isDropdownOpen: ${isDropdownOpen}`);
 
         if (isDropdownOpen) {
             dropdownContainer.classList.add("squareCraft-visible");
@@ -49,6 +56,8 @@
     });
 
     waitForElement("#squareCraft-font-family", (parentDiv) => {
+        console.log("✅ Attaching dropdown to #squareCraft-font-family");
+
         dropdownContainer = document.createElement("div");
         dropdownContainer.id = "customDropdown";
         dropdownContainer.classList.add("squareCraft-dropdown");
@@ -58,6 +67,7 @@
 
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
+            console.log("🎯 Font dropdown clicked!");
             toggleDropdown(parentDiv);
         });
 
@@ -65,6 +75,7 @@
             if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
                 isDropdownOpen = false;
                 dropdownContainer.classList.remove("squareCraft-visible");
+                console.log("❌ Closing dropdown (clicked outside)");
             }
         });
     });
@@ -81,12 +92,15 @@
         const loader = dropdownContainer.querySelector(".squareCraft-loader");
 
         try {
+            console.log("⏳ Fetching fonts from Google API...");
             const response = await fetch(apiUrl);
             if (!response.ok) throw new Error("Failed to fetch fonts");
             const data = await response.json();
             allFonts = data.items;
+            console.log("✅ Fonts fetched successfully!", allFonts);
             renderFonts();
         } catch (error) {
+            console.error("❌ Error loading fonts:", error);
             dropdownContainer.innerHTML = `<p class="squareCraft-error">❌ Error loading fonts</p>`;
         }
 
