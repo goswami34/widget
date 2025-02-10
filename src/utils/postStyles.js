@@ -1,21 +1,37 @@
 import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
 
-export async function saveModifications(pageId, elementId, css, fontFamily, fontVariant, fontSize) {
+export async function saveModifications(targetElement, css, fontFamily, fontVariant, fontSize) {
     const token = localStorage.getItem("squareCraft_auth_token");
     const userId = localStorage.getItem("squareCraft_u_id");
     const widgetId = localStorage.getItem("squareCraft_w_id");
 
-    if (!pageId || !elementId || !css || !token || !userId || !widgetId) {
-        console.warn("⚠️ Missing required parameters. Cannot save modifications.");
+    let page = targetElement.closest("article[data-page-sections]");
+    let block = targetElement.closest('[id^="block-"]');
+
+    if (!page || !block) {
+        console.warn("⚠️ No valid page or block found.");
         return;
     }
 
+    let pageId = page.getAttribute("data-page-sections");
+    let elementId = block.id;
+
+    let blockType = "Unknown";
+    if (block.classList.contains("sqs-block-html")) {
+        blockType = "Text";
+    } else if (block.classList.contains("sqs-block-image")) {
+        blockType = "Image";
+    } else if (block.classList.contains("sqs-block-button")) {
+        blockType = "Button";
+    }
+
+    if (!css) css = {};
     if (fontFamily) css["font-family"] = fontFamily;
     if (fontVariant) css["font-variant"] = fontVariant;
     if (fontSize) css["font-size"] = `${fontSize}px`;
 
     applyStylesToElement(elementId, css);
-    console.log(`💾 Saving modifications for Page ID: ${pageId}, Element ID: ${elementId}`, css);
+    console.log(`💾 Saving modifications for Page ID: ${pageId}, Element ID: ${elementId}, Block Type: ${blockType}`, css);
 
     const modificationData = {
         userId,
@@ -27,7 +43,8 @@ export async function saveModifications(pageId, elementId, css, fontFamily, font
                 elements: [
                     {
                         elementId,
-                        css  
+                        css
+                         
                     }
                 ]
             }
