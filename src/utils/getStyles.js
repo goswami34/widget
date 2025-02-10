@@ -1,23 +1,11 @@
-
-import { isEditingMode } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode.js";
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token");
   const userId = localStorage.getItem("squareCraft_u_id");
-  const widgetId = localStorage.getItem("squareCraft_w_id");
 
-  if (!token || !userId || !widgetId) {
-      console.warn("⚠️ Missing authentication details.");
-      return;
-  }
-
-
+  if (!token || !userId) return;
 
   let pageElement = document.querySelector("article[data-page-sections]");
   let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
-
- 
-
-  console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
 
   try {
       const response = await fetch(
@@ -26,27 +14,27 @@ export async function getStyles() {
               method: "GET",
               headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`,
+                  "Authorization": `Bearer ${token}`
               },
           }
       );
 
-      
-
       const data = await response.json();
-      console.log("📥 Fetched Modifications:", data); // ✅ FIXED: Logs actual response data
 
       data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {
           if (fetchedPageId === pageId) {
               elements.forEach(({ elementId, css }) => {
-                  console.log(`🎨 Applying styles to ${elementId}`, css); // ✅ Fix: Logs CSS styles
-           
+                  const element = document.getElementById(elementId);
+                  if (!element) return;
+
+                  if (css["font-family"]) applyFont(css["font-family"], css["font-weights"]);
+                  if (css["font-size"]) element.style.fontSize = css["font-size"];
+                  if (css["font-variant"]) element.style.fontVariant = css["font-variant"];
               });
           }
       });
 
   } catch (error) {
       console.error("❌ Error fetching modifications:", error);
-      return
   }
 }
