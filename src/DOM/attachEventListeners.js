@@ -1,14 +1,15 @@
 import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/getPageAndElement.js";
 import { saveModifications } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/saveModifications.js";
 import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
+import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
 
-
-
-export function attachEventListeners() {
-    let lastHighlightedElement = null;
-    let selectedElement = null;
+let selectedElement = null;
 let selectedPageId = null;
 let selectedElementId = null;
+let lastHighlightedElement = null;
+
+export function attachEventListeners() {
+    console.log("🔗 attachEventListeners Initialized");
 
     document.addEventListener("click", (event) => {
         let { pageId, elementId } = getPageAndElement(event.target);
@@ -33,20 +34,36 @@ let selectedElementId = null;
         console.log(`✅ Selected Element → Page ID: ${selectedPageId}, Element ID: ${selectedElementId}`);
     });
 
-    document.getElementById("font-size").addEventListener("input", () => applyStyle(selectedElement));
-    document.getElementById("squareCraft-font-family").addEventListener("change", () => applyStyle(selectedElement));
-    document.getElementById("squareCraft-font-varient").addEventListener("change", () => applyStyle(selectedElement));
+    document.getElementById("font-size").addEventListener("input", (event) => {
+        if (!selectedElement) return;
+        selectedElement.style.fontSize = event.target.value + "px";
+    });
 
+    document.getElementById("squareCraft-font-family").addEventListener("change", (event) => {
+        if (!selectedElement) return;
+        selectedElement.style.fontFamily = event.target.value;
+    });
+    document.getElementById("squareCraft-font-varient").addEventListener("change", (event) => {
+        if (!selectedElement) return;
+        selectedElement.style.fontVariant = event.target.value;
+    });
     document.getElementById("squareCraftPublish").addEventListener("click", async () => {
         if (!selectedElement || !selectedPageId || !selectedElementId) {
             console.warn("⚠️ No element selected! Click an element first.");
             return;
         }
 
-        let css = getCSSModifications(selectedElement);
+        let css = {
+            fontSize: selectedElement.style.fontSize,
+            fontFamily: selectedElement.style.fontFamily,
+            fontVariant: selectedElement.style.fontVariant,
+        };
+
         console.log("🎨 Publishing Changes:", { selectedPageId, selectedElementId, css });
 
         await saveModifications(selectedElement, css);
+
+        applyStylesToElement(selectedElementId, css);
     });
 
     getStyles();
