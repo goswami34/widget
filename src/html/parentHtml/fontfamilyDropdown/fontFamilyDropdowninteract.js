@@ -18,7 +18,10 @@
         dropdown.style.top = `${rect.bottom + window.scrollY}px`;
         dropdown.style.display = "block";
     }
-
+    function toggleDropdown(dropdownContainer) {
+        isDropdownOpen = !isDropdownOpen;
+        dropdownContainer.style.display = isDropdownOpen ? "block" : "none";
+    }
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         let dropdownContainer = document.getElementById("customDropdown");
         if (!dropdownContainer) {
@@ -191,10 +194,12 @@
             }
         });
     
-        document.querySelectorAll("#customVariantDropdown .dropdown-content p").forEach(variantOption => {
-            variantOption.addEventListener("click", function () {
-                variantParentDiv.querySelector("p").textContent = this.textContent;
-                toggleVariantDropdown();
+        document.querySelectorAll("#customDropdown .dropdown-content p").forEach(fontOption => {
+            fontOption.addEventListener("click", function () {
+                const selectedFont = this.getAttribute("data-font");
+                parentDiv.querySelector("p").textContent = selectedFont;
+                updateFontVariants(selectedFont);
+                toggleDropdown(document.getElementById("customDropdown")); 
             });
         });
     }
