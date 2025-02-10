@@ -74,6 +74,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
             const data = await response.json();
             allFonts = data.items;
             renderFonts();
+            console.log(response)
         } catch (error) {
             dropdownContainer.innerHTML = `<p class="squareCraft-error">❌ Error loading fonts</p>`;
         }
@@ -108,7 +109,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
             fontLink.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400;700&display=swap`;
             document.head.appendChild(fontLink);
         }
-        selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
+        selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;   
     }
 
     // Font Size Dropdown
