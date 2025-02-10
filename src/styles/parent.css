@@ -567,51 +567,46 @@ p {
   width: 100%;
 }
 
-/* 🔽 Show dropdown when active */
 .squareCraft-visible {
   display: block !important;
 }
 
-/* 🔽 Dropdown Content */
 .squareCraft-dropdown-content {
-  background-color: #3d3d3d;
-  border: 1px solid #585858;
-  border-radius: 6px;
-  padding: 8px;
-  color: #ffffff;
-  font-size: 14px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #3d3d3d !important;
+  border: 1px solid #585858 !important;
+  border-radius: 6px !important;
+  padding: 8px !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  width: 300px !important;
 }
 
-/* 🔽 Dropdown Items */
 .squareCraft-dropdown-item {
-  padding: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
+  padding: 6px !important;
+  cursor: pointer !important;
+  transition: background 0.3s ease-in-out !important;
 }
 
 .squareCraft-dropdown-item:hover {
-  background-color: #EF7C2F;
+  background-color: #EF7C2F !important;
 }
 
-/* 🔽 Loading Indicator */
 .squareCraft-loader {
-  text-align: center;
-  padding: 10px;
+  text-align: center !important;
+  padding: 10px !important;
 }
 
 .squareCraft-hidden {
-  display: none;
+  display: none !important;
 }
 
-/* 🔽 Scrollable Pagination */
 .squareCraft-scroll {
-  max-height: 250px;
-  overflow-y: auto;
+  max-height: 250px !important;
+  overflow-y: auto !important;
 }
 
-/* 🔽 Active Selection */
 .squareCraft-active {
-  background-color: #EF7C2F;
-  color: white;
+  background-color: #EF7C2F !important;
+  color: white !important;
 }

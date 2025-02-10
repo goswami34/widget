@@ -6,7 +6,6 @@ export function attachEventListeners() {
     let selectedPageId = null;
     let selectedElementId = null;
 
-    // 🔥 Click Event: Store selected element details
     document.addEventListener("click", (event) => {
         let { pageId, elementId } = getPageAndElement(event.target);
 
@@ -15,19 +14,16 @@ export function attachEventListeners() {
             return;
         }
 
-        // ✅ Store the selected element data
         selectedElement = event.target;
         selectedPageId = pageId;
         selectedElementId = elementId;
 
         console.log(`✅ Selected → Page ID: ${selectedPageId}, Element ID: ${selectedElementId}`);
 
-        // Apply highlight effect
         selectedElement.style.outline = "3px solid #FF5733";
         selectedElement.style.animation = "squarecraftGlow 1.5s infinite alternate";
     });
 
-    // 🔥 Apply Styling (Font, Size, Variant)
     document.getElementById("squareCraft-font-family").addEventListener("change", (event) => {
         if (!selectedElement) {
             console.warn("⚠️ No element selected! Click an element first.");
@@ -52,7 +48,6 @@ export function attachEventListeners() {
         selectedElement.style.fontVariant = event.target.value;
     });
 
-    // 🔥 Publish Changes (Save to Backend)
     document.getElementById("squareCraftPublish").addEventListener("click", async () => {
         if (!selectedElement || !selectedPageId || !selectedElementId) {
             console.warn("⚠️ No element selected! Click an element first.");

@@ -28,25 +28,16 @@
     function toggleDropdown(parentDiv) {
         if (!dropdownContainer) return;
         isDropdownOpen = !isDropdownOpen;
-
-        if (isDropdownOpen) {
-            setDropdownPosition(parentDiv, dropdownContainer);
-        } else {
-            dropdownContainer.classList.remove("squareCraft-visible");
-        }
+        isDropdownOpen ? setDropdownPosition(parentDiv, dropdownContainer) : dropdownContainer.classList.remove("squareCraft-visible");
     }
 
     document.addEventListener("click", (event) => {
         let clickedElement = event.target.closest("[id^='block-']");
         let pageElement = event.target.closest("article[data-page-sections]");
-
         if (!clickedElement || !pageElement) return;
-
         selectedElement = clickedElement;
         selectedPageId = pageElement.getAttribute("data-page-sections");
         selectedBlockId = clickedElement.id;
-
-        console.log(`✅ Selected → Page ID: ${selectedPageId}, Block ID: ${selectedBlockId}`);
     });
 
     waitForElement("#squareCraft-font-family", (parentDiv) => {
@@ -54,14 +45,11 @@
         dropdownContainer.id = "customDropdown";
         dropdownContainer.classList.add("squareCraft-dropdown");
         document.body.appendChild(dropdownContainer);
-
         fetchGoogleFonts(dropdownContainer, parentDiv);
-
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
             toggleDropdown(parentDiv);
         });
-
         document.addEventListener("click", function (event) {
             if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
                 isDropdownOpen = false;
@@ -76,18 +64,15 @@
         let currentIndex = 0;
         const pageSize = 10;
         let isFetching = false;
-
         dropdownContainer.innerHTML = `<div class="squareCraft-dropdown-content"></div><div class="squareCraft-loader">Loading fonts...</div>`;
         const dropdownContent = dropdownContainer.querySelector(".squareCraft-dropdown-content");
         const loader = dropdownContainer.querySelector(".squareCraft-loader");
 
         try {
-            console.log("⏳ Fetching fonts...");
             const response = await fetch(apiUrl);
             if (!response.ok) throw new Error("Failed to fetch fonts");
             const data = await response.json();
             allFonts = data.items;
-            console.log("✅ Fonts fetched:", allFonts.length);
             renderFonts();
         } catch (error) {
             dropdownContainer.innerHTML = `<p class="squareCraft-error">❌ Error loading fonts</p>`;
@@ -95,31 +80,22 @@
 
         function renderFonts() {
             if (currentIndex >= allFonts.length) return;
-
             const fontsToShow = allFonts.slice(currentIndex, currentIndex + pageSize);
             currentIndex += pageSize;
-
             dropdownContent.innerHTML += fontsToShow.map(font => `
-                <p class="squareCraft-dropdown-item" data-font="${font.family}">
+                <p class="squareCraft-dropdown-item" data-font="${font.family}" data-font-url="${font.files.regular}">
                     ${font.family}
                 </p>
             `).join("");
-
             loader.classList.add("squareCraft-hidden");
             isFetching = false;
-
             document.querySelectorAll(".squareCraft-dropdown-content .squareCraft-dropdown-item").forEach(fontOption => {
                 fontOption.addEventListener("click", function () {
-                    if (!selectedElement || !selectedPageId || !selectedBlockId) {
-                        console.warn("⚠️ No element selected! Click an element first.");
-                        return;
-                    }
+                    if (!selectedElement || !selectedPageId || !selectedBlockId) return;
                     const selectedFont = this.getAttribute("data-font");
-                    console.log(`🎨 Applying Font: ${selectedFont} to Element: ${selectedBlockId}`);
-
-                    selectedElement.classList.add(`squareCraft-font-${selectedFont.replace(/\s+/g, '-')}`);
+                    const fontUrl = this.getAttribute("data-font-url");
+                    applyFont(selectedFont, fontUrl);
                     saveModifications(selectedElement, { "font-family": selectedFont });
-
                     toggleDropdown(parentDiv);
                 });
             });
@@ -136,16 +112,21 @@
         });
     }
 
+    function applyFont(fontFamily, fontUrl) {
+        if (!document.querySelector(`link[href="${fontUrl}"]`)) {
+            let fontLink = document.createElement("link");
+            fontLink.rel = "stylesheet";
+            fontLink.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400;700&display=swap`;
+            document.head.appendChild(fontLink);
+        }
+        selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
+    }
+
     async function saveModifications(targetElement, css) {
         const token = localStorage.getItem("squareCraft_auth_token");
         const userId = localStorage.getItem("squareCraft_u_id");
         const widgetId = localStorage.getItem("squareCraft_w_id");
-
-        if (!token || !userId || !widgetId) {
-            console.warn("⚠️ Missing authentication details. Cannot save modifications.");
-            return;
-        }
-
+        if (!token || !userId || !widgetId) return;
         let modificationData = {
             userId,
             token,
@@ -162,7 +143,6 @@
                 }
             ]
         };
-
         try {
             const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
                 method: "POST",
@@ -175,12 +155,9 @@
                 },
                 body: JSON.stringify(modificationData),
             });
-
-            const data = await response.json();
-            console.log("✅ Changes Saved Successfully!", data);
+            await response.json();
         } catch (error) {
             console.error("❌ Error saving modifications:", error);
         }
     }
-
 })();
