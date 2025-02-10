@@ -129,14 +129,9 @@
     }
     
 
-    function updateFontVariants(variants) {
+    function updateFontVariants(fontFamily) {
         let variantParentDiv = document.getElementById("squareCraft-font-varient");
         if (!variantParentDiv) return;
-    
-        // ✅ Ensure `variants` is an array, if not, convert it
-        if (!Array.isArray(variants)) {
-            variants = [variants];
-        }
     
         let variantDropdown = document.getElementById("customVariantDropdown");
         if (!variantDropdown) {
@@ -157,9 +152,17 @@
             document.body.appendChild(variantDropdown);
         }
     
-        // ✅ Render dropdown safely
+        // ✅ Find the font in the Google Fonts API response
+        const fontData = allFonts.find(font => font.family === fontFamily);
+        const variants = fontData?.variants || [];
+    
+        if (!Array.isArray(variants) || variants.length === 0) {
+            variantDropdown.innerHTML = `<p class="dropdown-item">❌ No variants available</p>`;
+            return;
+        }
+    
         variantDropdown.innerHTML = `<div class="dropdown-content">
-            ${variants?.map(variant => `
+            ${variants.map(variant => `
                 <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer">
                     ${variant}
                 </p>
@@ -196,6 +199,7 @@
             });
         });
     }
+    
     
 
     waitForElement("#font-size", (parentDiv) => {
