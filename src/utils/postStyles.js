@@ -63,7 +63,7 @@ export async function saveModifications(targetElement, css = {}, fontFamily, fon
             body: JSON.stringify(modificationData),
         });
 
-        if (!response.ok) throw new Error(`❌ Server Error: ${response.status} - ${response.statusText}`);
+      
 
         const data = await response.json();
         console.log("✅ Changes Saved Successfully!", data);
