@@ -69,5 +69,6 @@ export async function saveModifications(targetElement, css = {}, fontFamily, fon
 
     } catch (error) {
         console.error("❌ Error saving modifications:", error);
+        return
     }
 }

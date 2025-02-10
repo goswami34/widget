@@ -44,7 +44,7 @@ export async function getStyles() {
       const data = await response.json();
       console.log("📥 Fetched Modifications:", data); // ✅ FIXED: Logs actual response data
 
-      data.modifications.forEach(({ pageId: fetchedPageId, elements }) => {
+      data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {
           if (fetchedPageId === pageId) {
               elements.forEach(({ elementId, css }) => {
                   console.log(`🎨 Applying styles to ${elementId}`, css); // ✅ Fix: Logs CSS styles
@@ -55,5 +55,6 @@ export async function getStyles() {
 
   } catch (error) {
       console.error("❌ Error fetching modifications:", error);
+      return
   }
 }
