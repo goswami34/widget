@@ -5,25 +5,25 @@ export async function getStyles() {
   const userId = localStorage.getItem("squareCraft_u_id");
   const widgetId = localStorage.getItem("squareCraft_w_id");
 
-  if (!token || !userId || !widgetId) {
-      console.warn("⚠️ Missing authentication details.");
-      return;
-  }
+  // if (!token || !userId || !widgetId) {
+  //     console.warn("⚠️ Missing authentication details.");
+  //     return;
+  // }
 
   if (isEditingMode()) {
       console.log("🛠 Squarespace is in Edit Mode - Waiting for changes...");
       setTimeout(getStyles, 3000);
-      return;
+      // return;
   }
 
   let pageElement = document.querySelector("article[data-page-sections]");
   let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
 
-  if (!pageId) {
-      console.warn("⚠️ No valid page ID found. Retrying in 2s...");
-      setTimeout(getStyles, 2000);
-      return;
-  }
+  // if (!pageId) {
+  //     console.warn("⚠️ No valid page ID found. Retrying in 2s...");
+  //     setTimeout(getStyles, 2000);
+  //     return;
+  // }
 
   console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
 
