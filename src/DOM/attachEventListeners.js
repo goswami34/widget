@@ -1,13 +1,20 @@
 import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/getPageAndElement.js";
-import { applyStyle } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStyle.js";
+import { saveModifications } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/saveModifications.js";
+import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
+
+let selectedElement = null;
+let selectedPageId = null;
+let selectedElementId = null;
 
 export function attachEventListeners() {
-    let selectedElement = null;
     let lastHighlightedElement = null;
 
     document.addEventListener("click", (event) => {
         let { pageId, elementId } = getPageAndElement(event.target);
-        if (!pageId || !elementId) return;
+        if (!pageId || !elementId) {
+            console.warn("⚠️ No valid page or block found.");
+            return;
+        }
 
         if (lastHighlightedElement) {
             lastHighlightedElement.style.outline = "";
@@ -15,13 +22,33 @@ export function attachEventListeners() {
         }
 
         selectedElement = event.target;
-        lastHighlightedElement = selectedElement; 
+        selectedPageId = pageId;
+        selectedElementId = elementId;
+        lastHighlightedElement = selectedElement;
 
         selectedElement.style.outline = "3px solid #FF5733";
         selectedElement.style.animation = "squarecraftGlow 1.5s infinite alternate";
 
-        console.log(`🆔 Page ID: ${pageId}, Element ID: ${elementId}`);
+        console.log(`✅ Selected Element → Page ID: ${selectedPageId}, Element ID: ${selectedElementId}`);
     });
+
+    document.getElementById("font-size").addEventListener("input", () => applyStyle(selectedElement));
+    document.getElementById("squareCraft-font-family").addEventListener("change", () => applyStyle(selectedElement));
+    document.getElementById("squareCraft-font-varient").addEventListener("change", () => applyStyle(selectedElement));
+
+    document.getElementById("squareCraftPublish").addEventListener("click", async () => {
+        if (!selectedElement || !selectedPageId || !selectedElementId) {
+            console.warn("⚠️ No element selected! Click an element first.");
+            return;
+        }
+
+        let css = getCSSModifications(selectedElement);
+        console.log("🎨 Publishing Changes:", { selectedPageId, selectedElementId, css });
+
+        await saveModifications(selectedElement, css);
+    });
+
+    getStyles();
 
     const style = document.createElement("style");
     style.innerHTML = `
@@ -31,29 +58,4 @@ export function attachEventListeners() {
         }
     `;
     document.head.appendChild(style);
-
-    document.getElementById("squareCraftFontSize").addEventListener("input", applyStyle);
-    document.getElementById("squareCraftBgColor").addEventListener("input", applyStyle);
-    document.getElementById("squareCraftBorderRadius").addEventListener("input", function () {
-        document.getElementById("borderRadiusValue").textContent = this.value + "px";
-        applyStyle();
-    });
-
-    document.getElementById("squareCraftPublish").addEventListener("click", async () => {
-        if (!selectedElement) {
-            console.warn("⚠️ No element selected for publishing.");
-            return;
-        }
-
-        let { pageId, elementId } = getPageAndElement(selectedElement);
-        if (!pageId || !elementId) {
-            console.warn("⚠️ No valid page or block found for publishing.");
-            return;
-        }
-
-        let css = getCSSModifications(selectedElement);
-        console.log("🎨 Publishing Changes:", { pageId, elementId, css });
-
-        await saveModifications(pageId, elementId, css);
-    });
 }
