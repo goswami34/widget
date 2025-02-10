@@ -542,18 +542,18 @@ p {
 }
 
 .squareCraft-loader {
-  width: 24px;
-  height: 24px;
-  border: 3px solid #ccc;
-  border-top-color: #ff7b00;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 10px auto;
-  display: none;
+  width: 24px !important;
+  height: 24px !important;
+  border: 3px solid #ccc !important;
+  border-top-color: #ff7b00 !important;
+  border-radius: 50%  !important;
+  animation: spin 1s linear infinite !important;
+  margin: 10px auto !important;
+  display: none !important;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg) !important; }
+  100% { transform: rotate(360deg) !important; }
 }
 

@@ -72,9 +72,13 @@
         const pageSize = 10;
         let isFetching = false;
     
-        const loader = document.createElement("div");
-        loader.className = "squareCraft-loader";
-        dropdownContainer.appendChild(loader);
+        // ✅ Add loader
+        dropdownContainer.innerHTML = `
+            <div class="dropdown-content"></div>
+            <div class="squareCraft-loader"></div>
+        `;
+        const dropdownContent = dropdownContainer.querySelector(".dropdown-content");
+        const loader = dropdownContainer.querySelector(".squareCraft-loader");
     
         try {
             const response = await fetch(apiUrl);
@@ -83,36 +87,39 @@
             allFonts = data.items;
     
             renderFonts();
-            console.log("font family response" , response)
+            console.log("✅ Font API Response:", data);
         } catch (error) {
             dropdownContainer.innerHTML = `<p class="dropdown-item">❌ Error loading fonts</p>`;
         }
     
         function renderFonts() {
+            if (currentIndex >= allFonts.length) return;
+            
             const fontsToShow = allFonts.slice(currentIndex, currentIndex + pageSize);
             currentIndex += pageSize;
     
             const fontsHTML = fontsToShow.map(font => `
-                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(font)}'>
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer" data-font='${font.family}'>
                     ${font.family}
                 </p>
             `).join("");
     
-            dropdownContainer.querySelector(".dropdown-content").insertAdjacentHTML("beforeend", fontsHTML);
+            dropdownContent.insertAdjacentHTML("beforeend", fontsHTML);
             loader.style.display = "none";
+            isFetching = false;
     
+            // ✅ Attach event listeners after rendering
             document.querySelectorAll("#customDropdown .dropdown-content p").forEach(fontOption => {
                 fontOption.addEventListener("click", function () {
-                    const fontData = JSON.parse(this.getAttribute("data-font"));
-                    parentDiv.querySelector("p").textContent = fontData.family;
-                    updateFontVariants(fontData.variants);
+                    const selectedFont = this.getAttribute("data-font");
+                    parentDiv.querySelector("p").textContent = selectedFont;
+                    updateFontVariants(selectedFont);
                     toggleDropdown();
                 });
             });
-    
-            isFetching = false;
         }
     
+        // ✅ Infinite scroll for next fonts
         dropdownContainer.addEventListener("scroll", () => {
             if (dropdownContainer.scrollTop + dropdownContainer.clientHeight >= dropdownContainer.scrollHeight - 5) {
                 if (!isFetching && currentIndex < allFonts.length) {
@@ -122,8 +129,6 @@
                 }
             }
         });
-    
-        dropdownContainer.innerHTML = `<div class="dropdown-content"></div>`;
     }
     
 
