@@ -22,6 +22,7 @@
     }
 
     function toggleDropdown(parentDiv) {
+        
         if (!dropdownContainer) {
             console.warn("⚠️ dropdownContainer not found!");
             return;
