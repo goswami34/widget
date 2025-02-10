@@ -10,20 +10,12 @@ export async function getStyles() {
       return;
   }
 
-  if (isEditingMode()) {
-      console.log("🛠 Squarespace is in Edit Mode - Waiting for changes...");
-      setTimeout(getStyles, 3000);
-      return;
-  }
+
 
   let pageElement = document.querySelector("article[data-page-sections]");
   let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
 
-  if (!pageId) {
-      console.warn("⚠️ No valid page ID found. Retrying in 2s...");
-      setTimeout(getStyles, 2000);
-      return;
-  }
+ 
 
   console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
 
