@@ -1,9 +1,7 @@
-
 import { postStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/postStyles.js";
 import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
 
 (async function fontFamilyDropdowninteract() {
-    let isDropdownOpen = false;
     let fontDropdown = null;
     let sizeDropdown = null;
     let variantDropdown = null;
@@ -24,17 +22,19 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         }, 200);
     }
 
-    function setDropdownPosition(parentDiv, dropdown) {
-        const rect = parentDiv.getBoundingClientRect();
-        dropdown.style.left = `${rect.left}px`;
-        dropdown.style.top = `${rect.bottom + window.scrollY}px`;
-        dropdown.classList.add("squareCraft-visible");
+    function toggleDropdown(dropdown) {
+        if (!dropdown) return;
+        const isVisible = dropdown.style.display === "block";
+        dropdown.style.display = isVisible ? "none" : "block";
     }
 
-    function toggleDropdown(parentDiv, dropdown) {
-        if (!dropdown) return;
-        isDropdownOpen = !isDropdownOpen;
-        isDropdownOpen ? setDropdownPosition(parentDiv, dropdown) : dropdown.classList.remove("squareCraft-visible");
+    function setDropdownPosition(parentDiv, dropdown) {
+        const rect = parentDiv.getBoundingClientRect();
+        dropdown.style.position = "absolute";
+        dropdown.style.left = `${rect.left}px`;
+        dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+        dropdown.style.zIndex = "9999";
+        dropdown.style.display = "block";
     }
 
     document.addEventListener("click", (event) => {
@@ -47,15 +47,24 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         getStyles(selectedElement);
     });
 
+    // Font Family Dropdown
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         fontDropdown = document.createElement("div");
         fontDropdown.id = "fontDropdown";
-        fontDropdown.classList.add("squareCraft-dropdown");
+        fontDropdown.style.display = "none";
         document.body.appendChild(fontDropdown);
         fetchGoogleFonts(fontDropdown, parentDiv);
+
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
-            toggleDropdown(parentDiv, fontDropdown);
+            setDropdownPosition(parentDiv, fontDropdown);
+            toggleDropdown(fontDropdown);
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!fontDropdown.contains(event.target) && event.target !== parentDiv) {
+                fontDropdown.style.display = "none";
+            }
         });
     });
 
@@ -64,7 +73,6 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         let allFonts = [];
         let currentIndex = 0;
         const pageSize = 10;
-        let isFetching = false;
         dropdownContainer.innerHTML = `<div class="squareCraft-dropdown-content"></div><div class="squareCraft-loader">Loading...</div>`;
         const dropdownContent = dropdownContainer.querySelector(".squareCraft-dropdown-content");
 
@@ -74,7 +82,6 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
             const data = await response.json();
             allFonts = data.items;
             renderFonts();
-            console.log(response)
         } catch (error) {
             dropdownContainer.innerHTML = `<p class="squareCraft-error">❌ Error loading fonts</p>`;
         }
@@ -84,47 +91,39 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
             const fontsToShow = allFonts.slice(currentIndex, currentIndex + pageSize);
             currentIndex += pageSize;
             dropdownContent.innerHTML += fontsToShow.map(font => `
-                <p class="squareCraft-dropdown-item" data-font="${font.family}" data-font-url="${font.files.regular}">
+                <p class="squareCraft-dropdown-item" data-font="${font.family}">
                     ${font.family}
                 </p>
             `).join("");
             document.querySelectorAll(".squareCraft-dropdown-item").forEach(fontOption => {
                 fontOption.addEventListener("click", function () {
-                    if (!selectedElement || !selectedPageId || !selectedBlockId) return;
+                    if (!selectedElement) return;
                     const selectedFont = this.getAttribute("data-font");
-                    const fontUrl = this.getAttribute("data-font-url");
-                    applyFont(selectedFont, fontUrl);
                     document.querySelector("#squareCraft-font-family p").textContent = selectedFont;
                     postStyles(selectedElement, { "font-family": selectedFont });
-                    toggleDropdown(parentDiv, fontDropdown);
+                    fontDropdown.style.display = "none";
                 });
             });
         }
-    }
-
-    function applyFont(fontFamily, fontUrl) {
-        if (!document.querySelector(`link[href="${fontUrl}"]`)) {
-            let fontLink = document.createElement("link");
-            fontLink.rel = "stylesheet";
-            fontLink.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400;700&display=swap`;
-            document.head.appendChild(fontLink);
-        }
-        selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;   
     }
 
     // Font Size Dropdown
     waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
         sizeDropdown.id = "fontSizeDropdown";
-        sizeDropdown.classList.add("squareCraft-dropdown");
+        sizeDropdown.style.display = "none";
         document.body.appendChild(sizeDropdown);
+
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
-            toggleDropdown(parentDiv, sizeDropdown);
+            setDropdownPosition(parentDiv, sizeDropdown);
+            toggleDropdown(sizeDropdown);
         });
+
         sizeDropdown.innerHTML = Array.from({ length: 80 }, (_, i) => i + 1)
             .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
             .join("");
+
         document.querySelectorAll("#fontSizeDropdown .squareCraft-dropdown-item").forEach(sizeOption => {
             sizeOption.addEventListener("click", function () {
                 if (!selectedElement) return;
@@ -132,10 +131,38 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
                 selectedElement.style.fontSize = `${selectedSize}px`;
                 document.querySelector("#font-size p").textContent = `${selectedSize}px`;
                 postStyles(selectedElement, { "font-size": `${selectedSize}px` });
-                toggleDropdown(parentDiv, sizeDropdown);
+                sizeDropdown.style.display = "none";
             });
         });
     });
 
+    // Font Variant Dropdown
+    waitForElement("#squareCraft-font-variant", (parentDiv) => {
+        variantDropdown = document.createElement("div");
+        variantDropdown.id = "fontVariantDropdown";
+        variantDropdown.style.display = "none";
+        document.body.appendChild(variantDropdown);
+
+        parentDiv.addEventListener("click", function (event) {
+            event.stopPropagation();
+            setDropdownPosition(parentDiv, variantDropdown);
+            toggleDropdown(variantDropdown);
+        });
+
+        variantDropdown.innerHTML = ["normal", "small-caps", "all-small-caps", "slashed-zero"]
+            .map(variant => `<p class="squareCraft-dropdown-item" data-variant="${variant}">${variant}</p>`)
+            .join("");
+
+        document.querySelectorAll("#fontVariantDropdown .squareCraft-dropdown-item").forEach(variantOption => {
+            variantOption.addEventListener("click", function () {
+                if (!selectedElement) return;
+                const selectedVariant = this.getAttribute("data-variant");
+                selectedElement.style.fontVariant = selectedVariant;
+                document.querySelector("#squareCraft-font-variant p").textContent = selectedVariant;
+                postStyles(selectedElement, { "font-variant": selectedVariant });
+                variantDropdown.style.display = "none";
+            });
+        });
+    });
 
 })();
