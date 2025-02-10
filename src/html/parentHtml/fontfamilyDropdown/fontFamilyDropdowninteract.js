@@ -129,7 +129,7 @@
     }
     
 
-    function updateFontVariants(fontFamily) {
+    function updateFontVariants(fontData) {
         let variantParentDiv = document.getElementById("squareCraft-font-varient");
         if (!variantParentDiv) return;
     
@@ -152,8 +152,7 @@
             document.body.appendChild(variantDropdown);
         }
     
-        // ✅ Find the font in the Google Fonts API response
-        const fontData = allFonts.find(font => font.family === fontFamily);
+        // ✅ Extract variants safely
         const variants = fontData?.variants || [];
     
         if (!Array.isArray(variants) || variants.length === 0) {
@@ -199,6 +198,7 @@
             });
         });
     }
+    
     
     
 

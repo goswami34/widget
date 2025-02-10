@@ -53,6 +53,7 @@ export async function getStyles() {
                 });
             }
         });
+        console.log("get method from modification" , response)
 
     } catch (error) {
         console.error("❌ Error fetching modifications:", error);

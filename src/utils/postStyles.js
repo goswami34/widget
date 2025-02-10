@@ -1,6 +1,6 @@
 import { applyStylesToElement } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js";
 
-export async function saveModifications(pageId, elementId, css, fontFamily) {
+export async function saveModifications(pageId, elementId, css, fontFamily, fontVariant, fontSize) {
     const token = localStorage.getItem("squareCraft_auth_token");
     const userId = localStorage.getItem("squareCraft_u_id");
     const widgetId = localStorage.getItem("squareCraft_w_id");
@@ -10,12 +10,12 @@ export async function saveModifications(pageId, elementId, css, fontFamily) {
         return;
     }
 
-    if (fontFamily) {
-        css["font-family"] = fontFamily;
-    }
+    if (fontFamily) css["font-family"] = fontFamily;
+    if (fontVariant) css["font-variant"] = fontVariant;
+    if (fontSize) css["font-size"] = `${fontSize}px`;
 
     applyStylesToElement(elementId, css);
-    console.log(`💾 Saving modifications for Page ID: ${pageId}, Element ID: ${elementId}, Font: ${fontFamily}`);
+    console.log(`💾 Saving modifications for Page ID: ${pageId}, Element ID: ${elementId}`, css);
 
     const modificationData = {
         userId,
@@ -24,7 +24,12 @@ export async function saveModifications(pageId, elementId, css, fontFamily) {
         modifications: [
             {
                 pageId,
-                elements: [{ elementId, css }]
+                elements: [
+                    {
+                        elementId,
+                        css  
+                    }
+                ]
             }
         ]
     };
@@ -41,7 +46,6 @@ export async function saveModifications(pageId, elementId, css, fontFamily) {
             },
             body: JSON.stringify(modificationData),
         });
-        console.log(response)
 
         if (response.ok) {
             const data = await response.json();
