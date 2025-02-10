@@ -1,6 +1,8 @@
 (async function fontFamilyDropdowninteract() {
     let isDropdownOpen = false;
     let dropdownContainer = null;
+    let variantDropdown = null;
+    let sizeDropdown = null;
     let selectedElement = null;
     let selectedPageId = null;
     let selectedBlockId = null;
@@ -25,10 +27,10 @@
         dropdown.classList.add("squareCraft-visible");
     }
 
-    function toggleDropdown(parentDiv) {
-        if (!dropdownContainer) return;
+    function toggleDropdown(parentDiv, dropdown) {
+        if (!dropdown) return;
         isDropdownOpen = !isDropdownOpen;
-        isDropdownOpen ? setDropdownPosition(parentDiv, dropdownContainer) : dropdownContainer.classList.remove("squareCraft-visible");
+        isDropdownOpen ? setDropdownPosition(parentDiv, dropdown) : dropdown.classList.remove("squareCraft-visible");
     }
 
     document.addEventListener("click", (event) => {
@@ -48,7 +50,7 @@
         fetchGoogleFonts(dropdownContainer, parentDiv);
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
-            toggleDropdown(parentDiv);
+            toggleDropdown(parentDiv, dropdownContainer);
         });
         document.addEventListener("click", function (event) {
             if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
@@ -96,7 +98,7 @@
                     const fontUrl = this.getAttribute("data-font-url");
                     applyFont(selectedFont, fontUrl);
                     saveModifications(selectedElement, { "font-family": selectedFont });
-                    toggleDropdown(parentDiv);
+                    toggleDropdown(parentDiv, dropdownContainer);
                 });
             });
         }
@@ -122,42 +124,62 @@
         selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
     }
 
+    waitForElement("#font-size", (parentDiv) => {
+        sizeDropdown = document.createElement("div");
+        sizeDropdown.id = "fontSizeDropdown";
+        sizeDropdown.classList.add("squareCraft-dropdown");
+        document.body.appendChild(sizeDropdown);
+        parentDiv.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleDropdown(parentDiv, sizeDropdown);
+        });
+        sizeDropdown.innerHTML = Array.from({ length: 80 }, (_, i) => i + 1)
+            .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
+            .join("");
+        document.querySelectorAll("#fontSizeDropdown .squareCraft-dropdown-item").forEach(sizeOption => {
+            sizeOption.addEventListener("click", function () {
+                if (!selectedElement) return;
+                const selectedSize = this.getAttribute("data-size");
+                selectedElement.style.fontSize = `${selectedSize}px`;
+                saveModifications(selectedElement, { "font-size": `${selectedSize}px` });
+                toggleDropdown(parentDiv, sizeDropdown);
+            });
+        });
+    });
+
+    waitForElement("#squareCraft-font-varient", (parentDiv) => {
+        variantDropdown = document.createElement("div");
+        variantDropdown.id = "fontVariantDropdown";
+        variantDropdown.classList.add("squareCraft-dropdown");
+        document.body.appendChild(variantDropdown);
+        parentDiv.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleDropdown(parentDiv, variantDropdown);
+        });
+        variantDropdown.innerHTML = ["Regular", "Bold", "Italic", "Bold Italic"]
+            .map(variant => `<p class="squareCraft-dropdown-item" data-variant="${variant}">${variant}</p>`)
+            .join("");
+        document.querySelectorAll("#fontVariantDropdown .squareCraft-dropdown-item").forEach(variantOption => {
+            variantOption.addEventListener("click", function () {
+                if (!selectedElement) return;
+                const selectedVariant = this.getAttribute("data-variant");
+                selectedElement.style.fontVariant = selectedVariant;
+                saveModifications(selectedElement, { "font-variant": selectedVariant });
+                toggleDropdown(parentDiv, variantDropdown);
+            });
+        });
+    });
+
     async function saveModifications(targetElement, css) {
         const token = localStorage.getItem("squareCraft_auth_token");
         const userId = localStorage.getItem("squareCraft_u_id");
         const widgetId = localStorage.getItem("squareCraft_w_id");
         if (!token || !userId || !widgetId) return;
-        let modificationData = {
-            userId,
-            token,
-            widgetId,
-            modifications: [
-                {
-                    pageId: selectedPageId,
-                    elements: [
-                        {
-                            elementId: selectedBlockId,
-                            css,
-                        }
-                    ]
-                }
-            ]
-        };
-        try {
-            const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                    "userId": userId,
-                    "widget-id": widgetId,
-                    "pageId": selectedPageId
-                },
-                body: JSON.stringify(modificationData),
-            });
-            await response.json();
-        } catch (error) {
-            console.error("❌ Error saving modifications:", error);
-        }
+        let modificationData = { userId, token, widgetId, modifications: [{ pageId: selectedPageId, elements: [{ elementId: selectedBlockId, css }] }] };
+        await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify(modificationData),
+        });
     }
 })();
