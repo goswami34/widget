@@ -19,10 +19,15 @@
         }, 200);
     }
 
-    function toggleDropdown() {
+    function toggleDropdown(parentDiv) {
         if (!dropdownContainer) return;
         isDropdownOpen = !isDropdownOpen;
-        dropdownContainer.style.display = isDropdownOpen ? "block" : "none";
+
+        if (isDropdownOpen) {
+            dropdownContainer.classList.add("squareCraft-visible");
+        } else {
+            dropdownContainer.classList.remove("squareCraft-visible");
+        }
     }
 
     document.addEventListener("click", (event) => {
@@ -46,28 +51,20 @@
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         dropdownContainer = document.createElement("div");
         dropdownContainer.id = "customDropdown";
-        dropdownContainer.classList.add(
-            "squareCraft-dropdown",
-            "squareCraft-bg-dark",
-            "squareCraft-border",
-            "squareCraft-text",
-            "squareCraft-rounded",
-            "squareCraft-scroll"
-        );
-        dropdownContainer.style.display = "none";
+        dropdownContainer.classList.add("squareCraft-dropdown");
         document.body.appendChild(dropdownContainer);
 
         fetchGoogleFonts(dropdownContainer, parentDiv);
 
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
-            toggleDropdown();
+            toggleDropdown(parentDiv);
         });
 
         document.addEventListener("click", function (event) {
             if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
                 isDropdownOpen = false;
-                dropdownContainer.style.display = "none";
+                dropdownContainer.classList.remove("squareCraft-visible");
             }
         });
     });
@@ -105,7 +102,7 @@
                 </p>
             `).join("");
 
-            loader.style.display = "none";
+            loader.classList.add("squareCraft-hidden");
             isFetching = false;
 
             document.querySelectorAll(".squareCraft-dropdown-content .squareCraft-dropdown-item").forEach(fontOption => {
@@ -117,10 +114,10 @@
                     const selectedFont = this.getAttribute("data-font");
                     console.log(`🎨 Applying Font: ${selectedFont} to Element: ${selectedBlockId}`);
 
-                    selectedElement.style.fontFamily = selectedFont;
+                    selectedElement.classList.add(`squareCraft-font-${selectedFont.replace(/\s+/g, '-')}`);
                     saveModifications(selectedElement, { "font-family": selectedFont });
 
-                    toggleDropdown();
+                    toggleDropdown(parentDiv);
                 });
             });
         }
@@ -129,7 +126,7 @@
             if (dropdownContainer.scrollTop + dropdownContainer.clientHeight >= dropdownContainer.scrollHeight - 5) {
                 if (!isFetching && currentIndex < allFonts.length) {
                     isFetching = true;
-                    loader.style.display = "block";
+                    loader.classList.remove("squareCraft-hidden");
                     setTimeout(renderFonts, 1000);
                 }
             }
