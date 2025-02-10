@@ -39,7 +39,7 @@ export async function getStyles() {
           }
       );
 
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      
 
       const data = await response.json();
       console.log("📥 Fetched Modifications:", data); // ✅ FIXED: Logs actual response data
