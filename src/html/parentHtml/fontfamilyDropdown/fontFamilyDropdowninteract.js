@@ -67,18 +67,40 @@
 
     async function fetchGoogleFonts(dropdownContainer, parentDiv) {
         const apiUrl = "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBPpLHcfY1Z1SfUIe78z6UvPe-wF31iwRk";
+        let allFonts = [];
+        let currentIndex = 0;
+        const pageSize = 10;
+        let isFetching = false;
+    
+        const loader = document.createElement("div");
+        loader.className = "squareCraft-loader";
+        dropdownContainer.appendChild(loader);
+    
         try {
             const response = await fetch(apiUrl);
-            if (!response.ok) return;
+            if (!response.ok) throw new Error("Failed to fetch fonts");
             const data = await response.json();
-            dropdownContainer.innerHTML = `<div class="dropdown-content">
-                ${data.items.slice(0, 10).map(font => `
-                    <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(font)}'>
-                        ${font.family}
-                    </p>
-                `).join("")}
-            </div>`;
-
+            allFonts = data.items;
+    
+            renderFonts();
+            console.log("font family response" , response)
+        } catch (error) {
+            dropdownContainer.innerHTML = `<p class="dropdown-item">❌ Error loading fonts</p>`;
+        }
+    
+        function renderFonts() {
+            const fontsToShow = allFonts.slice(currentIndex, currentIndex + pageSize);
+            currentIndex += pageSize;
+    
+            const fontsHTML = fontsToShow.map(font => `
+                <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer" data-font='${JSON.stringify(font)}'>
+                    ${font.family}
+                </p>
+            `).join("");
+    
+            dropdownContainer.querySelector(".dropdown-content").insertAdjacentHTML("beforeend", fontsHTML);
+            loader.style.display = "none";
+    
             document.querySelectorAll("#customDropdown .dropdown-content p").forEach(fontOption => {
                 fontOption.addEventListener("click", function () {
                     const fontData = JSON.parse(this.getAttribute("data-font"));
@@ -87,11 +109,23 @@
                     toggleDropdown();
                 });
             });
-
-        } catch (error) {
-            dropdownContainer.innerHTML = `<p class="dropdown-item">❌ Error loading fonts</p>`;
+    
+            isFetching = false;
         }
+    
+        dropdownContainer.addEventListener("scroll", () => {
+            if (dropdownContainer.scrollTop + dropdownContainer.clientHeight >= dropdownContainer.scrollHeight - 5) {
+                if (!isFetching && currentIndex < allFonts.length) {
+                    isFetching = true;
+                    loader.style.display = "block";
+                    setTimeout(renderFonts, 1000);
+                }
+            }
+        });
+    
+        dropdownContainer.innerHTML = `<div class="dropdown-content"></div>`;
     }
+    
 
     function updateFontVariants(variants) {
         let variantParentDiv = document.getElementById("squareCraft-font-varient");
