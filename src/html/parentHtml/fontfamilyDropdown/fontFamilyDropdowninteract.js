@@ -72,7 +72,6 @@
         const pageSize = 10;
         let isFetching = false;
     
-        // ✅ Add loader
         dropdownContainer.innerHTML = `
             <div class="dropdown-content"></div>
             <div class="squareCraft-loader"></div>
@@ -108,7 +107,6 @@
             loader.style.display = "none";
             isFetching = false;
     
-            // ✅ Attach event listeners after rendering
             document.querySelectorAll("#customDropdown .dropdown-content p").forEach(fontOption => {
                 fontOption.addEventListener("click", function () {
                     const selectedFont = this.getAttribute("data-font");
@@ -119,7 +117,6 @@
             });
         }
     
-        // ✅ Infinite scroll for next fonts
         dropdownContainer.addEventListener("scroll", () => {
             if (dropdownContainer.scrollTop + dropdownContainer.clientHeight >= dropdownContainer.scrollHeight - 5) {
                 if (!isFetching && currentIndex < allFonts.length) {
@@ -156,7 +153,7 @@
         }
 
         variantDropdown.innerHTML = `<div class="dropdown-content">
-            ${variants.map(variant => `
+            ${variants?.map(variant => `
                 <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover  squareCraft-text-sm squareCraft-cursor-pointer">
                     ${variant}
                 </p>
