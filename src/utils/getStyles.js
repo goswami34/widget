@@ -1,4 +1,4 @@
-(async function () {
+(async function getStyles() {
   console.log("🔍 Initializing getStyles function...");
 
   async function loadModule(url) {
@@ -11,15 +11,15 @@
       }
   }
 
-  const applyStylesToElement = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js"))?.applyStylesToElement;
-  const isEditingMode = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode.js"))?.isEditingMode;
+  let applyStylesToElement = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/applyStylesToElement.js"))?.applyStylesToElement;
+  let isEditingMode = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/isEditingMode.js"))?.isEditingMode;
 
   if (!applyStylesToElement || !isEditingMode) {
       console.error("⚠️ Critical modules failed to load, aborting `getStyles` execution.");
       return;
   }
 
-  async function getStyles() {
+  async function fetchAndApplyStyles() {
       const token = localStorage.getItem("squareCraft_auth_token");
       const userId = localStorage.getItem("squareCraft_u_id");
       const widgetId = localStorage.getItem("squareCraft_w_id");
@@ -31,7 +31,7 @@
 
       if (isEditingMode()) {
           console.log("🛠 Squarespace is in Edit Mode - Waiting for changes...");
-          setTimeout(getStyles, 3000);
+          setTimeout(fetchAndApplyStyles, 3000);
           return;
       }
 
@@ -40,7 +40,7 @@
 
       if (!pageId) {
           console.warn("⚠️ No valid page ID found. Retrying in 2s...");
-          setTimeout(getStyles, 2000);
+          setTimeout(fetchAndApplyStyles, 2000);
           return;
       }
 
@@ -77,7 +77,7 @@
       }
   }
 
-  // ✅ Execute `getStyles` after ensuring modules are loaded
-  getStyles();
+  // ✅ Call the function immediately like in `parent.js`
+  fetchAndApplyStyles();
 
 })();
