@@ -28,6 +28,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
     }
 
     function setDropdownPosition(parentDiv, dropdown) {
+        if (!parentDiv || !dropdown) return;
         const rect = parentDiv.getBoundingClientRect();
         dropdown.style.position = "absolute";
         dropdown.style.left = `${rect.left}px`;
@@ -46,7 +47,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         getStyles(selectedElement);
     });
 
-    // Font Family Dropdown
+    // ✅ Font Family Dropdown
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         fontDropdown = document.createElement("div");
         fontDropdown.id = "fontDropdown";
@@ -90,7 +91,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
             const fontsToShow = allFonts.slice(currentIndex, currentIndex + pageSize);
             currentIndex += pageSize;
             dropdownContent.innerHTML += fontsToShow.map(font => `
-                <p class="squareCraft-dropdown-item" data-font="${font.family}" data-font-url="${font.files.regular}">
+                <p class="squareCraft-dropdown-item" data-font="${font.family}">
                     ${font.family}
                 </p>
             `).join("");
@@ -106,7 +107,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         }
     }
 
-    // Font Size Dropdown
+    // ✅ Font Size Dropdown
     waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
         sizeDropdown.id = "fontSizeDropdown";
@@ -123,6 +124,12 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
             .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
             .join("");
 
+        document.addEventListener("click", function (event) {
+            if (!sizeDropdown.contains(event.target) && event.target !== parentDiv) {
+                sizeDropdown.style.display = "none";
+            }
+        });
+
         document.querySelectorAll("#fontSizeDropdown .squareCraft-dropdown-item").forEach(sizeOption => {
             sizeOption.addEventListener("click", function () {
                 if (!selectedElement) return;
@@ -135,7 +142,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         });
     });
 
-    // Font Variant Dropdown
+    // ✅ Font Variant Dropdown
     waitForElement("#squareCraft-font-variant", (parentDiv) => {
         variantDropdown = document.createElement("div");
         variantDropdown.id = "fontVariantDropdown";
@@ -151,6 +158,12 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
         variantDropdown.innerHTML = ["normal", "small-caps", "all-small-caps", "slashed-zero"]
             .map(variant => `<p class="squareCraft-dropdown-item" data-variant="${variant}">${variant}</p>`)
             .join("");
+
+        document.addEventListener("click", function (event) {
+            if (!variantDropdown.contains(event.target) && event.target !== parentDiv) {
+                variantDropdown.style.display = "none";
+            }
+        });
 
         document.querySelectorAll("#fontVariantDropdown .squareCraft-dropdown-item").forEach(variantOption => {
             variantOption.addEventListener("click", function () {
