@@ -11,7 +11,7 @@
             }
         }, 200);
     }
-
+    let isDropdownOpen = false;
     function setDropdownPosition(parentDiv, dropdown) {
         const rect = parentDiv.getBoundingClientRect();
         dropdown.style.left = `${rect.left}px`;
@@ -44,7 +44,7 @@
             fetchGoogleFonts(dropdownContainer, parentDiv);
         }
 
-        let isDropdownOpen = false;
+      
 
         function toggleDropdown() {
             isDropdownOpen = !isDropdownOpen;
