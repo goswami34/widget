@@ -24,8 +24,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
 
     function toggleDropdown(dropdown) {
         if (!dropdown) return;
-        const isVisible = dropdown.style.display === "block";
-        dropdown.style.display = isVisible ? "none" : "block";
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
     }
 
     function setDropdownPosition(parentDiv, dropdown) {
@@ -91,7 +90,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
             const fontsToShow = allFonts.slice(currentIndex, currentIndex + pageSize);
             currentIndex += pageSize;
             dropdownContent.innerHTML += fontsToShow.map(font => `
-                <p class="squareCraft-dropdown-item" data-font="${font.family}">
+                <p class="squareCraft-dropdown-item" data-font="${font.family}" data-font-url="${font.files.regular}">
                     ${font.family}
                 </p>
             `).join("");
