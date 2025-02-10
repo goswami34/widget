@@ -143,7 +143,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
     });
 
     // ✅ Font Variant Dropdown
-    waitForElement("#squareCraft-font-variant", (parentDiv) => {
+    waitForElement("#squareCraft-font-varient", (parentDiv) => {
         variantDropdown = document.createElement("div");
         variantDropdown.id = "fontVariantDropdown";
         variantDropdown.style.display = "none";
@@ -170,7 +170,7 @@ import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src
                 if (!selectedElement) return;
                 const selectedVariant = this.getAttribute("data-variant");
                 selectedElement.style.fontVariant = selectedVariant;
-                document.querySelector("#squareCraft-font-variant p").textContent = selectedVariant;
+                document.querySelector("#squareCraft-font-varient p").textContent = selectedVariant;
                 postStyles(selectedElement, { "font-variant": selectedVariant });
                 variantDropdown.style.display = "none";
             });
