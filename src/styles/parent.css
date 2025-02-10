@@ -557,3 +557,61 @@ p {
   100% { transform: rotate(360deg) !important; }
 }
 
+/* 🔽 Dropdown Container */
+.squareCraft-dropdown {
+  position: absolute;
+  display: none;
+  z-index: 9999;
+  max-height: 250px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+/* 🔽 Show dropdown when active */
+.squareCraft-visible {
+  display: block !important;
+}
+
+/* 🔽 Dropdown Content */
+.squareCraft-dropdown-content {
+  background-color: #3d3d3d;
+  border: 1px solid #585858;
+  border-radius: 6px;
+  padding: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔽 Dropdown Items */
+.squareCraft-dropdown-item {
+  padding: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.squareCraft-dropdown-item:hover {
+  background-color: #EF7C2F;
+}
+
+/* 🔽 Loading Indicator */
+.squareCraft-loader {
+  text-align: center;
+  padding: 10px;
+}
+
+.squareCraft-hidden {
+  display: none;
+}
+
+/* 🔽 Scrollable Pagination */
+.squareCraft-scroll {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* 🔽 Active Selection */
+.squareCraft-active {
+  background-color: #EF7C2F;
+  color: white;
+}

@@ -4,7 +4,6 @@
     let selectedElement = null;
     let selectedPageId = null;
     let selectedBlockId = null;
-    let selectedBlockType = null;
 
     function waitForElement(selector, callback, timeout = 5000) {
         const startTime = Date.now();
@@ -12,27 +11,26 @@
             const element = document.querySelector(selector);
             if (element) {
                 clearInterval(interval);
-                console.log(`✅ Found element: ${selector}`);
                 callback(element);
             } else if (Date.now() - startTime > timeout) {
-                console.warn(`⚠️ Timeout waiting for ${selector}`);
                 clearInterval(interval);
             }
         }, 200);
     }
 
-    function toggleDropdown(parentDiv) {
-        
-        if (!dropdownContainer) {
-            console.warn("⚠️ dropdownContainer not found!");
-            return;
-        }
+    function setDropdownPosition(parentDiv, dropdown) {
+        const rect = parentDiv.getBoundingClientRect();
+        dropdown.style.left = `${rect.left}px`;
+        dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+        dropdown.classList.add("squareCraft-visible");
+    }
 
+    function toggleDropdown(parentDiv) {
+        if (!dropdownContainer) return;
         isDropdownOpen = !isDropdownOpen;
-        console.log(`🔄 Toggling Dropdown → isDropdownOpen: ${isDropdownOpen}`);
 
         if (isDropdownOpen) {
-            dropdownContainer.classList.add("squareCraft-visible");
+            setDropdownPosition(parentDiv, dropdownContainer);
         } else {
             dropdownContainer.classList.remove("squareCraft-visible");
         }
@@ -48,17 +46,10 @@
         selectedPageId = pageElement.getAttribute("data-page-sections");
         selectedBlockId = clickedElement.id;
 
-        selectedBlockType = "Unknown";
-        if (clickedElement.classList.contains("sqs-block-html")) selectedBlockType = "Text";
-        else if (clickedElement.classList.contains("sqs-block-image")) selectedBlockType = "Image";
-        else if (clickedElement.classList.contains("sqs-block-button")) selectedBlockType = "Button";
-
-        console.log(`✅ Selected → Page ID: ${selectedPageId}, Block ID: ${selectedBlockId}, Type: ${selectedBlockType}`);
+        console.log(`✅ Selected → Page ID: ${selectedPageId}, Block ID: ${selectedBlockId}`);
     });
 
     waitForElement("#squareCraft-font-family", (parentDiv) => {
-        console.log("✅ Attaching dropdown to #squareCraft-font-family");
-
         dropdownContainer = document.createElement("div");
         dropdownContainer.id = "customDropdown";
         dropdownContainer.classList.add("squareCraft-dropdown");
@@ -68,7 +59,6 @@
 
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
-            console.log("🎯 Font dropdown clicked!");
             toggleDropdown(parentDiv);
         });
 
@@ -76,7 +66,6 @@
             if (!parentDiv.contains(event.target) && !dropdownContainer.contains(event.target)) {
                 isDropdownOpen = false;
                 dropdownContainer.classList.remove("squareCraft-visible");
-                console.log("❌ Closing dropdown (clicked outside)");
             }
         });
     });
@@ -88,20 +77,19 @@
         const pageSize = 10;
         let isFetching = false;
 
-        dropdownContainer.innerHTML = `<div class="squareCraft-dropdown-content"></div><div class="squareCraft-loader"></div>`;
+        dropdownContainer.innerHTML = `<div class="squareCraft-dropdown-content"></div><div class="squareCraft-loader">Loading fonts...</div>`;
         const dropdownContent = dropdownContainer.querySelector(".squareCraft-dropdown-content");
         const loader = dropdownContainer.querySelector(".squareCraft-loader");
 
         try {
-            console.log("⏳ Fetching fonts from Google API...");
+            console.log("⏳ Fetching fonts...");
             const response = await fetch(apiUrl);
             if (!response.ok) throw new Error("Failed to fetch fonts");
             const data = await response.json();
             allFonts = data.items;
-            console.log("✅ Fonts fetched successfully!", allFonts);
+            console.log("✅ Fonts fetched:", allFonts.length);
             renderFonts();
         } catch (error) {
-            console.error("❌ Error loading fonts:", error);
             dropdownContainer.innerHTML = `<p class="squareCraft-error">❌ Error loading fonts</p>`;
         }
 
