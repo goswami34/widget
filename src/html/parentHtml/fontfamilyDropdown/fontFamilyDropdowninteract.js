@@ -134,7 +134,7 @@
             toggleDropdown(parentDiv, sizeDropdown);
         });
         sizeDropdown.innerHTML = Array.from({ length: 80 }, (_, i) => i + 1)
-            .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
+            .map(size => `<p class="squareCraft-dropdown-item squareCraft-w-250" data-size="${size}">${size}px</p>`)
             .join("");
         document.querySelectorAll("#fontSizeDropdown .squareCraft-dropdown-item").forEach(sizeOption => {
             sizeOption.addEventListener("click", function () {
@@ -157,7 +157,7 @@
             toggleDropdown(parentDiv, variantDropdown);
         });
         variantDropdown.innerHTML = ["Regular", "Bold", "Italic", "Bold Italic"]
-            .map(variant => `<p class="squareCraft-dropdown-item" data-variant="${variant}">${variant}</p>`)
+            .map(variant => `<p class="squareCraft-dropdown-item squareCraft-w-250" data-variant="${variant}">${variant}</p>`)
             .join("");
         document.querySelectorAll("#fontVariantDropdown .squareCraft-dropdown-item").forEach(variantOption => {
             variantOption.addEventListener("click", function () {
