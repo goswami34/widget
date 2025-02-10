@@ -159,7 +159,7 @@
     
         // ✅ Render dropdown safely
         variantDropdown.innerHTML = `<div class="dropdown-content">
-            ${variants.map(variant => `
+            ${variants?.map(variant => `
                 <p class="squareCraft-text-center squareCraft-py-1 squareCraft-bg-colo-EF7C2F-hover squareCraft-text-sm squareCraft-cursor-pointer">
                     ${variant}
                 </p>
