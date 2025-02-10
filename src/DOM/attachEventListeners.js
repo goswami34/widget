@@ -2,12 +2,13 @@ import { getPageAndElement } from "https://fatin-webefo.github.io/squareCraft-Pl
 import { saveModifications } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/saveModifications.js";
 import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
 
-let selectedElement = null;
-let selectedPageId = null;
-let selectedElementId = null;
+
 
 export function attachEventListeners() {
     let lastHighlightedElement = null;
+    let selectedElement = null;
+let selectedPageId = null;
+let selectedElementId = null;
 
     document.addEventListener("click", (event) => {
         let { pageId, elementId } = getPageAndElement(event.target);
