@@ -1,7 +1,8 @@
-import { postStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/postStyles.js";
-import { getStyles } from "https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js";
 
 (async function fontFamilyDropdowninteract() {
+    postStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/postStyles.js"))?.postStyles;
+    getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
+
     let fontDropdown = null;
     let sizeDropdown = null;
     let variantDropdown = null;
