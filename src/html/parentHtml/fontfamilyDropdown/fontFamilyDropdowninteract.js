@@ -13,7 +13,93 @@
     let selectedVariant = "regular";
     let selectedFontSize = "16px";
     let loadedFonts = new Set();
+    async function getStyles() {
+        const token = localStorage.getItem("squareCraft_auth_token");
+        const userId = localStorage.getItem("squareCraft_u_id");
+      
+        if (!token || !userId) return;
+      
+        let pageElement = document.querySelector("article[data-page-sections]");
+        let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
+      
+        try {
+            const response = await fetch(
+                `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                }
+            );
+      
+            const data = await response.json();
+      
+            data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {
+                if (fetchedPageId === pageId) {
+                    elements.forEach(({ elementId, css }) => {
+                        const element = document.getElementById(elementId);
+                        if (!element) return;
+      
+                        if (css["font-family"]) applyFont(css["font-family"], css["font-weights"]);
+                        if (css["font-size"]) element.style.fontSize = css["font-size"];
+                        if (css["font-variant"]) element.style.fontVariant = css["font-variant"];
+                    });
+                }
+            });
+      
+        } catch (error) {
+            console.error("❌ Error fetching modifications:", error);
+        }
+      }
 
+
+
+      async function postStyles(targetElement, css = {}, fontFamily, fontVariant, fontSize) {
+        const token = localStorage.getItem("squareCraft_auth_token");
+        const userId = localStorage.getItem("squareCraft_u_id");
+        const widgetId = localStorage.getItem("squareCraft_w_id");
+      
+        if (!token || !userId || !widgetId) return;
+      
+        let page = targetElement.closest("article[data-page-sections]");
+        let block = targetElement.closest('[id^="block-"]');
+      
+        if (!page || !block) return;
+      
+        let pageId = page.getAttribute("data-page-sections");
+        let elementId = block.id;
+      
+        if (fontFamily) css["font-family"] = fontFamily;
+        if (fontVariant) css["font-variant"] = fontVariant;
+        if (fontSize) css["font-size"] = `${fontSize}px`;
+      
+        const formattedFontName = fontFamily.replace(/\s+/g, "+");
+        const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@400;700&display=swap`;
+        css["font-cdn"] = fontCDN;
+      
+        const modificationData = {
+          userId,
+          token,
+          widgetId,
+          modifications: [
+            {
+              pageId,
+              elements: [{ elementId, css }]
+            }
+          ]
+        };
+      
+        await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(modificationData),
+        });
+      }
     function waitForElement(selector, callback, timeout = 5000) {
         const startTime = Date.now();
         const interval = setInterval(() => {
@@ -170,7 +256,7 @@
             variantItem.addEventListener("click", function () {
                 selectedVariant = variant;
                 document.querySelector("#squareCraft-font-varient p").textContent = variant;
-                saveModifications({ "font-family": font.family, "font-variant": variant });
+                postStyles({ "font-family": font.family, "font-variant": variant });
                 closeAllDropdowns();
             });
 
@@ -203,7 +289,7 @@
             document.querySelector("#font-size p").textContent = selectedFontSize;
             if (selectedElement) selectedElement.style.fontSize = selectedFontSize;
 
-            saveModifications({ "font-size": selectedFontSize });
+            postStyles({ "font-size": selectedFontSize });
             closeAllDropdowns();
         });
     });
