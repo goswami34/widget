@@ -16,7 +16,7 @@ function fontFamilyDropdown() {
     
     document.body.appendChild(script);
 }
-
+fontFamilyDropdown();
 export function observeDOMChanges() {
   fontFamilyDropdown(); 
     const observer = new MutationObserver(() => {

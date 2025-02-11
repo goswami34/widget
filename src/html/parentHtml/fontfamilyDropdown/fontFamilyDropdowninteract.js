@@ -84,14 +84,14 @@
                 }
             );
     
-            console.log("🛠️ Raw Response from API:", response);
+            console.log("✅ Parsed API Response:", data);
     
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
     
             const data = await response.json();
-            console.log("✅ Parsed API Response:", data);
+       
     
             // ✅ Apply modifications
             data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {
@@ -114,7 +114,7 @@
     }
     
     
-
+getStyles();
 
 
     async function postStyles(targetElement, css = {}, fontFamily, fontVariant, fontSize, bgColor) {
