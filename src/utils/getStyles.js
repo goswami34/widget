@@ -2,6 +2,7 @@ export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token");
   const userId = localStorage.getItem("squareCraft_u_id");
   let loadedFonts = new Set();
+  let selectedElement = null;
   if (!token || !userId) return;
 
   let pageElement = document.querySelector("article[data-page-sections]");
@@ -10,7 +11,6 @@ export async function getStyles() {
   function applyFont(fontFamily, fontWeights = "400") {
     console.log(`Applying font: ${fontFamily} with weights: ${fontWeights}`);
 
-    // Add the font to the document head if not already loaded
     const formattedFontName = fontFamily.replace(/\s+/g, "+");
     const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@${fontWeights}&display=swap`;
 
@@ -23,7 +23,6 @@ export async function getStyles() {
         console.log(`Font added to head: ${fontCDN}`);
     }
 
-    // Apply the font globally to the selected element
     if (selectedElement) {
         selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
         console.log(`Font applied to element: ${selectedElement.id}`);
