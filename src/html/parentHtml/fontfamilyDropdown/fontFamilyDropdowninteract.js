@@ -26,15 +26,19 @@
             fontLink.href = fontCDN;
             document.head.appendChild(fontLink);
             loadedFonts.add(fontFamily);
-            console.log(`Font added to head: ${fontCDN}`);
+            console.log(`✅ Font added to head: ${fontCDN}`);
         }
     
-        // Apply the font globally to the selected element
+        // Apply the font immediately to the selected element
         if (selectedElement) {
             selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
-            console.log(`Font applied to element: ${selectedElement.id}`);
+            console.log(`✅ Font applied to element: ${selectedElement.id}`);
         }
+    
+        // Update the dropdown text with the selected font
+        document.querySelector("#squareCraft-font-family p").textContent = fontFamily;
     }
+
     
     async function getStyles() {
         const token = localStorage.getItem("squareCraft_auth_token");
@@ -239,13 +243,13 @@
     
                 if (font.family === selectedFont) fontItem.classList.add("squareCraft-active");
     
-                fontItem.addEventListener("click", function () {
-                    selectedFont = font.family;
-                    document.querySelector("#squareCraft-font-family p").textContent = font.family;
-                    addFontToHead(font.family);
-                    syncVariantDropdown(font);
-                    closeAllDropdowns();
-                });
+              fontItem.addEventListener("click", function () {
+    selectedFont = font.family; // Update selected font globally
+    applyFont(font.family); // Apply live changes
+    syncVariantDropdown(font); // Sync variants
+    closeAllDropdowns();
+});
+
     
                 dropdownContent.appendChild(fontItem);
             });
@@ -307,19 +311,23 @@
         document.querySelector("#font-size p").textContent = selectedFontSize;
     
         if (selectedElement) {
-            selectedElement.style.fontSize = selectedFontSize;
+            selectedElement.style.fontSize = selectedFontSize; // Apply live change
             console.log(`✅ Font size updated to ${selectedFontSize} on element: ${selectedElement.id}`);
+        } else {
+            console.error("❌ No element selected to apply font size!");
+            return;
         }
+    
         try {
-            const response = await postStyles(selectedElement, {}, null, null, selectedFontSize);
-            const responseData = await response.json();
-            console.log("✅ postStyles API Response:", responseData);
+            await postStyles(selectedElement, {}, null, null, selectedFontSize);
+            console.log("✅ Font size updated successfully in the backend!");
         } catch (error) {
             console.error("❌ Error posting styles:", error);
         }
     
         closeAllDropdowns();
     });
+    
     
     
 
@@ -335,17 +343,18 @@
         );
         document.body.appendChild(sizeDropdown);
     
+        // ✅ Attach click event to open the dropdown when clicking #font-size
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
             toggleDropdown(parentDiv, sizeDropdown);
         });
     
-        // Generate Font Size Options (from 5px to 80px)
+        // ✅ Generate Font Size Options (from 5px to 80px)
         sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => i + 5)
             .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown squareCraft-w-100" data-size="${size}">${size}px</p>`)
             .join("");
     
-        // Attach Event Listener Properly
+        // ✅ Attach Event Listener for Selecting Font Size
         sizeDropdown.addEventListener("click", async function (event) {
             let sizeOption = event.target.closest(".squareCraft-dropdown-item");
             if (!sizeOption) return;
@@ -372,6 +381,7 @@
             closeAllDropdowns();
         });
     });
+    
     
     
     
