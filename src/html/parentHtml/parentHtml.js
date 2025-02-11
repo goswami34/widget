@@ -140,7 +140,7 @@ export function parentHtml() {
                         </div>
                     </div>
 
-<div id="squareCraft-bg-color-picker" class="squareCraft-bg-color-2c2c2c squareCraft-rounded-6px squareCraft-mt-4 squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-w-full" style="z-index: 9999; position: relative;">
+<div id="squareCraft-bg-color-picker" class="squareCraft-bg-color-2c2c2c squareCraft-mt-2 squareCraft-rounded-6px  squareCraft-border squareCraft-border-solid squareCraft-border-585858 squareCraft-w-full" style="z-index: 9999; position: relative;">
     <div class="squareCraft-flex squareCraft-p-2 squareCraft-items-center squareCraft-justify-between">
         <div class="squareCraft-flex squareCraft-gap-2 squareCraft-items-center">
             <img loading="lazy" src="https://fatin-webefo.github.io/squareCraft-Plugin/public/color-picker.svg" alt="">

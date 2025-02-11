@@ -14,7 +14,7 @@
     let selectedFontSize = "16px";
     let loadedFonts = new Set();
     document.addEventListener("DOMContentLoaded", function () {
-        const colorInput = document.getElementById("squareCraft-bg-color-input");
+        const colorInput = document.getElementById("squareCraft-bg-color-picker");
     
         colorInput.addEventListener("input", async function () {
             if (selectedElement) {
@@ -320,7 +320,7 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
     }
     
     document.addEventListener("DOMContentLoaded", function () {
-        const colorInput = document.getElementById("squareCraft-bg-color-input");
+        const colorInput = document.getElementById("squareCraft-bg-color-picker");
     
         colorInput.addEventListener("input", async function () {
             if (selectedElement) {
