@@ -18,51 +18,50 @@
     
         colorInput.addEventListener("input", async function () {
             if (selectedElement) {
-                selectedElement.style.backgroundColor = colorInput.value; // 🔥 Live update
+                selectedElement.style.backgroundColor = colorInput.value;
                 console.log(`✅ Background color changed to ${colorInput.value} for element: ${selectedElement.id}`);
     
-                // 🔥 **Post color to API immediately**
-                try {
-                    await postStyles(selectedElement, {}, null, null, null, colorInput.value);
-                    console.log("✅ Background color updated successfully in the backend!");
-                } catch (error) {
-                    console.error("❌ Error updating background color in API:", error);
-                }
+                // **🔥 Post only background color change**
+                postStyles(selectedElement, {
+                    "background-color": colorInput.value
+                });
             } else {
                 console.error("❌ No element selected to apply background color!");
             }
         });
     });
     
+    
     function applyFont(fontFamily, fontWeights = "400") {
         console.log(`Applying font: ${fontFamily} with weights: ${fontWeights}`);
     
-        // ✅ Add the font to <head> before applying it
         addFontToHead(fontFamily);
-    
+        
         const formattedFontName = fontFamily.replace(/\s+/g, "+");
         const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@${fontWeights}&display=swap`;
     
-        // **🔹 Fix: Ensure font is not removed from <head>**
         let existingFontLink = document.querySelector(`link[data-font="${fontFamily}"]`);
-    
         if (!existingFontLink) {
             let fontLink = document.createElement("link");
             fontLink.rel = "stylesheet";
             fontLink.href = fontCDN;
-            fontLink.setAttribute("data-font", fontFamily); // **Unique identifier**
+            fontLink.setAttribute("data-font", fontFamily);
             document.head.appendChild(fontLink);
             console.log(`✅ Font added to head: ${fontCDN}`);
-        } else {
-            console.log(`ℹ️ Font ${fontFamily} already exists in <head>.`);
         }
     
-        // **Apply the font immediately to the selected element**
         if (selectedElement) {
             selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
             console.log(`✅ Font applied to element: ${selectedElement.id}`);
+    
+            // **🔥 Post only font family change**
+            postStyles(selectedElement, {
+                "font-family": fontFamily,
+                "font-cdn": fontCDN
+            });
         }
     }
+    
     
     
     
@@ -226,8 +225,8 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
 
     document.addEventListener("click", (event) => {
         let clickedElement = event.target.closest("[id^='block-']");
-        let pageElement = event.target.closest("article[data-page-sections]");
-        
+        let pageElement = event.target.closest("article[data-page-sections']");
+    
         if (!clickedElement || !pageElement) return;
     
         if (selectedElement && selectedElement !== clickedElement) {
@@ -240,8 +239,10 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
     
         selectedElement.classList.add("squareCraft-animated-border");
     
+        // ✅ Fetch styles only when selecting an element
         getStyles();
     });
+    
     
 
     document.addEventListener("click", () => closeAllDropdowns());
@@ -364,7 +365,16 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
             variantItem.addEventListener("click", function () {
                 selectedVariant = variant;
                 document.querySelector("#squareCraft-font-varient p").textContent = variant;
-                postStyles(selectedElement, {}, font.family, variant, null); // ✅ Correct function call
+    
+                if (selectedElement) {
+                    selectedElement.style.fontVariant = variant;
+    
+                    // **🔥 Post only font variant change**
+                    postStyles(selectedElement, {
+                        "font-variant": variant
+                    });
+                }
+    
                 closeAllDropdowns();
             });
     
@@ -373,6 +383,7 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
     
         variantDropdown.appendChild(dropdownContent);
     }
+    
     
     sizeDropdown.addEventListener("click", async function (event) {
         let sizeOption = event.target.closest(".squareCraft-dropdown-item");
@@ -413,12 +424,10 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
             toggleDropdown(parentDiv, sizeDropdown);
         });
     
-        // ✅ Generate Font Size Options (5px to 80px)
         sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => i + 5)
             .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
             .join("");
     
-        // ✅ Attach Event Listener for Selecting Font Size
         sizeDropdown.addEventListener("click", async function (event) {
             let sizeOption = event.target.closest(".squareCraft-dropdown-item");
             if (!sizeOption) return;
@@ -427,23 +436,19 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
             document.querySelector("#font-size p").textContent = selectedFontSize;
     
             if (selectedElement) {
-                selectedElement.style.fontSize = selectedFontSize; // 🔥 Live update
+                selectedElement.style.fontSize = selectedFontSize;
                 console.log(`✅ Font size updated to ${selectedFontSize} on element: ${selectedElement.id}`);
     
-                // 🔥 **Post update to API**
-                try {
-                    await postStyles(selectedElement, {}, null, null, selectedFontSize);
-                    console.log("✅ Font size updated successfully in the backend!");
-                } catch (error) {
-                    console.error("❌ Error posting font size:", error);
-                }
-            } else {
-                console.error("❌ No element selected to apply font size!");
+                // **🔥 Post only font size change**
+                postStyles(selectedElement, {
+                    "font-size": selectedFontSize
+                });
             }
     
             closeAllDropdowns();
         });
     });
+    
     
     
     
