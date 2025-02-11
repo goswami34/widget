@@ -57,7 +57,7 @@
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
+                        "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
                     },
                     credentials: "include"
                 }
@@ -113,11 +113,7 @@
         if (fontFamily) css["font-family"] = fontFamily;
         if (fontVariant) css["font-variant"] = fontVariant;
         if (fontSize) css["font-size"] = `${fontSize}px`;
-        if (bgColor) css["background-color"] = bgColor; // ✅ Added Background Color Support
-    
-        const formattedFontName = fontFamily ? fontFamily.replace(/\s+/g, "+") : "";
-        const fontCDN = fontFamily ? `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@400;700&display=swap` : "";
-        if (fontFamily) css["font-cdn"] = fontCDN;
+        if (bgColor) css["background-color"] = bgColor; // ✅ Background color should be included
     
         const modificationData = {
             userId,
@@ -131,22 +127,25 @@
             ]
         };
     
+        console.log("🚀 Sending to API:", JSON.stringify(modificationData, null, 2)); // ✅ Debugging log
+    
         try {
             const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
                 },
                 body: JSON.stringify(modificationData),
             });
     
             const responseData = await response.json();
-            console.log("✅ Background color posted successfully:", responseData);
+            console.log("✅ API Response:", responseData);
         } catch (error) {
             console.error("❌ Error posting background color:", error);
         }
     }
+    
     
     function waitForElement(selector, callback, timeout = 5000) {
         const startTime = Date.now();
