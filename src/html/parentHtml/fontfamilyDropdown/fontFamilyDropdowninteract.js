@@ -1,12 +1,13 @@
 (async function fontFamilyDropdownInteract() {
     let selectedElement = null;
-    let selectedFont = "Inter", selectedVariant = "regular", selectedFontSize = "16px", selectedBgColor = "#ffffff";
+    let selectedFont = "", selectedVariant = "", selectedFontSize = "16px", selectedBgColor = "#ffffff";
     let fontDropdown, variantDropdown, sizeDropdown;
     let debounceTimeout;
-
+    let cachedFonts = [], currentFontIndex = 0, fontsPerPage = 10;
     const API_URL = "https://webefo-backend.vercel.app/api/v1/";
+    const GOOGLE_FONTS_API = "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBPpLHcfY1Z1SfUIe78z6UvPe-wF31iwRk";
 
-    // **🔥 Helper: Fetch Styles from API & Apply to Selected Element**
+    // **🔥 Fetch & Apply Initial Styles**
     async function fetchAndApplyStyles() {
         const token = localStorage.getItem("squareCraft_auth_token");
         const userId = localStorage.getItem("squareCraft_u_id");
@@ -38,7 +39,7 @@
         }
     }
 
-    // **🔥 Helper: Post Styles to API (Debounced)**
+    // **🔥 Debounced API Update**
     function postStylesDebounced(css) {
         clearTimeout(debounceTimeout);
         debounceTimeout = setTimeout(() => postStyles(css), 500);
@@ -71,100 +72,134 @@
         }
     }
 
-    // **🔥 Helper: Apply Styles to Selected Element**
+    // **🔥 Apply Styles to Selected Element**
     function applyStyles() {
         if (!selectedElement) return;
-        selectedElement.style.fontFamily = `'${selectedFont}', sans-serif`;
+        selectedElement.style.fontFamily = selectedFont ? `'${selectedFont}', sans-serif` : "";
         selectedElement.style.fontVariant = selectedVariant;
         selectedElement.style.fontSize = selectedFontSize;
         selectedElement.style.backgroundColor = selectedBgColor;
     }
 
-    // **🔥 Font Family Selection**
-    document.getElementById("squareCraft-font-family")?.addEventListener("click", () => toggleDropdown(fontDropdown));
+    // **🔥 Fetch Google Fonts & Implement Pagination**
+    async function fetchGoogleFonts() {
+        if (cachedFonts.length) return renderFonts();
 
-    fontDropdown = createDropdown("squareCraft-font-dropdown", [
-        { label: "Inter", value: "Inter" },
-        { label: "Arial", value: "Arial" },
-        { label: "Roboto", value: "Roboto" }
-    ], (font) => {
-        selectedFont = font;
-        postStylesDebounced({ "font-family": font });
-        applyStyles();
-    });
+        try {
+            const response = await fetch(GOOGLE_FONTS_API);
+            const data = await response.json();
+            cachedFonts = data.items;
+            renderFonts();
+        } catch (error) {
+            console.error("❌ Error fetching fonts:", error);
+        }
+    }
 
-    // **🔥 Font Variant Selection**
-    document.getElementById("squareCraft-font-varient")?.addEventListener("click", () => toggleDropdown(variantDropdown));
+    function renderFonts() {
+        const dropdownContainer = fontDropdown.querySelector(".squareCraft-dropdown-content") || document.createElement("div");
+        dropdownContainer.classList.add("squareCraft-dropdown-content");
+        dropdownContainer.innerHTML = "";
 
-    variantDropdown = createDropdown("squareCraft-variant-dropdown", [
-        { label: "Regular", value: "regular" },
-        { label: "Bold", value: "bold" },
-        { label: "Italic", value: "italic" }
-    ], (variant) => {
-        selectedVariant = variant;
-        postStylesDebounced({ "font-variant": variant });
-        applyStyles();
-    });
+        const fontsToShow = cachedFonts.slice(currentFontIndex, currentFontIndex + fontsPerPage);
+        currentFontIndex += fontsPerPage;
 
-    // **🔥 Font Size Selection**
-    document.getElementById("font-size")?.addEventListener("click", () => toggleDropdown(sizeDropdown));
+        fontsToShow.forEach(font => {
+            const fontItem = document.createElement("p");
+            fontItem.classList.add("squareCraft-dropdown-item");
+            fontItem.setAttribute("data-font", font.family);
+            fontItem.style.fontFamily = `'${font.family}', sans-serif`;
+            fontItem.textContent = font.family;
 
-    sizeDropdown = createDropdown("squareCraft-size-dropdown",
-        Array.from({ length: 76 }, (_, i) => ({ label: `${i + 5}px`, value: `${i + 5}px` })),
-        (size) => {
-            selectedFontSize = size;
-            postStylesDebounced({ "font-size": size });
-            applyStyles();
+            fontItem.addEventListener("click", function () {
+                selectedFont = font.family;
+                postStylesDebounced({ "font-family": font.family });
+                applyStyles();
+                closeAllDropdowns();
+            });
+
+            dropdownContainer.appendChild(fontItem);
         });
 
-    // **🔥 Background Color Selection**
-    document.getElementById("squareCraft-bg-color-input")?.addEventListener("input", (event) => {
-        selectedBgColor = event.target.value;
-        postStylesDebounced({ "background-color": selectedBgColor });
-        applyStyles();
-    });
+        fontDropdown.appendChild(dropdownContainer);
+    }
 
-    // **🔥 Utility: Create Dropdowns**
-    function createDropdown(id, items, onSelect) {
+    // **🔥 Dropdown & Event Listeners**
+    function setupDropdowns() {
+        fontDropdown = createDropdown("squareCraft-font-dropdown", () => fetchGoogleFonts());
+        variantDropdown = createDropdown("squareCraft-variant-dropdown", () => renderVariantOptions());
+        sizeDropdown = createDropdown("squareCraft-size-dropdown", () => renderSizeOptions());
+
+        document.getElementById("squareCraft-font-family")?.addEventListener("click", () => toggleDropdown(fontDropdown));
+        document.getElementById("squareCraft-font-varient")?.addEventListener("click", () => toggleDropdown(variantDropdown));
+        document.getElementById("font-size")?.addEventListener("click", () => toggleDropdown(sizeDropdown));
+
+        document.getElementById("squareCraft-bg-color-input")?.addEventListener("input", (event) => {
+            selectedBgColor = event.target.value;
+            postStylesDebounced({ "background-color": selectedBgColor });
+            applyStyles();
+        });
+    }
+
+    function renderVariantOptions() {
+        variantDropdown.innerHTML = `
+            <p class="squareCraft-dropdown-item" data-variant="regular">Regular</p>
+            <p class="squareCraft-dropdown-item" data-variant="bold">Bold</p>
+            <p class="squareCraft-dropdown-item" data-variant="italic">Italic</p>
+        `;
+
+        variantDropdown.querySelectorAll(".squareCraft-dropdown-item").forEach(item => {
+            item.addEventListener("click", () => {
+                selectedVariant = item.getAttribute("data-variant");
+                postStylesDebounced({ "font-variant": selectedVariant });
+                applyStyles();
+                closeAllDropdowns();
+            });
+        });
+    }
+
+    function renderSizeOptions() {
+        sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => 
+            `<p class="squareCraft-dropdown-item" data-size="${i + 5}px">${i + 5}px</p>`
+        ).join("");
+
+        sizeDropdown.querySelectorAll(".squareCraft-dropdown-item").forEach(item => {
+            item.addEventListener("click", () => {
+                selectedFontSize = item.getAttribute("data-size");
+                postStylesDebounced({ "font-size": selectedFontSize });
+                applyStyles();
+                closeAllDropdowns();
+            });
+        });
+    }
+
+    function createDropdown(id, onOpen) {
         const dropdown = document.createElement("div");
         dropdown.id = id;
         dropdown.classList.add("squareCraft-dropdown", "squareCraft-bg-3d3d3d");
-        dropdown.innerHTML = items.map(item =>
-            `<p class="squareCraft-dropdown-item" data-value="${item.value}">${item.label}</p>`
-        ).join("");
         document.body.appendChild(dropdown);
-
-        dropdown.addEventListener("click", (event) => {
-            const value = event.target.getAttribute("data-value");
-            if (value) {
-                onSelect(value);
-                closeAllDropdowns();
-            }
-        });
-
+        dropdown.addEventListener("click", (event) => event.stopPropagation());
+        dropdown.addEventListener("mouseenter", onOpen);
         return dropdown;
     }
 
-    // **🔥 Utility: Toggle Dropdown Visibility**
     function toggleDropdown(dropdown) {
-        if (!dropdown) return;
         closeAllDropdowns();
-        dropdown.classList.toggle("squareCraft-visible");
+        dropdown.classList.add("squareCraft-visible");
     }
 
-    // **🔥 Utility: Close All Dropdowns**
     function closeAllDropdowns() {
         document.querySelectorAll(".squareCraft-dropdown").forEach(d => d.classList.remove("squareCraft-visible"));
     }
 
-    // **🔥 Detect Selected Element on Click**
+    document.addEventListener("click", () => closeAllDropdowns());
+
     document.addEventListener("click", (event) => {
         let clickedElement = event.target.closest("[id^='block-']");
         if (clickedElement && clickedElement !== selectedElement) {
             selectedElement = clickedElement;
             fetchAndApplyStyles();
         }
-        closeAllDropdowns();
     });
 
+    setupDropdowns();
 })();
