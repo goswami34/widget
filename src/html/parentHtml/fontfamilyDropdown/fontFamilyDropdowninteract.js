@@ -340,10 +340,12 @@
             toggleDropdown(parentDiv, sizeDropdown);
         });
     
+        // Generate Font Size Options (from 5px to 80px)
         sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => i + 5)
             .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown squareCraft-w-100" data-size="${size}">${size}px</p>`)
             .join("");
     
+        // Attach Event Listener Properly
         sizeDropdown.addEventListener("click", async function (event) {
             let sizeOption = event.target.closest(".squareCraft-dropdown-item");
             if (!sizeOption) return;
@@ -359,11 +361,10 @@
                 return;
             }
     
-            // ✅ Call postStyles and log API response
+            // ✅ Ensure postStyles is awaited correctly
             try {
-                const response = await postStyles(selectedElement, {}, null, null, selectedFontSize);
-                const responseData = await response.json();
-                console.log("✅ postStyles API Response:", responseData);
+                await postStyles(selectedElement, {}, null, null, selectedFontSize);
+                console.log("✅ Font size updated successfully in the backend!");
             } catch (error) {
                 console.error("❌ Error posting styles:", error);
             }
@@ -371,6 +372,7 @@
             closeAllDropdowns();
         });
     });
+    
     
     
 
