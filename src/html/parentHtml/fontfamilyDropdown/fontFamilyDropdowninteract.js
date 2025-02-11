@@ -132,10 +132,14 @@
         let pageId = page.getAttribute("data-page-sections");
         let elementId = block.id;
     
-        if (fontFamily) css["font-family"] = fontFamily;
+        // ✅ Ensure all styles are applied properly
+        if (fontFamily) {
+            css["font-family"] = fontFamily;
+            css["font-cdn"] = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@100..900&display=swap`;
+        }
         if (fontVariant) css["font-variant"] = fontVariant;
-        if (fontSize) css["font-size"] = `${fontSize}px`;
-        if (bgColor) css["background-color"] = bgColor; // ✅ Background color should be included
+        if (fontSize) css["font-size"] = `${fontSize}px`;  // ✅ Ensure PX is added
+        if (bgColor) css["background-color"] = bgColor;
     
         const modificationData = {
             userId,
@@ -149,14 +153,14 @@
             ]
         };
     
-        console.log("🚀 Sending to API:", JSON.stringify(modificationData, null, 2)); // ✅ Debugging log
+        console.log("🚀 Sending to API:", JSON.stringify(modificationData, null, 2));
     
         try {
             const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify(modificationData),
             });
@@ -164,9 +168,10 @@
             const responseData = await response.json();
             console.log("✅ API Response:", responseData);
         } catch (error) {
-            console.error("❌ Error posting background color:", error);
+            console.error("❌ Error posting styles:", error);
         }
     }
+    
     
     
     function waitForElement(selector, callback, timeout = 5000) {
@@ -396,24 +401,17 @@
     waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
         sizeDropdown.id = "squareCraft-size-dropdown";
-        sizeDropdown.classList.add(
-            "squareCraft-w-100",
-            "squareCraft-dropdown",
-            "squareCraft-font-sm",
-            "squareCraft-bg-color-3d3d3d",
-            "squareCraft-scroll"
-        );
+        sizeDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-100", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
         document.body.appendChild(sizeDropdown);
     
-        // ✅ Attach click event to open the dropdown when clicking #font-size
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
             toggleDropdown(parentDiv, sizeDropdown);
         });
     
-        // ✅ Generate Font Size Options (from 5px to 80px)
+        // ✅ Generate Font Size Options (5px to 80px)
         sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => i + 5)
-            .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown squareCraft-w-100" data-size="${size}">${size}px</p>`)
+            .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
             .join("");
     
         // ✅ Attach Event Listener for Selecting Font Size
@@ -425,24 +423,24 @@
             document.querySelector("#font-size p").textContent = selectedFontSize;
     
             if (selectedElement) {
-                selectedElement.style.fontSize = selectedFontSize;
+                selectedElement.style.fontSize = selectedFontSize; // 🔥 Live update
                 console.log(`✅ Font size updated to ${selectedFontSize} on element: ${selectedElement.id}`);
+    
+                // 🔥 **Post update to API**
+                try {
+                    await postStyles(selectedElement, {}, null, null, selectedFontSize);
+                    console.log("✅ Font size updated successfully in the backend!");
+                } catch (error) {
+                    console.error("❌ Error posting font size:", error);
+                }
             } else {
                 console.error("❌ No element selected to apply font size!");
-                return;
-            }
-    
-            // ✅ Ensure postStyles is awaited correctly
-            try {
-                await postStyles(selectedElement, {}, null, null, selectedFontSize);
-                console.log("✅ Font size updated successfully in the backend!");
-            } catch (error) {
-                console.error("❌ Error posting styles:", error);
             }
     
             closeAllDropdowns();
         });
     });
+    
     
     
     
