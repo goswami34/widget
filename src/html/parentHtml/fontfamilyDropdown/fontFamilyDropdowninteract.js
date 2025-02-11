@@ -14,20 +14,28 @@
     let selectedFontSize = "16px";
     let loadedFonts = new Set();
     document.addEventListener("DOMContentLoaded", function () {
-        const colorInput = document.getElementById("squareCraft-bg-color-picker");
+        const colorInput = document.getElementById("squareCraft-bg-color-input");
     
-        colorInput.addEventListener("input", async function () {
-            if (selectedElement) {
-                selectedElement.style.backgroundColor = colorInput.value;
-                console.log(`✅ Background color changed to ${colorInput.value} for element: ${selectedElement.id}`);
-    
-                // **🔥 Post only background color change**
-                postStyles(selectedElement, {
-                    "background-color": colorInput.value
-                });
-            } else {
+        let debounceTimeout;
+        colorInput.addEventListener("input", function () {
+            if (!selectedElement) {
                 console.error("❌ No element selected to apply background color!");
+                return;
             }
+    
+            selectedElement.style.backgroundColor = colorInput.value;
+            console.log(`✅ Background color changed to ${colorInput.value} for element: ${selectedElement.id}`);
+    
+            // **🔥 Debounce API request (Wait 500ms after last input)**
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(async () => {
+                try {
+                    await postStyles(selectedElement, { "background-color": colorInput.value });
+                    console.log("✅ Background color updated successfully in the backend!");
+                } catch (error) {
+                    console.error("❌ Error updating background color in API:", error);
+                }
+            }, 500);
         });
     });
     
@@ -55,10 +63,7 @@
             console.log(`✅ Font applied to element: ${selectedElement.id}`);
     
             // **🔥 Post only font family change**
-            postStyles(selectedElement, {
-                "font-family": fontFamily,
-                "font-cdn": fontCDN
-            });
+            postStyles(selectedElement, { "font-family": fontFamily, "font-cdn": fontCDN });
         }
     }
     
@@ -412,7 +417,6 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
     
     
     
-
     waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
         sizeDropdown.id = "squareCraft-size-dropdown";
@@ -428,6 +432,7 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
             .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
             .join("");
     
+        // ✅ Move click listener inside the function!
         sizeDropdown.addEventListener("click", async function (event) {
             let sizeOption = event.target.closest(".squareCraft-dropdown-item");
             if (!sizeOption) return;
@@ -440,17 +445,12 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
                 console.log(`✅ Font size updated to ${selectedFontSize} on element: ${selectedElement.id}`);
     
                 // **🔥 Post only font size change**
-                postStyles(selectedElement, {
-                    "font-size": selectedFontSize
-                });
+                postStyles(selectedElement, { "font-size": selectedFontSize });
             }
     
             closeAllDropdowns();
         });
     });
-    
-    
-    
     
     
     
