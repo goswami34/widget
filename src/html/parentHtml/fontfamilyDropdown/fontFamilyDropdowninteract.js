@@ -57,7 +57,7 @@
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
+                        "Authorization": `Bearer ${token}`
                     },
                     credentials: "include"
                 }
@@ -65,12 +65,11 @@
     
             console.log("🛠️ Raw Response from API:", response);
     
-            // ✅ Fix: Ensure `response.json()` is only called once
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
     
-            const data = await response.json(); // ✅ Ensure response is read correctly
+            const data = await response.json();
             console.log("✅ Parsed API Response:", data);
     
             // ✅ Apply modifications
@@ -83,6 +82,7 @@
                         if (css["font-family"]) applyFont(css["font-family"], css["font-weights"]);
                         if (css["font-size"]) element.style.fontSize = css["font-size"];
                         if (css["font-variant"]) element.style.fontVariant = css["font-variant"];
+                        if (css["background-color"]) element.style.backgroundColor = css["background-color"]; // ✅ FIXED!
                     });
                 }
             });
@@ -91,6 +91,7 @@
             console.error("❌ Error fetching modifications:", error);
         }
     }
+    
     
 
 
