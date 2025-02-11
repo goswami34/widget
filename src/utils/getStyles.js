@@ -1,7 +1,7 @@
 export async function getStyles() {
   const token = localStorage.getItem("squareCraft_auth_token");
   const userId = localStorage.getItem("squareCraft_u_id");
-
+  let loadedFonts = new Set();
   if (!token || !userId) return;
 
   let pageElement = document.querySelector("article[data-page-sections]");
@@ -43,6 +43,7 @@ export async function getStyles() {
       );
 
       const data = await response.json();
+      console.log("response from get styles" , response)
 
       data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {
           if (fetchedPageId === pageId) {
