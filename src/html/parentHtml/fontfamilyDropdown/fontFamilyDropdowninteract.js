@@ -37,12 +37,15 @@
     function applyFont(fontFamily, fontWeights = "400") {
         console.log(`Applying font: ${fontFamily} with weights: ${fontWeights}`);
     
+        // ✅ Add the font to <head> before applying it
+        addFontToHead(fontFamily);
+    
         const formattedFontName = fontFamily.replace(/\s+/g, "+");
         const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@${fontWeights}&display=swap`;
-        
+    
         // **🔹 Fix: Ensure font is not removed from <head>**
         let existingFontLink = document.querySelector(`link[data-font="${fontFamily}"]`);
-        
+    
         if (!existingFontLink) {
             let fontLink = document.createElement("link");
             fontLink.rel = "stylesheet";
@@ -60,6 +63,7 @@
             console.log(`✅ Font applied to element: ${selectedElement.id}`);
         }
     }
+    
     
     
     async function getStyles() {
