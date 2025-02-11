@@ -8,7 +8,7 @@
         const link = document.createElement("link");
         link.id = "squareCraft-styles";
         link.rel = "stylesheet";
-        link.href = "https://fatin-webefo.github.io/squareCraft-Plugin/src/styles/parent.css"; // Change to your actual CDN or file path
+        link.href = "../../src/styles/parent.css"; // Change to your actual CDN or file path
         link.type = "text/css";
         link.onerror = () => console.error("❌ Failed to load SquareCraft styles.");
 
@@ -25,7 +25,7 @@
 
         const script = document.createElement("script");
         script.id = "squareCraft-script-tab";
-        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtmlTab.js"; 
+        script.src = "../../src/html/parentHtml/parentHtmlTab.js"; 
         script.defer = true;
 
         script.onerror = (e) => console.error("❌ Failed to load parentHtmlTab.js", e);
@@ -42,7 +42,7 @@
 
         const script = document.createElement("script");
         script.id = "squareCraft-script-fontFamily";
-        script.src = "https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/fontfamilyDropdown/fontFamilyDropdowninteract.js";
+        script.src = "../../src/html/parentHtml/fontfamilyDropdown/fontFamilyDropdowninteract.js";
         script.defer = true;
 
         script.onload = () => console.log("✅ parentHtmlTab.js loaded successfully!");
@@ -75,11 +75,11 @@
         }
     }
 
-    parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js"))?.parentHtml;
-    observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
-    getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
+    parentHtml = (await loadModule("../../src/html/parentHtml/parentHtml.js"))?.parentHtml;
+    observeDOMChanges = (await loadModule("../../src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
+    getStyles = (await loadModule("../../src/utils/getStyles.js"))?.getStyles;
     try {
-        const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
+        const { setToken } = await import("../../src/credentials/setToken.js");
         setToken();
     } catch (error) {
         console.error("❌ Failed to import setToken:", error);

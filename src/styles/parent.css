@@ -564,7 +564,7 @@ p {
   z-index: 9999;
   max-height: 250px;
   overflow-y: auto;
-  width: 100%;
+ width: 190px !important;
 }
 
 .squareCraft-visible {
@@ -579,7 +579,7 @@ p {
   color: #ffffff !important;
   font-size: 14px !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
-  width: 300px !important;
+font-size: 12px !important; 
 }
 
 .squareCraft-dropdown-item {
@@ -611,6 +611,7 @@ p {
   color: white !important;
 }
 
-.squareCraft-w-250{
-  width: 250px !important;
+.squareCraft-w-150{
+  width: 150px !important;
 }
+

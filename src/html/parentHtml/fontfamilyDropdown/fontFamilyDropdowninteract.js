@@ -6,7 +6,13 @@
     let selectedElement = null;
     let selectedPageId = null;
     let selectedBlockId = null;
-    let cachedFonts = null;
+    let cachedFonts = [];
+    let currentFontIndex = 0;
+    const fontsPerPage = 10;
+    let selectedFont = "Inter";
+    let selectedVariant = "regular";
+    let selectedFontSize = "16px";
+    let loadedFonts = new Set();
 
     function waitForElement(selector, callback, timeout = 5000) {
         const startTime = Date.now();
@@ -28,10 +34,30 @@
         dropdown.classList.add("squareCraft-visible");
     }
 
+    function closeAllDropdowns() {
+        document.querySelectorAll(".squareCraft-dropdown").forEach(dropdown => {
+            dropdown.classList.remove("squareCraft-visible");
+        });
+        isDropdownOpen = false;
+    }
+
     function toggleDropdown(parentDiv, dropdown) {
         if (!dropdown) return;
-        isDropdownOpen = !isDropdownOpen;
-        isDropdownOpen ? setDropdownPosition(parentDiv, dropdown) : dropdown.classList.remove("squareCraft-visible");
+        if (isDropdownOpen) {
+            closeAllDropdowns();
+        } else {
+            setDropdownPosition(parentDiv, dropdown);
+            isDropdownOpen = true;
+        }
+    }
+
+    function addFontToHead(fontFamily) {
+        if (loadedFonts.has(fontFamily)) return;
+        let fontLink = document.createElement("link");
+        fontLink.rel = "stylesheet";
+        fontLink.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@100..900&display=swap`;
+        document.head.appendChild(fontLink);
+        loadedFonts.add(fontFamily);
     }
 
     document.addEventListener("click", (event) => {
@@ -44,108 +70,108 @@
         getStyles();
     });
 
-    // Font Family Dropdown
+    document.addEventListener("click", () => closeAllDropdowns());
+
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         fontDropdown = document.createElement("div");
-        fontDropdown.id = "fontDropdown";
-        fontDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-250", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
+        fontDropdown.id = "squareCraft-font-dropdown";
+        fontDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-200", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
         document.body.appendChild(fontDropdown);
-        fetchGoogleFonts(fontDropdown, parentDiv);
+        fetchGoogleFonts(fontDropdown);
+
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
             toggleDropdown(parentDiv, fontDropdown);
         });
     });
 
-    async function fetchGoogleFonts(dropdownContainer, parentDiv) {
-        if (cachedFonts) {
-            return renderFonts(cachedFonts, dropdownContainer, parentDiv);
+    async function fetchGoogleFonts(dropdownContainer) {
+        if (cachedFonts.length) {
+            return renderFonts(dropdownContainer);
         }
-
         const apiUrl = "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBPpLHcfY1Z1SfUIe78z6UvPe-wF31iwRk";
         dropdownContainer.innerHTML = `<div class="squareCraft-loader">Loading fonts...</div>`;
 
         try {
             const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error("Failed to fetch fonts");
-
             const data = await response.json();
             cachedFonts = data.items;
-            renderFonts(cachedFonts, dropdownContainer, parentDiv);
+            renderFonts(dropdownContainer);
         } catch (error) {
-            dropdownContainer.innerHTML = `<p class="squareCraft-error">❌ Error loading fonts</p>`;
             console.error("Font fetch error:", error);
+            dropdownContainer.innerHTML = `<p class="squareCraft-error">❌ Error loading fonts</p>`;
         }
     }
 
-    function renderFonts(fontList, dropdownContainer, parentDiv) {
-        dropdownContainer.innerHTML = `<div class="squareCraft-dropdown-content"></div>`;
-        const dropdownContent = dropdownContainer.querySelector(".squareCraft-dropdown-content");
+    function renderFonts(dropdownContainer) {
+        const dropdownContent = document.createElement("div");
+        dropdownContent.classList.add("squareCraft-dropdown-content");
+        let fontsToShow = cachedFonts.slice(currentFontIndex, currentFontIndex + fontsPerPage);
+        currentFontIndex += fontsPerPage;
 
-        fontList.slice(0, 20).forEach(font => {
+        fontsToShow.forEach(font => {
             const fontItem = document.createElement("p");
             fontItem.classList.add("squareCraft-dropdown-item");
             fontItem.setAttribute("data-font", font.family);
             fontItem.style.fontFamily = `'${font.family}', sans-serif`;
             fontItem.textContent = font.family;
 
+            if (font.family === selectedFont) fontItem.classList.add("squareCraft-active");
+
             fontItem.addEventListener("click", function () {
-                openVariantDropdown(font);
+                selectedFont = font.family;
                 document.querySelector("#squareCraft-font-family p").textContent = font.family;
-                toggleDropdown(parentDiv, dropdownContainer);
+                addFontToHead(font.family);
+                syncVariantDropdown(font);
+                closeAllDropdowns();
             });
 
             dropdownContent.appendChild(fontItem);
         });
+
+        dropdownContainer.innerHTML = "";
+        dropdownContainer.appendChild(dropdownContent);
     }
 
-    function openVariantDropdown(font) {
-        if (!variantDropdown) {
-            variantDropdown = document.createElement("div");
-            variantDropdown.id = "variantDropdown";
-            variantDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-250", "squareCraft-bg-color-3d3d3d");
-            document.body.appendChild(variantDropdown);
-        }
+    waitForElement("#squareCraft-font-varient", (parentDiv) => {
+        variantDropdown = document.createElement("div");
+        variantDropdown.id = "squareCraft-variant-dropdown";
+        variantDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-150", "squareCraft-bg-color-3d3d3d");
+        document.body.appendChild(variantDropdown);
 
+        parentDiv.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleDropdown(parentDiv, variantDropdown);
+        });
+    });
+
+    function syncVariantDropdown(font) {
         variantDropdown.innerHTML = `<div class="squareCraft-dropdown-content"></div>`;
         const dropdownContent = variantDropdown.querySelector(".squareCraft-dropdown-content");
 
         font.variants.forEach(variant => {
             const variantItem = document.createElement("p");
-            variantItem.classList.add("squareCraft-dropdown-item");
+            variantItem.classList.add("squareCraft-dropdown-item", "squareCraft-w-100");
             variantItem.setAttribute("data-variant", variant);
             variantItem.textContent = variant;
 
             variantItem.addEventListener("click", function () {
-                applyFont(font.family, font.files[variant] || font.files["regular"]);
+                selectedVariant = variant;
+                document.querySelector("#squareCraft-font-varient p").textContent = variant;
                 saveModifications({ "font-family": font.family, "font-variant": variant });
-                toggleDropdown(null, variantDropdown);
+                closeAllDropdowns();
             });
 
             dropdownContent.appendChild(variantItem);
         });
 
-        setDropdownPosition(document.querySelector("#squareCraft-font-family"), variantDropdown);
-        variantDropdown.classList.add("squareCraft-visible");
+        variantDropdown.appendChild(dropdownContent);
     }
 
-    function applyFont(fontFamily, fontUrl) {
-        if (!document.querySelector(`link[href="${fontUrl}"]`)) {
-            let fontLink = document.createElement("link");
-            fontLink.rel = "stylesheet";
-            fontLink.href = fontUrl;
-            document.head.appendChild(fontLink);
-        }
-        if (selectedElement) {
-            selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
-        }
-    }
-
-    // Font Size Dropdown
-    waitForElement("#squareCraft-font-size", (parentDiv) => {
+    waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
-        sizeDropdown.id = "sizeDropdown";
-        sizeDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-150", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
+        sizeDropdown.id = "squareCraft-size-dropdown";
+        sizeDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-100", "squareCraft-font-sm", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
         document.body.appendChild(sizeDropdown);
 
         parentDiv.addEventListener("click", function (event) {
@@ -153,21 +179,26 @@
             toggleDropdown(parentDiv, sizeDropdown);
         });
 
-        sizeDropdown.innerHTML = Array.from({ length: 80 }, (_, i) => i + 1)
-            .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
+        sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => i + 5)
+            .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown" data-size="${size}">${size}px</p>`)
             .join("");
 
         sizeDropdown.addEventListener("click", function (event) {
             let sizeOption = event.target.closest(".squareCraft-dropdown-item");
             if (!sizeOption) return;
 
-            if (!selectedElement) return;
-            const selectedSize = sizeOption.getAttribute("data-size");
-            selectedElement.style.fontSize = `${selectedSize}px`;
-            document.querySelector("#squareCraft-font-size p").textContent = `${selectedSize}px`;
-            saveModifications({ "font-size": `${selectedSize}px` });
-            toggleDropdown(parentDiv, sizeDropdown);
+            selectedFontSize = sizeOption.getAttribute("data-size") + "px";
+            document.querySelector("#font-size p").textContent = selectedFontSize;
+            if (selectedElement) selectedElement.style.fontSize = selectedFontSize;
+
+            saveModifications({ "font-size": selectedFontSize });
+            closeAllDropdowns();
         });
     });
+
+    // Set Initial Values
+    waitForElement("#squareCraft-font-family p", el => el.textContent = selectedFont);
+    waitForElement("#squareCraft-font-varient p", el => el.textContent = selectedVariant);
+    waitForElement("#font-size p", el => el.textContent = selectedFontSize);
 
 })();
