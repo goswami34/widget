@@ -13,6 +13,27 @@
     let selectedVariant = "regular";
     let selectedFontSize = "16px";
     let loadedFonts = new Set();
+    document.addEventListener("DOMContentLoaded", function () {
+        const colorInput = document.getElementById("squareCraft-bg-color-input");
+    
+        colorInput.addEventListener("input", async function () {
+            if (selectedElement) {
+                selectedElement.style.backgroundColor = colorInput.value; // 🔥 Live update
+                console.log(`✅ Background color changed to ${colorInput.value} for element: ${selectedElement.id}`);
+    
+                // 🔥 **Post color to API immediately**
+                try {
+                    await postStyles(selectedElement, {}, null, null, null, colorInput.value);
+                    console.log("✅ Background color updated successfully in the backend!");
+                } catch (error) {
+                    console.error("❌ Error updating background color in API:", error);
+                }
+            } else {
+                console.error("❌ No element selected to apply background color!");
+            }
+        });
+    });
+    
     function applyFont(fontFamily, fontWeights = "400") {
         console.log(`Applying font: ${fontFamily} with weights: ${fontWeights}`);
     
