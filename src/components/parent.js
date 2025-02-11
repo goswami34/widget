@@ -57,13 +57,15 @@
     function initializeSquareCraft() {
         console.log("⚡ Initializing SquareCraft...");
         fontFamilyDropdowninteract();
-        getStyles();
+        // getStyles();
         observeDOMChanges();
         parentTabFunction();
         fontFamilyDropdown();
     }
 
-    let parentHtml,  observeDOMChanges, getStyles;
+    let parentHtml,  observeDOMChanges
+    //  getStyles
+     ;
 
     async function loadModule(url) {
         try {
@@ -77,7 +79,7 @@
 
     parentHtml = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/html/parentHtml/parentHtml.js"))?.parentHtml;
     observeDOMChanges = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/DOM/observeDOMChanges.js"))?.observeDOMChanges;
-    getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
+    // getStyles = (await loadModule("https://fatin-webefo.github.io/squareCraft-Plugin/src/utils/getStyles.js"))?.getStyles;
     try {
         const { setToken } = await import("https://fatin-webefo.github.io/squareCraft-Plugin/src/credentials/setToken.js");
         setToken();
@@ -94,9 +96,9 @@
     else if (!parentHtml) {
         console.error("❌ parentHtml function not found! Check if the script loaded properly.");
     }
-    else if (!getStyles) {
-        console.error("�� getStyles function not found! Check if the script loaded properly.");
-    }
+    // else if (!getStyles) {
+    //     console.error("�� getStyles function not found! Check if the script loaded properly.");
+    // }
 
 
 
@@ -161,7 +163,7 @@
             fontFamilyDropdowninteract();
             parentTabFunction();
             fontFamilyDropdown();
-            getStyles();
+            // getStyles();
         }
     }, 1000);
 
@@ -169,6 +171,6 @@
         initializeSquareCraft();
         fontFamilyDropdown();
         parentTabFunction();
-        getStyles();
+        // getStyles();
     }, 1000);
 })();
