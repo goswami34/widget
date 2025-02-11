@@ -95,50 +95,59 @@
 
 
 
-      async function postStyles(targetElement, css = {}, fontFamily, fontVariant, fontSize) {
+    async function postStyles(targetElement, css = {}, fontFamily, fontVariant, fontSize, bgColor) {
         const token = localStorage.getItem("squareCraft_auth_token");
         const userId = localStorage.getItem("squareCraft_u_id");
         const widgetId = localStorage.getItem("squareCraft_w_id");
-      
+    
         if (!token || !userId || !widgetId) return;
-      
+    
         let page = targetElement.closest("article[data-page-sections]");
         let block = targetElement.closest('[id^="block-"]');
-      
+    
         if (!page || !block) return;
-      
+    
         let pageId = page.getAttribute("data-page-sections");
         let elementId = block.id;
-      
+    
         if (fontFamily) css["font-family"] = fontFamily;
         if (fontVariant) css["font-variant"] = fontVariant;
         if (fontSize) css["font-size"] = `${fontSize}px`;
-      
-        const formattedFontName = fontFamily.replace(/\s+/g, "+");
-        const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@400;700&display=swap`;
-        css["font-cdn"] = fontCDN;
-      
+        if (bgColor) css["background-color"] = bgColor; // ✅ Added Background Color Support
+    
+        const formattedFontName = fontFamily ? fontFamily.replace(/\s+/g, "+") : "";
+        const fontCDN = fontFamily ? `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@400;700&display=swap` : "";
+        if (fontFamily) css["font-cdn"] = fontCDN;
+    
         const modificationData = {
-          userId,
-          token,
-          widgetId,
-          modifications: [
-            {
-              pageId,
-              elements: [{ elementId, css }]
-            }
-          ]
+            userId,
+            token,
+            widgetId,
+            modifications: [
+                {
+                    pageId,
+                    elements: [{ elementId, css }]
+                }
+            ]
         };
-      
-        await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(modificationData),
-        });
-      }
+    
+        try {
+            const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(modificationData),
+            });
+    
+            const responseData = await response.json();
+            console.log("✅ Background color posted successfully:", responseData);
+        } catch (error) {
+            console.error("❌ Error posting background color:", error);
+        }
+    }
+    
     function waitForElement(selector, callback, timeout = 5000) {
         const startTime = Date.now();
         const interval = setInterval(() => {
@@ -279,7 +288,27 @@
         });
     }
     
-
+    document.addEventListener("DOMContentLoaded", function () {
+        const colorInput = document.getElementById("squareCraft-bg-color-input");
+    
+        colorInput.addEventListener("input", async function () {
+            if (selectedElement) {
+                selectedElement.style.backgroundColor = colorInput.value; // 🔥 Live update
+                console.log(`✅ Background color changed to ${colorInput.value} for element: ${selectedElement.id}`);
+    
+                // 🔥 **Post color to API**
+                try {
+                    await postStyles(selectedElement, {}, null, null, null, colorInput.value);
+                    console.log("✅ Background color updated successfully in the backend!");
+                } catch (error) {
+                    console.error("❌ Error updating background color in API:", error);
+                }
+            } else {
+                console.error("❌ No element selected to apply background color!");
+            }
+        });
+    });
+    
     waitForElement("#squareCraft-font-varient", (parentDiv) => {
         variantDropdown = document.createElement("div");
         variantDropdown.id = "squareCraft-variant-dropdown";
