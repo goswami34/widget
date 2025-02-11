@@ -7,6 +7,29 @@ export async function getStyles() {
   let pageElement = document.querySelector("article[data-page-sections]");
   let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
 
+  function applyFont(fontFamily, fontWeights = "400") {
+    console.log(`Applying font: ${fontFamily} with weights: ${fontWeights}`);
+
+    // Add the font to the document head if not already loaded
+    const formattedFontName = fontFamily.replace(/\s+/g, "+");
+    const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@${fontWeights}&display=swap`;
+
+    if (!loadedFonts.has(fontFamily)) {
+        let fontLink = document.createElement("link");
+        fontLink.rel = "stylesheet";
+        fontLink.href = fontCDN;
+        document.head.appendChild(fontLink);
+        loadedFonts.add(fontFamily);
+        console.log(`Font added to head: ${fontCDN}`);
+    }
+
+    // Apply the font globally to the selected element
+    if (selectedElement) {
+        selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
+        console.log(`Font applied to element: ${selectedElement.id}`);
+    }
+}
+
   try {
       const response = await fetch(
           `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`,

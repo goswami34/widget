@@ -326,7 +326,13 @@
     waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
         sizeDropdown.id = "squareCraft-size-dropdown";
-        sizeDropdown.classList.add("squareCraft-w-100", "squareCraft-dropdown", "squareCraft-font-sm", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
+        sizeDropdown.classList.add(
+            "squareCraft-w-100",
+            "squareCraft-dropdown",
+            "squareCraft-font-sm",
+            "squareCraft-bg-color-3d3d3d",
+            "squareCraft-scroll"
+        );
         document.body.appendChild(sizeDropdown);
     
         parentDiv.addEventListener("click", function (event) {
@@ -338,18 +344,34 @@
             .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown squareCraft-w-100" data-size="${size}">${size}px</p>`)
             .join("");
     
-        sizeDropdown.addEventListener("click", function (event) {
+        sizeDropdown.addEventListener("click", async function (event) {
             let sizeOption = event.target.closest(".squareCraft-dropdown-item");
             if (!sizeOption) return;
     
             selectedFontSize = sizeOption.getAttribute("data-size") + "px";
             document.querySelector("#font-size p").textContent = selectedFontSize;
-            if (selectedElement) selectedElement.style.fontSize = selectedFontSize;
     
-            postStyles(selectedElement, {}, null, null, selectedFontSize);
+            if (selectedElement) {
+                selectedElement.style.fontSize = selectedFontSize;
+                console.log(`✅ Font size updated to ${selectedFontSize} on element: ${selectedElement.id}`);
+            } else {
+                console.error("❌ No element selected to apply font size!");
+                return;
+            }
+    
+            // ✅ Call postStyles and log API response
+            try {
+                const response = await postStyles(selectedElement, {}, null, null, selectedFontSize);
+                const responseData = await response.json();
+                console.log("✅ postStyles API Response:", responseData);
+            } catch (error) {
+                console.error("❌ Error posting styles:", error);
+            }
+    
             closeAllDropdowns();
         });
     });
+    
     
 
     waitForElement("#squareCraft-font-family p", el => el.textContent = selectedFont);
