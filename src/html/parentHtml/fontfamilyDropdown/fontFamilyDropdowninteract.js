@@ -96,17 +96,13 @@
     }
 
     function renderFonts() {
-        const dropdownContainer = fontDropdown.querySelector(".squareCraft-dropdown-content") || document.createElement("div");
-        dropdownContainer.classList.add("squareCraft-dropdown-content");
-        dropdownContainer.innerHTML = "";
-
+        fontDropdown.innerHTML = "";
         const fontsToShow = cachedFonts.slice(currentFontIndex, currentFontIndex + fontsPerPage);
         currentFontIndex += fontsPerPage;
 
         fontsToShow.forEach(font => {
             const fontItem = document.createElement("p");
             fontItem.classList.add("squareCraft-dropdown-item");
-            fontItem.setAttribute("data-font", font.family);
             fontItem.style.fontFamily = `'${font.family}', sans-serif`;
             fontItem.textContent = font.family;
 
@@ -117,17 +113,24 @@
                 closeAllDropdowns();
             });
 
-            dropdownContainer.appendChild(fontItem);
+            fontDropdown.appendChild(fontItem);
         });
 
-        fontDropdown.appendChild(dropdownContainer);
+        // "Load More" Button
+        if (currentFontIndex < cachedFonts.length) {
+            const loadMore = document.createElement("p");
+            loadMore.textContent = "Load More Fonts...";
+            loadMore.classList.add("squareCraft-dropdown-item", "load-more");
+            loadMore.addEventListener("click", renderFonts);
+            fontDropdown.appendChild(loadMore);
+        }
     }
 
     // **🔥 Dropdown & Event Listeners**
     function setupDropdowns() {
-        fontDropdown = createDropdown("squareCraft-font-dropdown", () => fetchGoogleFonts());
-        variantDropdown = createDropdown("squareCraft-variant-dropdown", () => renderVariantOptions());
-        sizeDropdown = createDropdown("squareCraft-size-dropdown", () => renderSizeOptions());
+        fontDropdown = createDropdown("squareCraft-font-dropdown", fetchGoogleFonts);
+        variantDropdown = createDropdown("squareCraft-variant-dropdown", renderVariantOptions);
+        sizeDropdown = createDropdown("squareCraft-size-dropdown", renderSizeOptions);
 
         document.getElementById("squareCraft-font-family")?.addEventListener("click", () => toggleDropdown(fontDropdown));
         document.getElementById("squareCraft-font-varient")?.addEventListener("click", () => toggleDropdown(variantDropdown));
