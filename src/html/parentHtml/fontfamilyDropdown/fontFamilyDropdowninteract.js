@@ -225,7 +225,7 @@ async function postStyles(targetElement, css = {}, fontFamily, fontVariant, font
 
     document.addEventListener("click", (event) => {
         let clickedElement = event.target.closest("[id^='block-']");
-        let pageElement = event.target.closest("article[data-page-sections']");
+        let pageElement = event.target.closest("article[data-page-sections]");
     
         if (!clickedElement || !pageElement) return;
     
