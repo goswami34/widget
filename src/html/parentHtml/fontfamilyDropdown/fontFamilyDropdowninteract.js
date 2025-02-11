@@ -16,29 +16,30 @@
     function applyFont(fontFamily, fontWeights = "400") {
         console.log(`Applying font: ${fontFamily} with weights: ${fontWeights}`);
     
-        // Add the font to the document head if not already loaded
         const formattedFontName = fontFamily.replace(/\s+/g, "+");
         const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@${fontWeights}&display=swap`;
-    
-        if (!loadedFonts.has(fontFamily)) {
+        
+        // **🔹 Fix: Ensure font is not removed from <head>**
+        let existingFontLink = document.querySelector(`link[data-font="${fontFamily}"]`);
+        
+        if (!existingFontLink) {
             let fontLink = document.createElement("link");
             fontLink.rel = "stylesheet";
             fontLink.href = fontCDN;
+            fontLink.setAttribute("data-font", fontFamily); // **Unique identifier**
             document.head.appendChild(fontLink);
-            loadedFonts.add(fontFamily);
             console.log(`✅ Font added to head: ${fontCDN}`);
+        } else {
+            console.log(`ℹ️ Font ${fontFamily} already exists in <head>.`);
         }
     
-        // Apply the font immediately to the selected element
+        // **Apply the font immediately to the selected element**
         if (selectedElement) {
             selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
             console.log(`✅ Font applied to element: ${selectedElement.id}`);
         }
-    
-        // Update the dropdown text with the selected font
-        document.querySelector("#squareCraft-font-family p").textContent = fontFamily;
     }
-
+    
     
     async function getStyles() {
         const token = localStorage.getItem("squareCraft_auth_token");
@@ -62,7 +63,7 @@
 
                 }
             );
-      
+      console.log("response from get emthod", response);
             const data = await response.json();
       
             data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {

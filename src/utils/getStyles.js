@@ -13,21 +13,28 @@ export async function getStyles() {
 
     const formattedFontName = fontFamily.replace(/\s+/g, "+");
     const fontCDN = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@${fontWeights}&display=swap`;
-
-    if (!loadedFonts.has(fontFamily)) {
+    
+    // **🔹 Fix: Ensure font is not removed from <head>**
+    let existingFontLink = document.querySelector(`link[data-font="${fontFamily}"]`);
+    
+    if (!existingFontLink) {
         let fontLink = document.createElement("link");
         fontLink.rel = "stylesheet";
         fontLink.href = fontCDN;
+        fontLink.setAttribute("data-font", fontFamily); // **Unique identifier**
         document.head.appendChild(fontLink);
-        loadedFonts.add(fontFamily);
-        console.log(`Font added to head: ${fontCDN}`);
+        console.log(`✅ Font added to head: ${fontCDN}`);
+    } else {
+        console.log(`ℹ️ Font ${fontFamily} already exists in <head>.`);
     }
 
+    // **Apply the font immediately to the selected element**
     if (selectedElement) {
         selectedElement.style.fontFamily = `'${fontFamily}', sans-serif`;
-        console.log(`Font applied to element: ${selectedElement.id}`);
+        console.log(`✅ Font applied to element: ${selectedElement.id}`);
     }
 }
+
 
   try {
       const response = await fetch(
@@ -36,7 +43,8 @@ export async function getStyles() {
               method: "GET",
               headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`
+                  "Authorization": `Bearer ${token}`,
+                  "userId" : userId
                 },
                credentials: "include"
           },
