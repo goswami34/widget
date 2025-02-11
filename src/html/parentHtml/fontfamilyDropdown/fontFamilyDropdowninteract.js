@@ -84,14 +84,12 @@
                 }
             );
     
-            console.log("✅ Parsed API Response:", data);
-    
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
     
-            const data = await response.json();
-       
+            const data = await response.json(); // ✅ Moved here before logging it
+            console.log("✅ Parsed API Response:", data);
     
             // ✅ Apply modifications
             data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {
@@ -103,7 +101,7 @@
                         if (css["font-family"]) applyFont(css["font-family"], css["font-weights"]);
                         if (css["font-size"]) element.style.fontSize = css["font-size"];
                         if (css["font-variant"]) element.style.fontVariant = css["font-variant"];
-                        if (css["background-color"]) element.style.backgroundColor = css["background-color"]; // ✅ FIXED!
+                        if (css["background-color"]) element.style.backgroundColor = css["background-color"];
                     });
                 }
             });
@@ -114,63 +112,65 @@
     }
     
     
+    
 getStyles();
 
 
-    async function postStyles(targetElement, css = {}, fontFamily, fontVariant, fontSize, bgColor) {
-        const token = localStorage.getItem("squareCraft_auth_token");
-        const userId = localStorage.getItem("squareCraft_u_id");
-        const widgetId = localStorage.getItem("squareCraft_w_id");
-    
-        if (!token || !userId || !widgetId) return;
-    
-        let page = targetElement.closest("article[data-page-sections]");
-        let block = targetElement.closest('[id^="block-"]');
-    
-        if (!page || !block) return;
-    
-        let pageId = page.getAttribute("data-page-sections");
-        let elementId = block.id;
-    
-        // ✅ Ensure all styles are applied properly
-        if (fontFamily) {
-            css["font-family"] = fontFamily;
-            css["font-cdn"] = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@100..900&display=swap`;
-        }
-        if (fontVariant) css["font-variant"] = fontVariant;
-        if (fontSize) css["font-size"] = `${fontSize}px`;  // ✅ Ensure PX is added
-        if (bgColor) css["background-color"] = bgColor;
-    
-        const modificationData = {
-            userId,
-            token,
-            widgetId,
-            modifications: [
-                {
-                    pageId,
-                    elements: [{ elementId, css }]
-                }
-            ]
-        };
-    
-        console.log("🚀 Sending to API:", JSON.stringify(modificationData, null, 2));
-    
-        try {
-            const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(modificationData),
-            });
-    
-            const responseData = await response.json();
-            console.log("✅ API Response:", responseData);
-        } catch (error) {
-            console.error("❌ Error posting styles:", error);
-        }
+async function postStyles(targetElement, css = {}, fontFamily, fontVariant, fontSize, bgColor) {
+    const token = localStorage.getItem("squareCraft_auth_token");
+    const userId = localStorage.getItem("squareCraft_u_id");
+    const widgetId = localStorage.getItem("squareCraft_w_id");
+
+    if (!token || !userId || !widgetId) return;
+
+    let page = targetElement.closest("article[data-page-sections]");
+    let block = targetElement.closest('[id^="block-"]');
+
+    if (!page || !block) return;
+
+    let pageId = page.getAttribute("data-page-sections");
+    let elementId = block.id;
+
+    // ✅ Ensure all styles are applied properly
+    if (fontFamily) {
+        css["font-family"] = fontFamily;
+        css["font-cdn"] = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@100..900&display=swap`;
     }
+    if (fontVariant) css["font-variant"] = fontVariant;
+    if (fontSize) css["font-size"] = `${fontSize}px`;  // ✅ Ensure PX is added
+    if (bgColor) css["background-color"] = bgColor; // ✅ Background color fixed!
+
+    const modificationData = {
+        userId,
+        token,
+        widgetId,
+        modifications: [
+            {
+                pageId,
+                elements: [{ elementId, css }]
+            }
+        ]
+    };
+
+    console.log("🚀 Sending to API:", JSON.stringify(modificationData, null, 2));
+
+    try {
+        const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(modificationData),
+        });
+
+        const responseData = await response.json();
+        console.log("✅ API Response:", responseData);
+    } catch (error) {
+        console.error("❌ Error posting styles:", error);
+    }
+}
+
     
     
     
