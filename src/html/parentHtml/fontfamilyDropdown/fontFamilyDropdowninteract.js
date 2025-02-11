@@ -44,10 +44,11 @@
         getStyles();
     });
 
+    // Font Family Dropdown
     waitForElement("#squareCraft-font-family", (parentDiv) => {
         fontDropdown = document.createElement("div");
         fontDropdown.id = "fontDropdown";
-        fontDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-250", "squareCraft-bg-color-3d3d3d");
+        fontDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-250", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
         document.body.appendChild(fontDropdown);
         fetchGoogleFonts(fontDropdown, parentDiv);
         parentDiv.addEventListener("click", function (event) {
@@ -140,69 +141,33 @@
         }
     }
 
-    async function saveModifications(css) {
-        const token = localStorage.getItem("squareCraft_auth_token");
-        const userId = localStorage.getItem("squareCraft_u_id");
-        const widgetId = localStorage.getItem("squareCraft_w_id");
+    // Font Size Dropdown
+    waitForElement("#squareCraft-font-size", (parentDiv) => {
+        sizeDropdown = document.createElement("div");
+        sizeDropdown.id = "sizeDropdown";
+        sizeDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-150", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
+        document.body.appendChild(sizeDropdown);
 
-        if (!token || !userId || !widgetId || !selectedElement || !selectedPageId || !selectedBlockId) return;
+        parentDiv.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleDropdown(parentDiv, sizeDropdown);
+        });
 
-        let modificationData = {
-            userId,
-            token,
-            widgetId,
-            modifications: [{ 
-                pageId: selectedPageId, 
-                elements: [{ elementId: selectedBlockId, css }] 
-            }]
-        };
+        sizeDropdown.innerHTML = Array.from({ length: 80 }, (_, i) => i + 1)
+            .map(size => `<p class="squareCraft-dropdown-item" data-size="${size}">${size}px</p>`)
+            .join("");
 
-        try {
-            const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                    "userId": userId,
-                    "widget-id": widgetId,
-                },
-                body: JSON.stringify(modificationData),
-            });
+        sizeDropdown.addEventListener("click", function (event) {
+            let sizeOption = event.target.closest(".squareCraft-dropdown-item");
+            if (!sizeOption) return;
 
-            if (!response.ok) {
-                console.error("Failed to save modifications");
-            }
-        } catch (error) {
-            console.error("Error saving modifications:", error);
-        }
-    }
+            if (!selectedElement) return;
+            const selectedSize = sizeOption.getAttribute("data-size");
+            selectedElement.style.fontSize = `${selectedSize}px`;
+            document.querySelector("#squareCraft-font-size p").textContent = `${selectedSize}px`;
+            saveModifications({ "font-size": `${selectedSize}px` });
+            toggleDropdown(parentDiv, sizeDropdown);
+        });
+    });
 
-    async function getStyles() {
-        const token = localStorage.getItem("squareCraft_auth_token");
-        const userId = localStorage.getItem("squareCraft_u_id");
-
-        if (!token || !userId || !selectedElement || !selectedPageId || !selectedBlockId) return;
-
-        try {
-            const response = await fetch(`https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`);
-            if (!response.ok) return;
-
-            const data = await response.json();
-            data?.modifications?.forEach(({ pageId: fetchedPageId, elements }) => {
-                if (fetchedPageId === selectedPageId) {
-                    elements.forEach(({ elementId, css }) => {
-                        if (elementId === selectedBlockId) {
-                            if (css["font-family"]) {
-                                selectedElement.style.fontFamily = css["font-family"];
-                                document.querySelector("#squareCraft-font-family p").textContent = css["font-family"];
-                            }
-                        }
-                    });
-                }
-            });
-
-        } catch (error) {
-            console.error("Error fetching modifications:", error);
-        }
-    }
 })();
