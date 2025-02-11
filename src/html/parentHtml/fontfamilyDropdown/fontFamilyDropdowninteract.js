@@ -104,34 +104,46 @@
     }
 
     function renderFonts(dropdownContainer) {
-        const dropdownContent = document.createElement("div");
+        const dropdownContent = dropdownContainer.querySelector(".squareCraft-dropdown-content") || document.createElement("div");
         dropdownContent.classList.add("squareCraft-dropdown-content");
-        let fontsToShow = cachedFonts.slice(currentFontIndex, currentFontIndex + fontsPerPage);
-        currentFontIndex += fontsPerPage;
-
-        fontsToShow.forEach(font => {
-            const fontItem = document.createElement("p");
-            fontItem.classList.add("squareCraft-dropdown-item");
-            fontItem.setAttribute("data-font", font.family);
-            fontItem.style.fontFamily = `'${font.family}', sans-serif`;
-            fontItem.textContent = font.family;
-
-            if (font.family === selectedFont) fontItem.classList.add("squareCraft-active");
-
-            fontItem.addEventListener("click", function () {
-                selectedFont = font.family;
-                document.querySelector("#squareCraft-font-family p").textContent = font.family;
-                addFontToHead(font.family);
-                syncVariantDropdown(font);
-                closeAllDropdowns();
+    
+        function loadNextFonts() {
+            let fontsToShow = cachedFonts.slice(currentFontIndex, currentFontIndex + fontsPerPage);
+            currentFontIndex += fontsPerPage;
+    
+            fontsToShow.forEach(font => {
+                const fontItem = document.createElement("p");
+                fontItem.classList.add("squareCraft-dropdown-item");
+                fontItem.setAttribute("data-font", font.family);
+                fontItem.style.fontFamily = `'${font.family}', sans-serif`;
+                fontItem.textContent = font.family;
+    
+                if (font.family === selectedFont) fontItem.classList.add("squareCraft-active");
+    
+                fontItem.addEventListener("click", function () {
+                    selectedFont = font.family;
+                    document.querySelector("#squareCraft-font-family p").textContent = font.family;
+                    addFontToHead(font.family);
+                    syncVariantDropdown(font);
+                    closeAllDropdowns();
+                });
+    
+                dropdownContent.appendChild(fontItem);
             });
-
-            dropdownContent.appendChild(fontItem);
+    
+            dropdownContainer.appendChild(dropdownContent);
+        }
+    
+        loadNextFonts(); // Initial Load
+    
+        dropdownContainer.addEventListener("scroll", function () {
+            if (dropdownContainer.scrollTop + dropdownContainer.clientHeight >= dropdownContainer.scrollHeight) {
+                console.log("Loading more fonts...");
+                loadNextFonts();
+            }
         });
-
-        dropdownContainer.innerHTML = "";
-        dropdownContainer.appendChild(dropdownContent);
     }
+    
 
     waitForElement("#squareCraft-font-varient", (parentDiv) => {
         variantDropdown = document.createElement("div");
@@ -171,7 +183,7 @@
     waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
         sizeDropdown.id = "squareCraft-size-dropdown";
-        sizeDropdown.classList.add("squareCraft-dropdown", "squareCraft-w-100", "squareCraft-font-sm", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
+        sizeDropdown.classList.add("squareCraft-w-100","squareCraft-dropdown", "squareCraft-font-sm", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
         document.body.appendChild(sizeDropdown);
 
         parentDiv.addEventListener("click", function (event) {
@@ -180,7 +192,7 @@
         });
 
         sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => i + 5)
-            .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown" data-size="${size}">${size}px</p>`)
+            .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown "squareCraft-w-100"" data-size="${size}">${size}px</p>`)
             .join("");
 
         sizeDropdown.addEventListener("click", function (event) {

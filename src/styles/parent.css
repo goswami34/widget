@@ -564,7 +564,9 @@ p {
   z-index: 9999;
   max-height: 250px;
   overflow-y: auto;
- width: 190px !important;
+}
+.squareCraft-w-190px{
+  width: 190px !important;
 }
 
 .squareCraft-visible {
