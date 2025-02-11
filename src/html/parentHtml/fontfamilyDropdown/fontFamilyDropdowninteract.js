@@ -175,7 +175,6 @@
         
         if (!clickedElement || !pageElement) return;
     
-        // Remove border from previously selected element
         if (selectedElement && selectedElement !== clickedElement) {
             selectedElement.classList.remove("squareCraft-animated-border");
         }
@@ -184,7 +183,6 @@
         selectedPageId = pageElement.getAttribute("data-page-sections");
         selectedBlockId = clickedElement.id;
     
-        // Apply animated border to the newly selected element
         selectedElement.classList.add("squareCraft-animated-border");
     
         getStyles();
@@ -301,48 +299,59 @@
         variantDropdown.appendChild(dropdownContent);
     }
     
-    sizeDropdown.addEventListener("click", function (event) {
+    sizeDropdown.addEventListener("click", async function (event) {
         let sizeOption = event.target.closest(".squareCraft-dropdown-item");
         if (!sizeOption) return;
     
         selectedFontSize = sizeOption.getAttribute("data-size") + "px";
         document.querySelector("#font-size p").textContent = selectedFontSize;
-        if (selectedElement) selectedElement.style.fontSize = selectedFontSize;
     
-        postStyles(selectedElement, {}, null, null, selectedFontSize); // ✅ Correct function call
+        if (selectedElement) {
+            selectedElement.style.fontSize = selectedFontSize;
+            console.log(`✅ Font size updated to ${selectedFontSize} on element: ${selectedElement.id}`);
+        }
+        try {
+            const response = await postStyles(selectedElement, {}, null, null, selectedFontSize);
+            const responseData = await response.json();
+            console.log("✅ postStyles API Response:", responseData);
+        } catch (error) {
+            console.error("❌ Error posting styles:", error);
+        }
+    
         closeAllDropdowns();
     });
+    
     
 
     waitForElement("#font-size", (parentDiv) => {
         sizeDropdown = document.createElement("div");
         sizeDropdown.id = "squareCraft-size-dropdown";
-        sizeDropdown.classList.add("squareCraft-w-100","squareCraft-dropdown", "squareCraft-font-sm", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
+        sizeDropdown.classList.add("squareCraft-w-100", "squareCraft-dropdown", "squareCraft-font-sm", "squareCraft-bg-color-3d3d3d", "squareCraft-scroll");
         document.body.appendChild(sizeDropdown);
-
+    
         parentDiv.addEventListener("click", function (event) {
             event.stopPropagation();
             toggleDropdown(parentDiv, sizeDropdown);
         });
-
+    
         sizeDropdown.innerHTML = Array.from({ length: 76 }, (_, i) => i + 5)
-            .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown "squareCraft-w-100"" data-size="${size}">${size}px</p>`)
+            .map(size => `<p class="squareCraft-dropdown-item squareCraft-font-size-dropdown squareCraft-w-100" data-size="${size}">${size}px</p>`)
             .join("");
-
+    
         sizeDropdown.addEventListener("click", function (event) {
             let sizeOption = event.target.closest(".squareCraft-dropdown-item");
             if (!sizeOption) return;
-
+    
             selectedFontSize = sizeOption.getAttribute("data-size") + "px";
             document.querySelector("#font-size p").textContent = selectedFontSize;
             if (selectedElement) selectedElement.style.fontSize = selectedFontSize;
-
-            postStyles({ "font-size": selectedFontSize });
+    
+            postStyles(selectedElement, {}, null, null, selectedFontSize);
             closeAllDropdowns();
         });
     });
+    
 
-    // Set Initial Values
     waitForElement("#squareCraft-font-family p", el => el.textContent = selectedFont);
     waitForElement("#squareCraft-font-varient p", el => el.textContent = selectedVariant);
     waitForElement("#font-size p", el => el.textContent = selectedFontSize);
