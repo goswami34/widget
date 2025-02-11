@@ -18,12 +18,13 @@ function fontFamilyDropdown() {
 }
 
 export function observeDOMChanges() {
+  fontFamilyDropdown(); 
     const observer = new MutationObserver(() => {
         console.log("🔄 DOM Updated - Checking for changes...");
 
         if (isEditingMode()) {
             console.log("🛠 Detected Edit Mode - Rechecking modifications...");
-            fontFamilyDropdown();  // 🔥 Replace getStyles() with fontFamilyDropdown()
+            fontFamilyDropdown(); 
         }
     });
 
