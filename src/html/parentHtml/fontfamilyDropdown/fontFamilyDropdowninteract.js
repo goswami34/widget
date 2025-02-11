@@ -7,7 +7,7 @@
     const API_URL = "https://webefo-backend.vercel.app/api/v1/";
     const GOOGLE_FONTS_API = "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBPpLHcfY1Z1SfUIe78z6UvPe-wF31iwRk";
 
-    // **🔥 Fetch & Apply Initial Styles**
+    /** 🔥 Fetch & Apply Initial Styles */
     async function fetchAndApplyStyles() {
         const token = localStorage.getItem("squareCraft_auth_token");
         const userId = localStorage.getItem("squareCraft_u_id");
@@ -39,7 +39,7 @@
         }
     }
 
-    // **🔥 Debounced API Update**
+    /** 🔥 Debounced API Update */
     function postStylesDebounced(css) {
         clearTimeout(debounceTimeout);
         debounceTimeout = setTimeout(() => postStyles(css), 500);
@@ -72,7 +72,7 @@
         }
     }
 
-    // **🔥 Apply Styles to Selected Element**
+    /** 🔥 Apply Styles to Selected Element */
     function applyStyles() {
         if (!selectedElement) return;
         selectedElement.style.fontFamily = selectedFont ? `'${selectedFont}', sans-serif` : "";
@@ -81,7 +81,7 @@
         selectedElement.style.backgroundColor = selectedBgColor;
     }
 
-    // **🔥 Fetch Google Fonts & Implement Pagination**
+    /** 🔥 Fetch Google Fonts & Implement Pagination */
     async function fetchGoogleFonts() {
         if (cachedFonts.length) return renderFonts();
 
@@ -126,7 +126,7 @@
         }
     }
 
-    // **🔥 Dropdown & Event Listeners**
+    /** 🔥 Dropdown & Event Listeners */
     function setupDropdowns() {
         fontDropdown = createDropdown("squareCraft-font-dropdown", fetchGoogleFonts);
         variantDropdown = createDropdown("squareCraft-variant-dropdown", renderVariantOptions);
