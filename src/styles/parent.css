@@ -617,3 +617,15 @@ font-size: 12px !important;
   width: 150px !important;
 }
 
+@keyframes squareCraft-border-animation {
+  0% { border-color: #ff4500; } /* Orange */
+  25% { border-color: #00ff00; } /* Green */
+  50% { border-color: #007bff; } /* Blue */
+  75% { border-color: #ff00ff; } /* Magenta */
+  100% { border-color: #ff4500; } /* Back to Orange */
+}
+
+.squareCraft-animated-border {
+  border: 2px solid;
+  animation: squareCraft-border-animation 1.5s infinite linear;
+}
