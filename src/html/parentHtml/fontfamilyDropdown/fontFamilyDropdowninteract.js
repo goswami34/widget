@@ -1,4 +1,6 @@
 (async function fontFamilyDropdownInteract() {
+  const userId = localStorage.getItem("squareCraft_u_id");
+  const widgetId = localStorage.getItem("squareCraft_w_id");
     console.log("✅ SquareCraft Plugin Loaded");
     setTimeout(() => {
       if (!window.location.href.includes("squarespace.com/config")) return;
@@ -26,7 +28,6 @@
       logo.style.borderRadius = "50%";
       logo.style.cursor = "pointer";
   
-      // Append to Squarespace Admin Toolbar
       logoWrapper.appendChild(logo);
       toolbar.appendChild(logoWrapper);
   
@@ -65,7 +66,7 @@
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`
           },
-          body: JSON.stringify({ userId: "679b4e3aee8e48bf97172661", modifications: [{ pageId, elements: [{ elementId, css }] }] } ),
+          body: JSON.stringify({ userId: userId, widgetId:widgetId, modifications: [{ pageId, elements: [{ elementId, css }] }] } ),
         });
   
         console.log("✅ Changes Saved Successfully!", response);
@@ -275,7 +276,6 @@
   
     async function fetchModifications() {
       try {
-        const userId = "679b4e3aee8e48bf97172661";
     
         // 🔹 Detect Edit Mode
         if (isEditingMode()) {
