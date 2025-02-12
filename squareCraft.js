@@ -5,13 +5,7 @@
     return;
   }
 
-  const token = widgetScript.dataset?.token || null;
-  const userId = widgetScript.dataset?.uId || null;
-  const widgetId = widgetScript.dataset?.wId || null;
-
-  if (token) localStorage.setItem("squareCraft_auth_token", token);
-  if (userId) localStorage.setItem("squareCraft_u_id", userId);
-  if (widgetId) localStorage.setItem("squareCraft_w_id", widgetId);
+src/html/parentHtml/fontfamilyDropdown/fontFamilyDropdowninteract.js
 
   let selectedElement = null;
   let appliedStyles = new Set(); // 🛠️ To track applied styles & prevent duplicate applications
