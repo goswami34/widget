@@ -58,6 +58,17 @@
   
       applyStylesToElement(elementId, css);
       console.log("Saving modifications for Page ID and Element ID:", pageId, elementId);
+      const modificationData = {
+        userId,
+        token,
+        widgetId,
+        modifications: [
+            {
+                pageId,
+                elements: [{ elementId, css }]
+            }
+        ]
+    };
   
       try {
         const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
@@ -66,10 +77,10 @@
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`
           },
-          body: JSON.stringify({ userId: userId, widgetId:widgetId, modifications: [{ pageId, elements: [{ elementId, css }] }] } ),
+          body: JSON.stringify(modificationData),
         });
   
-        console.log("✅ Changes Saved Successfully!", response);
+        console.log("✅ Changes Saved Successfully!", response.json());
   
       } catch (error) {
         console.error("❌ Error saving modifications:", error);
