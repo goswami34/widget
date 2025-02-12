@@ -14,7 +14,12 @@
   if (widgetId) localStorage.setItem("squareCraft_w_id", widgetId);
 
   let selectedElement = null;
-  let appliedStyles = new Set(); // Track applied styles to prevent duplicate injection
+  let appliedStyles = new Set();
+  let fonts = [];
+  let currentPage = 1;
+  const fontsPerPage = 10;
+  const API_KEY = "AIzaSyBPpLHcfY1Z1SfUIe78z6UvPe-wF31iwRk"; // Replace with your Google API Key
+  const FONT_API_URL = `https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}`;
 
   function getPageId() {
     let pageElement = document.querySelector("article[data-page-sections]");
@@ -24,9 +29,6 @@
   let pageId = getPageId();
   if (!pageId) console.warn("⚠️ No page ID found. Plugin may not work correctly.");
 
-  /**
-   * 🎨 Apply Styles to an Element & Ensure Persistence
-   */
   function applyStylesToElement(elementId, css) {
     if (!elementId || !css || appliedStyles.has(elementId)) return;
 
@@ -37,15 +39,14 @@
       document.head.appendChild(styleTag);
     }
 
-    let cssText = `#${elementId}, #${elementId} * { `; // Apply to element + all children
+    let cssText = `#${elementId}, #${elementId} * { `;
     Object.keys(css).forEach(prop => {
       cssText += `${prop}: ${css[prop]} !important; `;
     });
     cssText += "}";
 
-    // Fix border-radius issue by adding `overflow: hidden;` if needed
     if (css["border-radius"]) {
-      cssText += `#${elementId} { overflow: hidden !important; }`; // Ensure rounded corners work
+      cssText += `#${elementId} { overflow: hidden !important; }`;
     }
 
     styleTag.innerHTML = cssText;
@@ -53,9 +54,6 @@
     console.log(`✅ Styles Persisted for ${elementId}`);
   }
 
-  /**
-   * 📡 Fetch & Apply Stored Modifications After Page Load
-   */
   async function fetchModifications(retries = 3) {
     if (!pageId) return;
 
@@ -99,9 +97,6 @@
     }
   }
 
-  /**
-   * 💾 Save Modifications for Selected Element
-   */
   async function saveModifications(elementId, css) {
     if (!pageId || !elementId || !css) {
       console.warn("⚠️ Missing required data to save modifications.");
@@ -119,93 +114,118 @@
     };
 
     try {
-      const response = await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
+      await fetch("https://webefo-backend.vercel.app/api/v1/modifications", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
-          "userId": userId,
-          "pageId": pageId,
-          "widget-id": widgetId,
         },
         body: JSON.stringify(modificationData),
       });
 
-      console.log("✅ Changes Saved Successfully!", await response.json());
+      console.log("✅ Changes Saved Successfully!");
     } catch (error) {
       console.error("❌ Error saving modifications:", error);
     }
   }
 
-  /**
-   * 🎛️ Create Floating Widget for Editing Styles
-   */
-  function createWidget() {
-    const widgetContainer = document.createElement("div");
-    widgetContainer.id = "squarecraft-widget-container";
-    widgetContainer.style.position = "fixed";
-    widgetContainer.style.top = "100px";
-    widgetContainer.style.left = "100px";
-    widgetContainer.style.zIndex = "9999";
-
-    widgetContainer.innerHTML = `
-      <div style="width: 300px; background: #2c2c2c; padding: 20px; border-radius: 18px; color: white;">
-        <h3>🎨 SquareCraft Widget</h3>
-
-        <label>Font Size:</label>
-        <input type="number" id="squareCraftFontSize" value="16" min="10" max="50" style="width: 100%;">
-
-        <label>Background Color:</label>
-        <input type="color" id="squareCraftBgColor" value="#ffffff" style="width: 100%;">
-
-        <label>Border Radius:</label>
-        <input type="range" id="squareCraftBorderRadius" min="0" max="50" value="0">
-        <p>Border Radius: <span id="borderRadiusValue">0px</span></p>
-
-        <button id="squareCraftPublish" style="width: 100%; padding: 10px; background: #EF7C2F; color: white;">
-          Publish Changes
-        </button>
-      </div>
-    `;
-
-    document.body.appendChild(widgetContainer);
+  async function fetchFonts() {
+    try {
+      const response = await fetch(FONT_API_URL);
+      const data = await response.json();
+      fonts = data.items;
+      renderFontDropdown();
+    } catch (error) {
+      console.error("❌ Error fetching fonts:", error);
+    }
   }
 
-  
-  /**
-   * 🎯 Handle Element Selection & Style Updates
-   */
-  function attachEventListeners() {
-    document.body.addEventListener("click", (event) => {
-      let block = event.target.closest('[id^="block-"]');
-      if (!block) return;
+  function renderFontDropdown() {
+    const dropdown = document.getElementById("fontDropdown");
+    const paginationContainer = document.getElementById("paginationControls");
 
-      if (selectedElement) selectedElement.style.outline = "";
-      selectedElement = block;
-      selectedElement.style.outline = "2px dashed #EF7C2F";
+    dropdown.innerHTML = "";
+    paginationContainer.innerHTML = "";
 
-      console.log(`✅ Selected Element: ${selectedElement.id}`);
+    const startIndex = (currentPage - 1) * fontsPerPage;
+    const endIndex = startIndex + fontsPerPage;
+    const paginatedFonts = fonts.slice(startIndex, endIndex);
+
+    paginatedFonts.forEach(font => {
+      const option = document.createElement("div");
+      option.classList.add("font-option");
+      option.style.fontFamily = font.family;
+      option.textContent = font.family;
+      option.dataset.fontUrl = font.files.regular;
+
+      option.addEventListener("click", () => applyFont(font.family, font.files.regular));
+      dropdown.appendChild(option);
     });
 
-    document.getElementById("squareCraftPublish").addEventListener("click", async () => {
-      if (!selectedElement) {
-        console.warn("⚠️ No element selected.");
-        return;
-      }
-
-      let css = {
-        "font-size": document.getElementById("squareCraftFontSize").value + "px",
-        "background-color": document.getElementById("squareCraftBgColor").value,
-        "border-radius": document.getElementById("squareCraftBorderRadius").value + "px"
+    if (currentPage > 1) {
+      const prevBtn = document.createElement("button");
+      prevBtn.textContent = "⬅️ Previous";
+      prevBtn.onclick = () => {
+        currentPage--;
+        renderFontDropdown();
       };
+      paginationContainer.appendChild(prevBtn);
+    }
 
-      await saveModifications(selectedElement.id, css);
+    if (endIndex < fonts.length) {
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "Next ➡️";
+      nextBtn.onclick = () => {
+        currentPage++;
+        renderFontDropdown();
+      };
+      paginationContainer.appendChild(nextBtn);
+    }
+  }
+
+  function applyFont(fontFamily, fontUrl) {
+    if (!selectedElement) {
+      console.warn("⚠️ No element selected.");
+      return;
+    }
+
+    const fontFace = new FontFace(fontFamily, `url(${fontUrl})`);
+    document.fonts.add(fontFace);
+    fontFace.load().then(() => {
+      selectedElement.style.fontFamily = fontFamily;
+      console.log(`✅ Applied font: ${fontFamily}`);
+      saveModifications(selectedElement.id, { "font-family": fontFamily });
     });
+  }
+
+  function createFontSelectorUI() {
+    const fontSelector = document.createElement("div");
+    fontSelector.id = "fontSelectorContainer";
+    fontSelector.style.cssText = `
+      position: fixed;
+      top: 100px;
+      left: 400px;
+      width: 300px;
+      background: white;
+      border: 1px solid #ddd;
+      padding: 10px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      z-index: 9999;
+    `;
+
+    fontSelector.innerHTML = `
+      <h3 style="margin-bottom: 10px;">🎨 Choose Font</h3>
+      <div id="fontDropdown" style="max-height: 200px; overflow-y: auto;"></div>
+      <div id="paginationControls" style="margin-top: 10px;"></div>
+    `;
+
+    document.body.appendChild(fontSelector);
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    createWidget();
-    attachEventListeners();
+    createFontSelectorUI();
+    fetchFonts();
     fetchModifications();
   });
 })();
