@@ -1,5 +1,4 @@
 (async function fontFamilyDropdownInteract() {
-
   const widgetScript = document.getElementById("squarecraft-script");
   const token = widgetScript?.dataset?.token;
   const userId = widgetScript.dataset?.uId; 
