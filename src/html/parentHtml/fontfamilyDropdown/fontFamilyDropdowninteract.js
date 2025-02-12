@@ -86,8 +86,7 @@
         console.error("❌ Error saving modifications:", error);
       }
     }
-  
-    // ✅ Ensure full URL logs correctly
+
     setTimeout(() => {
       console.log("🔗 Full URL:", window.location.href);
     }, 1000);
