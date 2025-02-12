@@ -83,7 +83,7 @@ if (widgetId) {
       console.log(`📄 Fetching modifications for Page ID: ${pageId} and User ID: ${userId}`);
 
       const response = await fetch(
-        `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}&pageId=${encodeURIComponent(pageId)}`,
+        `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`,
         {
           method: "GET",
           headers: {
@@ -146,7 +146,10 @@ if (widgetId) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`
+          "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
+          "pageId" : pageId,
+          "userId" : userId,
+          "widget-id" : widgetId
         },
         body: JSON.stringify(modificationData),
       });
