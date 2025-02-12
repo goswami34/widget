@@ -306,7 +306,7 @@
         console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
     
         const response = await fetch(
-          `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}&pageId=${pageId}`,
+          `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`,
           {
             method: "GET",
             headers: {
