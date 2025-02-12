@@ -8,7 +8,7 @@
     console.error("❌ Missing authentication data!");
     return;
   }
-
+  let selectedElement = null;
   console.log("🔑 Authenticated:", { token, userId, widgetId });
 
   localStorage.setItem("squareCraft_auth_token", token);
