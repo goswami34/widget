@@ -9,17 +9,17 @@
     document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
 }
 
-if (squareCraft_u_id) {
-    console.log("👤 User ID received:", squareCraft_u_id);
-    localStorage.setItem("squareCraft_u_id", squareCraft_u_id);
-    document.cookie = `squareCraft_u_id=${squareCraft_u_id}; path=.squarespace.com;`;
+if (userId) {
+    console.log("👤 User ID received:", userId);
+    localStorage.setItem("squareCraft_u_id", userId);
+    document.cookie = `squareCraft_u_id=${userId}; path=.squarespace.com;`;
 
 }
 
-if (squareCraft_w_id) {
-    console.log("🛠️ Widget ID received:", squareCraft_w_id);
-    localStorage.setItem("squareCraft_w_id", squareCraft_w_id);
-    document.cookie = `squareCraft_w_id=${squareCraft_w_id}; path=.squarespace.com;`;
+if (widgetId) {
+    console.log("🛠️ Widget ID received:", widgetId);
+    localStorage.setItem("squareCraft_w_id", widgetId);
+    document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
 }
     console.log("✅ SquareCraft Plugin Loaded");
     setTimeout(() => {

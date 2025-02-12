@@ -1,37 +1,42 @@
-(async function squareCraft() {
+(async function fontFamilyDropdownInteract() {
   const widgetScript = document.getElementById("squarecraft-script");
   const token = widgetScript?.dataset?.token;
-  const userId = widgetScript?.dataset?.uId;
-  const widgetId = widgetScript?.dataset?.wId;
-  let selectedElement = null; // Track currently selected element
+  const userId = widgetScript.dataset?.uId; 
+  const widgetId = widgetScript.dataset?.wId; 
 
-  // Get pageId once (global for the entire page)
-  const pageElement = document.querySelector("article[data-page-sections]");
-  const pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
-
-  if (!pageId) {
-    console.warn("⚠️ No page ID found. The plugin may not work correctly.");
-  } else {
-    console.log(`📄 Page ID detected: ${pageId}`);
-  }
-
-  // Store credentials if available
   if (token) {
     console.log("🔑 Token received:", token);
     localStorage.setItem("squareCraft_auth_token", token);
     document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
-  }
-  if (userId) {
+}
+
+if (userId) {
     console.log("👤 User ID received:", userId);
     localStorage.setItem("squareCraft_u_id", userId);
     document.cookie = `squareCraft_u_id=${userId}; path=.squarespace.com;`;
-  }
-  if (widgetId) {
+
+}
+
+if (widgetId) {
     console.log("🛠️ Widget ID received:", widgetId);
     localStorage.setItem("squareCraft_w_id", widgetId);
     document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
+}
+  
+  let selectedElement = null;
+
+  // Get pageId once (global for the entire page)
+  function getPageId() {
+    let pageElement = document.querySelector("article[data-page-sections]");
+    return pageElement ? pageElement.getAttribute("data-page-sections") : null;
   }
 
+  let pageId = getPageId();
+  if (!pageId) {
+    console.warn("⚠️ No page ID found. Plugin may not work correctly.");
+  } else {
+    console.log(`📄 Page ID detected: ${pageId}`);
+  }
   /**
    * 🎨 Apply Styles to Selected Element
    */
@@ -42,18 +47,17 @@
       return;
     }
 
-    console.log(`🎨 Applying styles to ${elementId}:`, css);
     Object.keys(css).forEach((prop) => {
       element.style.setProperty(prop, css[prop], "important");
     });
 
-    console.log("✅ Styles Applied Successfully!");
+    console.log(`✅ Styles Applied to ${elementId}`);
   }
 
   /**
    * 📡 Fetch and Apply Modifications on Page Load
    */
-  async function fetchModifications() {
+  async function fetchModifications(retries = 3) {
     if (!pageId) return;
 
     try {
@@ -73,8 +77,6 @@
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
-      console.log("📥 Fetched Modifications:", data);
-
       if (!data.modifications || data.modifications.length === 0) {
         console.warn("⚠️ No styles found for this page.");
         return;
@@ -90,6 +92,10 @@
 
     } catch (error) {
       console.error("❌ Error fetching modifications:", error);
+      if (retries > 0) {
+        console.log(`🔄 Retrying fetch... (${retries} left)`);
+        setTimeout(() => fetchModifications(retries - 1), 2000);
+      }
     }
   }
 
@@ -109,12 +115,7 @@
       userId,
       token,
       widgetId,
-      modifications: [
-        {
-          pageId,
-          elements: [{ elementId, css }]
-        }
-      ]
+      modifications: [{ pageId, elements: [{ elementId, css }] }],
     };
 
     try {
@@ -123,9 +124,6 @@
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
-          "Page-Id": pageId,
-          "User-Id": userId,
-          "Widget-Id": widgetId
         },
         body: JSON.stringify(modificationData),
       });
@@ -185,13 +183,6 @@
       console.log(`✅ Selected Element: ${selectedElement.id}`);
     });
 
-    document.getElementById("squareCraftFontSize").addEventListener("input", applyStyle);
-    document.getElementById("squareCraftBgColor").addEventListener("input", applyStyle);
-    document.getElementById("squareCraftBorderRadius").addEventListener("input", function () {
-      document.getElementById("borderRadiusValue").textContent = this.value + "px";
-      applyStyle();
-    });
-
     document.getElementById("squareCraftPublish").addEventListener("click", async () => {
       if (!selectedElement) {
         console.warn("⚠️ No element selected.");
@@ -207,6 +198,16 @@
       await saveModifications(selectedElement.id, css);
     });
   }
+
+  /**
+   * 🔄 Handle Squarespace AJAX Navigation
+   */
+  const observer = new MutationObserver(() => {
+    console.log("🔄 Page updated via AJAX. Re-fetching styles...");
+    pageId = getPageId();
+    fetchModifications();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 
   document.addEventListener("DOMContentLoaded", () => {
     createWidget();
