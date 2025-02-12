@@ -1,10 +1,11 @@
-(async function fontFamilyDropdownInteract() {
+(async function squareCraft() {
   const widgetScript = document.getElementById("squarecraft-script");
   if (!widgetScript) {
     console.error("❌ Widget script not found! Ensure the script tag exists with id 'squarecraft-script'.");
     return;
   }
 
+  // Securely store authentication details
   const token = widgetScript.dataset?.token || null;
   const userId = widgetScript.dataset?.uId || null;
   const widgetId = widgetScript.dataset?.wId || null;
@@ -24,6 +25,7 @@
 
   let selectedElement = null;
 
+  // Fetch the Page ID (fixed for each Squarespace page)
   function getPageId() {
     let pageElement = document.querySelector("article[data-page-sections]");
     return pageElement ? pageElement.getAttribute("data-page-sections") : null;
@@ -32,7 +34,10 @@
   let pageId = getPageId();
   if (!pageId) console.warn("⚠️ No page ID found. Plugin may not work correctly.");
 
-
+  /**
+   * 🎨 Apply Styles to Selected Element
+   * Uses a `<style>` tag to persist changes even after reloads or AJAX updates.
+   */
   function applyStylesToElement(elementId, css) {
     if (!elementId || !css) return;
 
@@ -53,7 +58,9 @@
     console.log(`✅ Styles Persisted for ${elementId}`);
   }
 
-
+  /**
+   * 📡 Fetch and Apply Saved Styles After Page Reload
+   */
   async function fetchModifications(retries = 3) {
     if (!pageId) return;
 
@@ -97,7 +104,9 @@
     }
   }
 
-
+  /**
+   * 💾 Save Modifications for the Selected Element
+   */
   async function saveModifications(elementId, css) {
     if (!pageId || !elementId || !css) {
       console.warn("⚠️ Missing required data to save modifications.");
@@ -130,7 +139,9 @@
     }
   }
 
- 
+  /**
+   * 🎛️ Create Floating Widget for Editing Styles
+   */
   function createWidget() {
     const widgetContainer = document.createElement("div");
     widgetContainer.id = "squarecraft-widget-container";
@@ -162,7 +173,9 @@
     document.body.appendChild(widgetContainer);
   }
 
- 
+  /**
+   * 🎯 Handle Element Selection & Style Updates
+   */
   function attachEventListeners() {
     document.body.addEventListener("click", (event) => {
       let block = event.target.closest('[id^="block-"]');
@@ -191,6 +204,9 @@
     });
   }
 
+  /**
+   * 🔄 Handle Squarespace AJAX Navigation
+   */
   const observer = new MutationObserver(() => {
     console.log("🔄 Page updated via AJAX. Re-fetching styles...");
     pageId = getPageId();
