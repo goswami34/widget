@@ -68,8 +68,8 @@
             },
             body: JSON.stringify({ userId: userId, widgetId:widgetId, modifications: [{ pageId, elements: [{ elementId, css }] }] } ),
           });
-    
-          console.log("✅ Changes Saved Successfully!", response);
+    const data = response.json();
+          console.log("✅ Changes Saved Successfully!", data);
     
         } catch (error) {
           console.error("❌ Error saving modifications:", error);
