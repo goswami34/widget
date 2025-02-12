@@ -5,7 +5,28 @@
     return;
   }
 
-src/html/parentHtml/fontfamilyDropdown/fontFamilyDropdowninteract.js
+  const token = widgetScript?.dataset?.token;
+  const userId = widgetScript.dataset?.uId; 
+  const widgetId = widgetScript.dataset?.wId; 
+
+  if (token) {
+    console.log("🔑 Token received:", token);
+    localStorage.setItem("squareCraft_auth_token", token);
+    document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
+}
+
+if (userId) {
+    console.log("👤 User ID received:", userId);
+    localStorage.setItem("squareCraft_u_id", userId);
+    document.cookie = `squareCraft_u_id=${userId}; path=.squarespace.com;`;
+
+}
+
+if (widgetId) {
+    console.log("🛠️ Widget ID received:", widgetId);
+    localStorage.setItem("squareCraft_w_id", widgetId);
+    document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
+}
 
   let selectedElement = null;
   let appliedStyles = new Set(); // 🛠️ To track applied styles & prevent duplicate applications
