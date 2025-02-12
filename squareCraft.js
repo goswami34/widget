@@ -1,23 +1,27 @@
 (async function fontFamilyDropdownInteract() {
   const widgetScript = document.getElementById("squarecraft-script");
   const token = widgetScript?.dataset?.token;
-  const userId = widgetScript.dataset?.uId;
-  const widgetId = widgetScript.dataset?.wId;
+  const userId = widgetScript.dataset?.uId; 
+  const widgetId = widgetScript.dataset?.wId; 
 
-  if (!token || !userId || !widgetId) {
-    console.error("❌ Missing authentication data!");
-    return;
-  }
-  let selectedElement = null;
-  console.log("🔑 Authenticated:", { token, userId, widgetId });
+  if (token) {
+    console.log("🔑 Token received:", token);
+    localStorage.setItem("squareCraft_auth_token", token);
+    document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
+}
 
-  localStorage.setItem("squareCraft_auth_token", token);
-  localStorage.setItem("squareCraft_u_id", userId);
-  localStorage.setItem("squareCraft_w_id", widgetId);
+if (squareCraft_u_id) {
+    console.log("👤 User ID received:", squareCraft_u_id);
+    localStorage.setItem("squareCraft_u_id", squareCraft_u_id);
+    document.cookie = `squareCraft_u_id=${squareCraft_u_id}; path=.squarespace.com;`;
 
-  document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
-  document.cookie = `squareCraft_u_id=${userId}; path=.squarespace.com;`;
-  document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
+}
+
+if (squareCraft_w_id) {
+    console.log("🛠️ Widget ID received:", squareCraft_w_id);
+    localStorage.setItem("squareCraft_w_id", squareCraft_w_id);
+    document.cookie = `squareCraft_w_id=${squareCraft_w_id}; path=.squarespace.com;`;
+}
 
   /**
    * 🎨 Apply Styles Dynamically & Ensure Persistence
