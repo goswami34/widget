@@ -23,58 +23,27 @@ if (widgetId) {
     document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
 }
 
-function injectCSS(elementId, css) {
-  let styleTag = document.getElementById(`custom-style-${elementId}`);
-  
-  if (!styleTag) {
-      styleTag = document.createElement("style");
-      styleTag.id = `custom-style-${elementId}`;
-      document.head.appendChild(styleTag);
-  }
 
-  let cssString = Object.keys(css).map(prop => {
-      return `#${elementId} { ${prop}: ${css[prop]} !important; }`;
-  }).join("\n");
-
-  styleTag.innerHTML = cssString;
-}
-
-function applyStylesToElement(elementId, css, retries = 5) {
-  console.log(`🔍 Searching for element: ${elementId}`);
-
-  const element = document.getElementById(elementId) || document.querySelector(`[id='${elementId}']`);
-
-  if (!element) {
-      if (retries === 0) {
-          console.warn(`⚠️ Element ${elementId} not found after multiple retries.`);
-          return;
-      }
-      console.warn(`⚠️ Element ${elementId} not found. Retrying in 2s... (${retries} retries left)`);
-      setTimeout(() => applyStylesToElement(elementId, css, retries - 1), 2000);
-      return;
-  }
-
-  console.log(`🎨 Applying styles to ${elementId}:`, css);
+function applyStylesToElement(elementId, css) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
 
   Object.keys(css).forEach((prop) => {
-      element.style.setProperty(prop, css[prop], "important");
+    if (prop === "font-size") {
+      element.querySelectorAll("h1, h2, h3, p, span, a").forEach(el => {
+        el.style.fontSize = css[prop];
+      });
+    } else if (prop === "border-radius") {
+      element.style.borderRadius = css[prop];
+      element.querySelectorAll("img").forEach(img => {
+        img.style.borderRadius = css[prop];
+      });
+    } else {
+      element.style[prop] = css[prop];
+    }
   });
 
-  if (css["font-size"]) {
-      element.querySelectorAll("h1, h2, h3, p, span, a, div, li, strong, em").forEach(el => {
-          el.style.setProperty("font-size", css["font-size"], "important");
-      });
-  }
-
-  if (css["border-radius"]) {
-      element.querySelectorAll("img").forEach(img => {
-          img.style.setProperty("border-radius", css["border-radius"], "important");
-      });
-  }
-
-  injectCSS(elementId, css);
-
-  console.log("✅ Styles Applied:", element.style);
+  console.log(`🎨 Styles applied to ${elementId}:`, css);
 }
 
 
