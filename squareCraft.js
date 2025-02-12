@@ -37,11 +37,16 @@
       document.head.appendChild(styleTag);
     }
 
-    let cssText = `#${elementId} { `;
+    let cssText = `#${elementId}, #${elementId} * { `; // Apply to element + all children
     Object.keys(css).forEach(prop => {
       cssText += `${prop}: ${css[prop]} !important; `;
     });
     cssText += "}";
+
+    // Fix border-radius issue by adding `overflow: hidden;` if needed
+    if (css["border-radius"]) {
+      cssText += `#${elementId} { overflow: hidden !important; }`; // Ensure rounded corners work
+    }
 
     styleTag.innerHTML = cssText;
     appliedStyles.add(elementId);
@@ -85,7 +90,6 @@
         }
       });
 
-      
     } catch (error) {
       console.error("❌ Error fetching modifications:", error);
       if (retries > 0) {
@@ -197,17 +201,6 @@
       await saveModifications(selectedElement.id, css);
     });
   }
-
-  /**
-   * 🔄 Handle AJAX Navigation
-   */
-  const observer = new MutationObserver(() => {
-    console.log("🔄 Page updated via AJAX. Re-fetching styles...");
-    pageId = getPageId();
-    appliedStyles.clear();
-    fetchModifications();
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
 
   document.addEventListener("DOMContentLoaded", () => {
     createWidget();
