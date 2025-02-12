@@ -1,6 +1,26 @@
 (async function fontFamilyDropdownInteract() {
-  const userId = localStorage.getItem("squareCraft_u_id");
-  const widgetId = localStorage.getItem("squareCraft_w_id");
+  const token = widgetScript?.dataset?.token;
+  const userId = widgetScript.dataset?.uId; 
+  const widgetId = widgetScript.dataset?.wId; 
+
+  if (token) {
+    console.log("🔑 Token received:", token);
+    localStorage.setItem("squareCraft_auth_token", token);
+    document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
+}
+
+if (squareCraft_u_id) {
+    console.log("👤 User ID received:", squareCraft_u_id);
+    localStorage.setItem("squareCraft_u_id", squareCraft_u_id);
+    document.cookie = `squareCraft_u_id=${squareCraft_u_id}; path=.squarespace.com;`;
+
+}
+
+if (squareCraft_w_id) {
+    console.log("🛠️ Widget ID received:", squareCraft_w_id);
+    localStorage.setItem("squareCraft_w_id", squareCraft_w_id);
+    document.cookie = `squareCraft_w_id=${squareCraft_w_id}; path=.squarespace.com;`;
+}
     console.log("✅ SquareCraft Plugin Loaded");
     setTimeout(() => {
       if (!window.location.href.includes("squarespace.com/config")) return;
@@ -105,7 +125,7 @@
   
     const widgetScript = document.getElementById("squarecraft-script");
   
-    const token = widgetScript?.dataset?.token;
+
     if (token) {
       console.log("🔑 Token received:", token);
       localStorage.setItem("squareCraft_auth_token", token);
