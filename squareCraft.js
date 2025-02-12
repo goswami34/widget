@@ -171,6 +171,7 @@
     document.body.appendChild(widgetContainer);
   }
 
+  
   /**
    * 🎯 Handle Element Selection & Style Updates
    */
