@@ -24,27 +24,30 @@ if (widgetId) {
 }
 
 
-function applyStylesToElement(elementId, css) {
-  const element = document.getElementById(elementId);
-  if (!element) return;
+function applyStylesToElement(elementId, css, retries = 5) {
+  console.log(`🔍 Searching for element: ${elementId}`);
+
+  const element = document.getElementById(elementId) || document.querySelector(`[id='${elementId}']`);
+
+  if (!element) {
+      if (retries === 0) {
+          console.warn(`⚠️ Element ${elementId} not found after multiple retries.`);
+          return;
+      }
+      console.warn(`⚠️ Element ${elementId} not found. Retrying in 1s... (${retries} retries left)`);
+      setTimeout(() => applyStylesToElement(elementId, css, retries - 1), 1000);
+      return;
+  }
+
+  console.log(`🎨 Applying styles to ${elementId}:`, css);
 
   Object.keys(css).forEach((prop) => {
-    if (prop === "font-size") {
-      element.querySelectorAll("h1, h2, h3, p, span, a").forEach(el => {
-        el.style.fontSize = css[prop];
-      });
-    } else if (prop === "border-radius") {
-      element.style.borderRadius = css[prop];
-      element.querySelectorAll("img").forEach(img => {
-        img.style.borderRadius = css[prop];
-      });
-    } else {
-      element.style[prop] = css[prop];
-    }
+      element.style.setProperty(prop, css[prop], "important");
   });
 
-  console.log(`🎨 Styles applied to ${elementId}:`, css);
+  console.log("✅ Styles Applied:", element.style);
 }
+
 
 
 
@@ -308,24 +311,16 @@ function applyStylesToElement(elementId, css) {
  
     
       
-      async function fetchModifications(retries = 5) {
+      async function fetchModifications() {
         try {
-            if (isEditingMode()) {
-                console.log("🛠 Squarespace is in Edit Mode - Waiting...");
-                setTimeout(() => fetchModifications(retries), 3000);
-                return;
-            }
-    
             let pageElement = document.querySelector("article[data-page-sections]");
             let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
+
+            console.log("fetchModifications called" , pageElement, pageId);
     
             if (!pageId) {
-                if (retries === 0) {
-                    console.warn("❌ No valid page ID found. Giving up.");
-                    return;
-                }
-                console.warn("⚠️ No valid page ID found. Retrying in 2s...");
-                setTimeout(() => fetchModifications(retries - 1), 2000);
+                console.warn("⚠️ No valid page ID found. Retrying...");
+                setTimeout(fetchModifications, 2000);
                 return;
             }
     
@@ -347,12 +342,19 @@ function applyStylesToElement(elementId, css) {
             const data = await response.json();
             console.log("📥 Fetched Modifications:", data);
     
+            if (!data.modifications || data.modifications.length === 0) {
+                console.warn("⚠️ No styles found for this page.");
+                return;
+            }
+    
             data.modifications.forEach(({ page_id, elements }) => {
                 if (page_id === pageId) {
                     elements.forEach(({ elementId, css }) => {
-                        console.log(`🎨 Applying styles to ${elementId}`);
-                        applyStylesToElement(elementId, css); // Ensure it's applied dynamically
+                        console.log(`🎨 Applying styles to ${elementId}`, css);
+                        applyStylesToElement(elementId, css);
                     });
+                } else {
+                    console.warn(`❌ No matching Page ID found. Expected: ${pageId}, Got: ${page_id}`);
                 }
             });
     
@@ -363,7 +365,9 @@ function applyStylesToElement(elementId, css) {
     
     
     
+    
       document.addEventListener("DOMContentLoaded", initializeSquareCraft);
+      document.addEventListener("DOMContentLoaded", fetchModifications);
       window.addEventListener("hashchange", toggleWidgetVisibility);
       window.addEventListener("popstate", toggleWidgetVisibility);
     })();
