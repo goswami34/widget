@@ -23,12 +23,34 @@ if (widgetId) {
     document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
 }
 
-   
-function applyStylesToElement(elementId, css) {
-  const element = document.getElementById(elementId) || document.querySelector(`[id='${elementId}']`);
+function injectCSS(elementId, css) {
+  let styleTag = document.getElementById(`custom-style-${elementId}`);
   
+  if (!styleTag) {
+      styleTag = document.createElement("style");
+      styleTag.id = `custom-style-${elementId}`;
+      document.head.appendChild(styleTag);
+  }
+
+  let cssString = Object.keys(css).map(prop => {
+      return `#${elementId} { ${prop}: ${css[prop]} !important; }`;
+  }).join("\n");
+
+  styleTag.innerHTML = cssString;
+}
+
+function applyStylesToElement(elementId, css, retries = 5) {
+  console.log(`🔍 Searching for element: ${elementId}`);
+
+  const element = document.getElementById(elementId) || document.querySelector(`[id='${elementId}']`);
+
   if (!element) {
-      console.warn(`⚠️ Element ${elementId} not found`);
+      if (retries === 0) {
+          console.warn(`⚠️ Element ${elementId} not found after multiple retries.`);
+          return;
+      }
+      console.warn(`⚠️ Element ${elementId} not found. Retrying in 2s... (${retries} retries left)`);
+      setTimeout(() => applyStylesToElement(elementId, css, retries - 1), 2000);
       return;
   }
 
@@ -50,8 +72,12 @@ function applyStylesToElement(elementId, css) {
       });
   }
 
+  injectCSS(elementId, css);
+
   console.log("✅ Styles Applied:", element.style);
 }
+
+
 
 
       console.log("✅ SquareCraft Plugin Loaded");
@@ -313,61 +339,58 @@ function applyStylesToElement(elementId, css) {
  
     
       
-    
-    
-      async function fetchModifications() {
+      async function fetchModifications(retries = 5) {
         try {
-      
-          // 🔹 Detect Edit Mode
-          if (isEditingMode()) {
-            console.log("🛠 Squarespace is in Edit Mode - Waiting for changes...");
-            setTimeout(fetchModifications, 3000); // Retry after 3s
-            return;
-          }
-      
-          let pageElement = document.querySelector("article[data-page-sections]");
-          let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
-      
-          if (!pageId) {
-            console.warn("⚠️ No valid page ID found. Retrying in 2s...");
-            setTimeout(fetchModifications, 2000);
-            return;
-          }
-      
-          console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
-      
-          const response = await fetch(
-            `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
-              },
+            if (isEditingMode()) {
+                console.log("🛠 Squarespace is in Edit Mode - Waiting...");
+                setTimeout(() => fetchModifications(retries), 3000);
+                return;
             }
-          );
-      
-          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      
-          const data = await response.json();
-          console.log("📥 Fetched Modifications:", data);
-      
-          data.modifications.forEach(({ page_id, elements }) => {
-            if (page_id === pageId) {
-              elements.forEach(({ elementId, css }) => {
-                console.log(`🎨 Applying styles to ${elementId}`);
-                applyStylesToElement(elementId, css);
-              });
+    
+            let pageElement = document.querySelector("article[data-page-sections]");
+            let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
+    
+            if (!pageId) {
+                if (retries === 0) {
+                    console.warn("❌ No valid page ID found. Giving up.");
+                    return;
+                }
+                console.warn("⚠️ No valid page ID found. Retrying in 2s...");
+                setTimeout(() => fetchModifications(retries - 1), 2000);
+                return;
             }
-          });
-      
+    
+            console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
+    
+            const response = await fetch(
+                `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
+                    },
+                }
+            );
+    
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    
+            const data = await response.json();
+            console.log("📥 Fetched Modifications:", data);
+    
+            data.modifications.forEach(({ page_id, elements }) => {
+                if (page_id === pageId) {
+                    elements.forEach(({ elementId, css }) => {
+                        console.log(`🎨 Applying styles to ${elementId}`);
+                        applyStylesToElement(elementId, css); // Ensure it's applied dynamically
+                    });
+                }
+            });
+    
         } catch (error) {
-          console.error("❌ Error fetching modifications:", error);
+            console.error("❌ Error fetching modifications:", error);
         }
-      }
-      
-      
-      
+    }
     
     
     
