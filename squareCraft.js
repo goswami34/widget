@@ -1,67 +1,64 @@
 (async function fontFamilyDropdownInteract() {
   const widgetScript = document.getElementById("squarecraft-script");
-  const token = widgetScript?.dataset?.token;
-  const userId = widgetScript.dataset?.uId; 
-  const widgetId = widgetScript.dataset?.wId; 
+  if (!widgetScript) {
+    console.error("❌ Widget script not found! Ensure the script tag exists with id 'squarecraft-script'.");
+    return;
+  }
+
+  const token = widgetScript.dataset?.token || null;
+  const userId = widgetScript.dataset?.uId || null;
+  const widgetId = widgetScript.dataset?.wId || null;
 
   if (token) {
-    console.log("🔑 Token received:", token);
     localStorage.setItem("squareCraft_auth_token", token);
-    document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
-}
-
-if (userId) {
-    console.log("👤 User ID received:", userId);
+    document.cookie = `squareCraft_auth_token=${token}; path=/; Secure; SameSite=Lax`;
+  }
+  if (userId) {
     localStorage.setItem("squareCraft_u_id", userId);
-    document.cookie = `squareCraft_u_id=${userId}; path=.squarespace.com;`;
-
-}
-
-if (widgetId) {
-    console.log("🛠️ Widget ID received:", widgetId);
+    document.cookie = `squareCraft_u_id=${userId}; path=/; Secure; SameSite=Lax`;
+  }
+  if (widgetId) {
     localStorage.setItem("squareCraft_w_id", widgetId);
-    document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
-}
-  
+    document.cookie = `squareCraft_w_id=${widgetId}; path=/; Secure; SameSite=Lax`;
+  }
+
   let selectedElement = null;
 
-  // Get pageId once (global for the entire page)
   function getPageId() {
     let pageElement = document.querySelector("article[data-page-sections]");
     return pageElement ? pageElement.getAttribute("data-page-sections") : null;
   }
 
   let pageId = getPageId();
-  if (!pageId) {
-    console.warn("⚠️ No page ID found. Plugin may not work correctly.");
-  } else {
-    console.log(`📄 Page ID detected: ${pageId}`);
-  }
-  /**
-   * 🎨 Apply Styles to Selected Element
-   */
+  if (!pageId) console.warn("⚠️ No page ID found. Plugin may not work correctly.");
+
+
   function applyStylesToElement(elementId, css) {
-    const element = document.getElementById(elementId);
-    if (!element) {
-      console.warn(`⚠️ Element ${elementId} not found.`);
-      return;
+    if (!elementId || !css) return;
+
+    let styleTag = document.getElementById(`style-${elementId}`);
+    if (!styleTag) {
+      styleTag = document.createElement("style");
+      styleTag.id = `style-${elementId}`;
+      document.head.appendChild(styleTag);
     }
 
-    Object.keys(css).forEach((prop) => {
-      element.style.setProperty(prop, css[prop], "important");
+    let cssText = `#${elementId} { `;
+    Object.keys(css).forEach(prop => {
+      cssText += `${prop}: ${css[prop]} !important; `;
     });
+    cssText += "}";
 
-    console.log(`✅ Styles Applied to ${elementId}`);
+    styleTag.innerHTML = cssText;
+    console.log(`✅ Styles Persisted for ${elementId}`);
   }
 
-  /**
-   * 📡 Fetch and Apply Modifications on Page Load
-   */
+
   async function fetchModifications(retries = 3) {
     if (!pageId) return;
 
     try {
-      console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
+      console.log(`📄 Fetching saved modifications for Page ID: ${pageId}`);
 
       const response = await fetch(
         `https://webefo-backend.vercel.app/api/v1/get-modifications?userId=${userId}`,
@@ -82,6 +79,7 @@ if (widgetId) {
         return;
       }
 
+      console.log("📥 Applying stored modifications...", data);
       data.modifications.forEach(({ page_id, elements }) => {
         if (page_id === pageId) {
           elements.forEach(({ elementId, css }) => {
@@ -99,9 +97,7 @@ if (widgetId) {
     }
   }
 
-  /**
-   * 💾 Save Modifications for the Selected Element
-   */
+
   async function saveModifications(elementId, css) {
     if (!pageId || !elementId || !css) {
       console.warn("⚠️ Missing required data to save modifications.");
@@ -134,9 +130,7 @@ if (widgetId) {
     }
   }
 
-  /**
-   * 🎛️ Create Floating Widget for Editing Styles
-   */
+ 
   function createWidget() {
     const widgetContainer = document.createElement("div");
     widgetContainer.id = "squarecraft-widget-container";
@@ -168,9 +162,7 @@ if (widgetId) {
     document.body.appendChild(widgetContainer);
   }
 
-  /**
-   * 🎯 Handle Element Selection & Style Updates
-   */
+ 
   function attachEventListeners() {
     document.body.addEventListener("click", (event) => {
       let block = event.target.closest('[id^="block-"]');
@@ -199,9 +191,6 @@ if (widgetId) {
     });
   }
 
-  /**
-   * 🔄 Handle Squarespace AJAX Navigation
-   */
   const observer = new MutationObserver(() => {
     console.log("🔄 Page updated via AJAX. Re-fetching styles...");
     pageId = getPageId();
