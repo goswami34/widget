@@ -1,35 +1,41 @@
 (async function squareCraft() {
   const widgetScript = document.getElementById("squarecraft-script");
   const token = widgetScript?.dataset?.token;
-  const userId = widgetScript.dataset?.uId; 
-  const widgetId = widgetScript.dataset?.wId; 
-  let selectedElement = null;
+  const userId = widgetScript?.dataset?.uId;
+  const widgetId = widgetScript?.dataset?.wId;
+  let selectedElement = null; // Track currently selected element
 
+  // Get pageId once (global for the entire page)
+  const pageElement = document.querySelector("article[data-page-sections]");
+  const pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
+
+  if (!pageId) {
+    console.warn("⚠️ No page ID found. The plugin may not work correctly.");
+  } else {
+    console.log(`📄 Page ID detected: ${pageId}`);
+  }
+
+  // Store credentials if available
   if (token) {
     console.log("🔑 Token received:", token);
     localStorage.setItem("squareCraft_auth_token", token);
     document.cookie = `squareCraft_auth_token=${token}; path=.squarespace.com;`;
-}
-
-if (userId) {
+  }
+  if (userId) {
     console.log("👤 User ID received:", userId);
     localStorage.setItem("squareCraft_u_id", userId);
     document.cookie = `squareCraft_u_id=${userId}; path=.squarespace.com;`;
-
-}
-
-if (widgetId) {
+  }
+  if (widgetId) {
     console.log("🛠️ Widget ID received:", widgetId);
     localStorage.setItem("squareCraft_w_id", widgetId);
     document.cookie = `squareCraft_w_id=${widgetId}; path=.squarespace.com;`;
-}
+  }
 
   /**
-   * 🎨 Apply Styles Dynamically & Ensure Persistence
+   * 🎨 Apply Styles to Selected Element
    */
   function applyStylesToElement(elementId, css) {
-    console.log(`🔍 Searching for element: ${elementId}`);
-
     const element = document.getElementById(elementId);
     if (!element) {
       console.warn(`⚠️ Element ${elementId} not found.`);
@@ -37,7 +43,6 @@ if (widgetId) {
     }
 
     console.log(`🎨 Applying styles to ${elementId}:`, css);
-
     Object.keys(css).forEach((prop) => {
       element.style.setProperty(prop, css[prop], "important");
     });
@@ -46,19 +51,12 @@ if (widgetId) {
   }
 
   /**
-   * 📡 Fetch Modifications & Apply After Page Reload
+   * 📡 Fetch and Apply Modifications on Page Load
    */
   async function fetchModifications() {
+    if (!pageId) return;
+
     try {
-      let pageElement = document.querySelector("article[data-page-sections]");
-      let pageId = pageElement ? pageElement.getAttribute("data-page-sections") : null;
-
-      if (!pageId) {
-        console.warn("⚠️ No valid page ID found. Retrying...");
-        setTimeout(fetchModifications, 2000);
-        return;
-      }
-
       console.log(`📄 Fetching modifications for Page ID: ${pageId}`);
 
       const response = await fetch(
@@ -85,11 +83,8 @@ if (widgetId) {
       data.modifications.forEach(({ page_id, elements }) => {
         if (page_id === pageId) {
           elements.forEach(({ elementId, css }) => {
-            console.log(`🎨 Applying styles to ${elementId}`, css);
             applyStylesToElement(elementId, css);
           });
-        } else {
-          console.warn(`❌ No matching Page ID found. Expected: ${pageId}, Got: ${page_id}`);
         }
       });
 
@@ -99,13 +94,15 @@ if (widgetId) {
   }
 
   /**
-   * 💾 Save Modifications to Database
+   * 💾 Save Modifications for the Selected Element
    */
-  async function saveModifications(pageId, elementId, css) {
-    if (!pageId || !elementId || !css) return;
+  async function saveModifications(elementId, css) {
+    if (!pageId || !elementId || !css) {
+      console.warn("⚠️ Missing required data to save modifications.");
+      return;
+    }
 
     applyStylesToElement(elementId, css);
-
     console.log("📡 Saving modifications for:", { pageId, elementId, css });
 
     const modificationData = {
@@ -126,9 +123,9 @@ if (widgetId) {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token || localStorage.getItem("squareCraft_auth_token")}`,
-           "pageId": pageId,
-           "userId": userId,
-           "widget-id": widgetId
+          "Page-Id": pageId,
+          "User-Id": userId,
+          "Widget-Id": widgetId
         },
         body: JSON.stringify(modificationData),
       });
@@ -140,7 +137,7 @@ if (widgetId) {
   }
 
   /**
-   * 🎛️ Widget for Editing Elements
+   * 🎛️ Create Floating Widget for Editing Styles
    */
   function createWidget() {
     const widgetContainer = document.createElement("div");
@@ -148,11 +145,10 @@ if (widgetId) {
     widgetContainer.style.position = "fixed";
     widgetContainer.style.top = "100px";
     widgetContainer.style.left = "100px";
-    widgetContainer.style.cursor = "grab";
     widgetContainer.style.zIndex = "9999";
 
     widgetContainer.innerHTML = `
-      <div style="width: 300px; background: #2c2c2c; padding: 20px; border-radius: 18px; border: 1.5px solid #3D3D3D; color: white;">
+      <div style="width: 300px; background: #2c2c2c; padding: 20px; border-radius: 18px; color: white;">
         <h3>🎨 SquareCraft Widget</h3>
 
         <label>Font Size:</label>
@@ -165,7 +161,7 @@ if (widgetId) {
         <input type="range" id="squareCraftBorderRadius" min="0" max="50" value="0">
         <p>Border Radius: <span id="borderRadiusValue">0px</span></p>
 
-        <button id="squareCraftPublish" style="width: 100%; padding: 10px; background: #EF7C2F; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <button id="squareCraftPublish" style="width: 100%; padding: 10px; background: #EF7C2F; color: white;">
           Publish Changes
         </button>
       </div>
@@ -175,37 +171,18 @@ if (widgetId) {
   }
 
   /**
-   * 🎯 Attach Event Listeners for Real-time Changes
+   * 🎯 Handle Element Selection & Style Updates
    */
-  function applyStyle() {
-    if (!selectedElement) return;
-  
-    const fontSize = document.getElementById("squareCraftFontSize").value + "px";
-    selectedElement.querySelectorAll("h1, h2, h3, h4, h5, h6, p, span, a, div, li, strong, em").forEach(el => {
-      el.style.fontSize = fontSize;
-    });
-  
-    const bgColor = document.getElementById("squareCraftBgColor").value;
-    selectedElement.style.backgroundColor = bgColor;
-  
-    const borderRadius = document.getElementById("squareCraftBorderRadius").value + "px";
-    selectedElement.style.borderRadius = borderRadius;
-    selectedElement.querySelectorAll("img").forEach(img => {
-      img.style.borderRadius = borderRadius;
-    });
-  }
-  
   function attachEventListeners() {
-    let selectedElement = null;
-
-    document.addEventListener("click", (event) => {
-      let page = event.target.closest("article[data-page-sections]");
+    document.body.addEventListener("click", (event) => {
       let block = event.target.closest('[id^="block-"]');
+      if (!block) return;
 
-      if (!page || !block) return;
-
+      if (selectedElement) selectedElement.style.outline = "";
       selectedElement = block;
-      console.log(`🆔 Page ID: ${page.getAttribute("data-page-sections")}, Element ID: ${block.id}`);
+      selectedElement.style.outline = "2px dashed #EF7C2F";
+
+      console.log(`✅ Selected Element: ${selectedElement.id}`);
     });
 
     document.getElementById("squareCraftFontSize").addEventListener("input", applyStyle);
@@ -227,7 +204,7 @@ if (widgetId) {
         "border-radius": document.getElementById("squareCraftBorderRadius").value + "px"
       };
 
-      await saveModifications(page.getAttribute("data-page-sections"), selectedElement.id, css);
+      await saveModifications(selectedElement.id, css);
     });
   }
 
