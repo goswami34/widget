@@ -14,7 +14,7 @@
   if (widgetId) localStorage.setItem("squareCraft_w_id", widgetId);
 
   let selectedElement = null;
-  let appliedStyles = new Set(); // Track applied styles to prevent duplicate injection
+  let appliedStyles = new Set();
 
   function getPageId() {
     let pageElement = document.querySelector("article[data-page-sections]");
@@ -37,15 +37,14 @@
       document.head.appendChild(styleTag);
     }
 
-    let cssText = `#${elementId}, #${elementId} * { `; // Apply to element + all children
+    let cssText = `#${elementId}, #${elementId} * { `;
     Object.keys(css).forEach(prop => {
       cssText += `${prop}: ${css[prop]} !important; `;
     });
     cssText += "}";
 
-    // Fix border-radius issue by adding `overflow: hidden;` if needed
     if (css["border-radius"]) {
-      cssText += `#${elementId} { overflow: hidden !important; }`; // Ensure rounded corners work
+      cssText += `#${elementId} { overflow: hidden !important; }`;
     }
 
     styleTag.innerHTML = cssText;
@@ -140,7 +139,7 @@
   /**
    * 🎛️ Create Floating Widget for Editing Styles
    */
-  function createWidget() {
+  async function createWidget() {
     const widgetContainer = document.createElement("div");
     widgetContainer.id = "squarecraft-widget-container";
     widgetContainer.style.position = "fixed";
@@ -151,6 +150,9 @@
     widgetContainer.innerHTML = `
       <div style="width: 300px; background: #2c2c2c; padding: 20px; border-radius: 18px; color: white;">
         <h3>🎨 SquareCraft Widget</h3>
+
+        <label>Font Family:</label>
+        <div id="squareCraftFontFamilyContainer" style="height: 150px; overflow-y: auto; border: 1px solid #ccc; background: white;"></div>
 
         <label>Font Size:</label>
         <input type="number" id="squareCraftFontSize" value="16" min="10" max="50" style="width: 100%;">
@@ -169,43 +171,40 @@
     `;
 
     document.body.appendChild(widgetContainer);
+    await loadGoogleFonts();
   }
 
-  
   /**
-   * 🎯 Handle Element Selection & Style Updates
+   * 🎯 Load Google Fonts into Dropdown
    */
-  function attachEventListeners() {
-    document.body.addEventListener("click", (event) => {
-      let block = event.target.closest('[id^="block-"]');
-      if (!block) return;
+  async function loadGoogleFonts() {
+    try {
+      const response = await fetch("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBPpLHcfY1Z1SfUIe78z6UvPe-wF31iwRk");
+      const data = await response.json();
 
-      if (selectedElement) selectedElement.style.outline = "";
-      selectedElement = block;
-      selectedElement.style.outline = "2px dashed #EF7C2F";
+      const fontContainer = document.getElementById("squareCraftFontFamilyContainer");
+      data.items.forEach(font => {
+        const fontOption = document.createElement("div");
+        fontOption.style.fontFamily = font.family;
+        fontOption.style.padding = "5px";
+        fontOption.style.cursor = "pointer";
+        fontOption.innerText = font.family;
+        fontOption.onclick = async () => {
+          if (selectedElement) {
+            applyStylesToElement(selectedElement.id, { "font-family": font.family });
+            await saveModifications(selectedElement.id, { "font-family": font.family });
+          }
+        };
+        fontContainer.appendChild(fontOption);
+      });
 
-      console.log(`✅ Selected Element: ${selectedElement.id}`);
-    });
-
-    document.getElementById("squareCraftPublish").addEventListener("click", async () => {
-      if (!selectedElement) {
-        console.warn("⚠️ No element selected.");
-        return;
-      }
-
-      let css = {
-        "font-size": document.getElementById("squareCraftFontSize").value + "px",
-        "background-color": document.getElementById("squareCraftBgColor").value,
-        "border-radius": document.getElementById("squareCraftBorderRadius").value + "px"
-      };
-
-      await saveModifications(selectedElement.id, css);
-    });
+    } catch (error) {
+      console.error("❌ Error loading Google Fonts:", error);
+    }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     createWidget();
-    attachEventListeners();
     fetchModifications();
   });
 })();
