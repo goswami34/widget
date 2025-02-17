@@ -14,7 +14,7 @@
   if (widgetId) localStorage.setItem("squareCraft_w_id", widgetId);
 
   let selectedElement = null;
-  let appliedStyles = new Set(); // Track applied styles to prevent duplicate injection
+  let appliedStyles = new Set();
 
   function getPageId() {
     let pageElement = document.querySelector("article[data-page-sections]");
@@ -24,9 +24,7 @@
   let pageId = getPageId();
   if (!pageId) console.warn("⚠️ No page ID found. Plugin may not work correctly.");
 
-  /**
-   * 🎨 Apply Styles to an Element & Ensure Persistence
-   */
+
   function applyStylesToElement(elementId, css) {
     if (!elementId || !css || appliedStyles.has(elementId)) return;
 
@@ -37,15 +35,14 @@
       document.head.appendChild(styleTag);
     }
 
-    let cssText = `#${elementId}, #${elementId} * { `; // Apply to element + all children
+    let cssText = `#${elementId}, #${elementId} * { `; 
     Object.keys(css).forEach(prop => {
       cssText += `${prop}: ${css[prop]} !important; `;
     });
     cssText += "}";
 
-    // Fix border-radius issue by adding `overflow: hidden;` if needed
     if (css["border-radius"]) {
-      cssText += `#${elementId} { overflow: hidden !important; }`; // Ensure rounded corners work
+      cssText += `#${elementId} { overflow: hidden !important; }`; 
     }
 
     styleTag.innerHTML = cssText;
@@ -53,9 +50,7 @@
     console.log(`✅ Styles Persisted for ${elementId}`);
   }
 
-  /**
-   * 📡 Fetch & Apply Stored Modifications After Page Load
-   */
+
   async function fetchModifications(retries = 3) {
     if (!pageId) return;
 
@@ -99,9 +94,7 @@
     }
   }
 
-  /**
-   * 💾 Save Modifications for Selected Element
-   */
+
   async function saveModifications(elementId, css) {
     if (!pageId || !elementId || !css) {
       console.warn("⚠️ Missing required data to save modifications.");
@@ -137,9 +130,6 @@
     }
   }
 
-  /**
-   * 🎛️ Create Floating Widget for Editing Styles
-   */
   function createWidget() {
     const widgetContainer = document.createElement("div");
     widgetContainer.id = "squarecraft-widget-container";
@@ -172,9 +162,7 @@
   }
 
   
-  /**
-   * 🎯 Handle Element Selection & Style Updates
-   */
+
   function attachEventListeners() {
     document.body.addEventListener("click", (event) => {
       let block = event.target.closest('[id^="block-"]');
